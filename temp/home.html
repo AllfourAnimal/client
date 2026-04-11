@@ -1,0 +1,324 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>All4Animal | Home Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-background": "#091d2e",
+              "tertiary-container": "#5fc2d8",
+              "primary-fixed-dim": "#ffb780",
+              "secondary-fixed": "#ffdcc4",
+              "surface-container-highest": "#d1e4fb",
+              "secondary": "#7a573d",
+              "surface-dim": "#c9dcf3",
+              "on-secondary-fixed-variant": "#5f4027",
+              "inverse-primary": "#ffb780",
+              "primary-container": "#f4a261",
+              "surface-container-low": "#edf4ff",
+              "tertiary-fixed": "#a8edff",
+              "outline-variant": "#d8c2b5",
+              "secondary-fixed-dim": "#ebbd9d",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#fdcead",
+              "on-tertiary-container": "#004e5b",
+              "surface-bright": "#f7f9ff",
+              "on-surface-variant": "#534439",
+              "on-primary": "#ffffff",
+              "outline": "#867468",
+              "background": "#f7f9ff",
+              "tertiary-fixed-dim": "#72d4ea",
+              "inverse-on-surface": "#e8f2ff",
+              "surface-variant": "#d1e4fb",
+              "primary": "#8e4e14",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-fixed-variant": "#004e5b",
+              "primary-fixed": "#ffdcc4",
+              "on-error": "#ffffff",
+              "tertiary": "#006878",
+              "on-error-container": "#93000a",
+              "on-tertiary-fixed": "#001f25",
+              "inverse-surface": "#203243",
+              "surface-tint": "#8e4e14",
+              "error": "#ba1a1a",
+              "on-primary-fixed-variant": "#6f3800",
+              "on-secondary-fixed": "#2d1603",
+              "on-secondary-container": "#79563c",
+              "surface-container-high": "#d9eaff",
+              "error-container": "#ffdad6",
+              "on-primary-fixed": "#2f1400",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#6f3800",
+              "surface": "#f7f9ff",
+              "surface-container": "#e3efff",
+              "on-surface": "#091d2e"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.grainy-surface {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuB_LV07uN1bpUVD7lTk3lwk0GXSSydDJ8ouawio0fg5wjhvWybMdl5IpLS0HPRjyVrn1QRqhzOc0DQll0qnCXESBg4N3p8TfDY7JHDeAxSrq7Hs2wUqH2P5KcczYAwyQ02YEUpipa2a5C4jnj87wMmvE4e0P_mL5YSp8uqj3uVrk-SrLAWxEOdnF8uKC_ORj64nJfMPuORxkVJJ5edgiI4k8mJlDO9NHKu_eVbyjhAbWumwpq_LW-lQlYfJ6UjyxoWkofvp8WQFaMoa)
+    }
+body {
+    font-family: "Manrope", sans-serif
+    }
+h1, h2, h3, .brand-font {
+    font-family: "Plus Jakarta Sans", sans-serif
+    }</style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-[#f7f9ff] dark:bg-slate-950 fixed top-0 w-full z-50">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold text-[#091d2e] dark:text-white flex items-center gap-2" style="">
+<a class="flex items-center gap-2" href="home.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="font-variation-settings: &quot;FILL&quot; 1;">pets</span>
+                All4Animal
+            </a>
+            </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-[#8e4e14] dark:text-[#f4a261] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300" href="home.html" style="">홈</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="animal-list.html" style="">동물 목록</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="review-list.html" style="">입양 후기</a>
+
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#534439] dark:text-slate-400 cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all" style="">notifications</span>
+</div>
+<a class="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full cursor-pointer hover:scale-95 transition-all" href="profile.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="">account_circle</span>
+<span class="text-sm font-semibold" style="">프로필</span>
+</a>
+</div>
+</nav>
+</header>
+
+<div class="flex pt-20">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col h-[calc(100vh-80px)] w-64 bg-[#edf4ff] dark:bg-slate-900 rounded-r-[1.5rem] py-8 pl-4 sticky top-20">
+<div class="px-4 mb-10">
+<h3 class="text-xl font-bold text-on-surface font-headline" style="">메뉴</h3>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 py-3 px-6 bg-white dark:bg-slate-800 text-[#8e4e14] dark:text-[#f4a261] rounded-l-full shadow-sm transition-transform duration-200" href="#" style="">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">dashboard</span>
+<span class="font-medium" style="">개요</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-6 text-[#534439] dark:text-slate-400 hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200" href="#" style="">
+<span class="material-symbols-outlined" style="">insights</span>
+<span class="font-medium" style="">통계</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-6 text-[#534439] dark:text-slate-400 hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200" href="#" style="">
+<span class="material-symbols-outlined" style="">favorite</span>
+<span class="font-medium" style="">나의 매칭 현황</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-6 text-[#534439] dark:text-slate-400 hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200" href="#" style="">
+<span class="material-symbols-outlined" style="">bookmark</span>
+<span class="font-medium" style="">찜한 동물</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full py-4 bg-primary text-on-primary font-bold rounded-full hover:scale-95 transition-all shadow-lg shadow-primary/20" style="" onclick="window.location='preferences.html'">
+                    설문 작성
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 px-8 py-8 lg:px-12 max-w-7xl mx-auto overflow-hidden">
+<!-- Hero Header -->
+<section class="mb-12">
+<h1 class="text-5xl font-extrabold text-on-background mb-2 tracking-tight" style="">환영해요 예비 입양자님!</h1>
+<p class="text-on-surface-variant text-lg" style="">캐치프레이즈 적으면 좋을 듯 </p>
+</section>
+<!-- 1. National Rescue Status Dashboard (Bento Layout) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+<div class="md:col-span-2 bg-surface-container-high rounded-[1.5rem] p-8 flex flex-col justify-between relative overflow-hidden group">
+<div class="relative z-10">
+<h3 class="text-tertiary font-bold label-md mb-2" style="">전국</h3>
+<h2 class="text-4xl font-bold text-on-background mb-6" style="">구조 현황</h2>
+<div class="flex items-end gap-2 text-primary">
+<span class="text-6xl font-black" style="">12.4k</span>
+<span class="text-lg font-semibold mb-2" style="">올해 구조된 생명</span>
+</div>
+</div>
+<div class="mt-8 h-32 flex items-end gap-1 relative z-10">
+<!-- Simple Visual Bars to represent chart -->
+<div class="w-full bg-primary-container h-1/2 rounded-t-lg group-hover:h-3/4 transition-all duration-500"></div>
+<div class="w-full bg-primary h-3/4 rounded-t-lg group-hover:h-1/2 transition-all duration-500"></div>
+<div class="w-full bg-primary-container h-2/3 rounded-t-lg group-hover:h-full transition-all duration-500"></div>
+<div class="w-full bg-primary h-1/2 rounded-t-lg group-hover:h-2/3 transition-all duration-500"></div>
+<div class="w-full bg-primary-container h-3/4 rounded-t-lg group-hover:h-1/2 transition-all duration-500"></div>
+<div class="w-full bg-primary h-full rounded-t-lg group-hover:h-3/4 transition-all duration-500"></div>
+</div>
+<!-- Decorative Element -->
+<div class="absolute -right-10 -bottom-10 text-[200px] text-primary/5 material-symbols-outlined rotate-12 select-none" style="">analytics</div>
+</div>
+<div class="space-y-6">
+<div class="bg-surface-container-lowest rounded-[1.5rem] p-6 shadow-sm flex flex-col justify-center">
+<span class="text-tertiary font-bold text-sm uppercase tracking-widest mb-1" style="">이번 달 입양 건수</span>
+<div class="flex items-center justify-between">
+<span class="text-4xl font-bold text-on-surface" style="">28</span>
+<div class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold flex items-center" style="">
+<span class="material-symbols-outlined text-sm mr-1" style="">trending_up</span> +12%
+                            </div>
+</div>
+</div>
+<div class="bg-primary rounded-[1.5rem] p-6 text-on-primary shadow-lg shadow-primary/20 flex flex-col justify-center">
+<span class="text-on-primary/70 font-bold text-sm uppercase tracking-widest mb-1" style="">봉사 활동 건수</span>
+<div class="flex items-center justify-between">
+<span class="text-4xl font-bold" style="">42</span>
+<span class="material-symbols-outlined text-4xl opacity-50" style="">volunteer_activism</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. Top Matches for You (Editorial Horizontal Layout) -->
+<section class="mb-16">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-3xl font-bold text-on-background" style="">Top Matches for You</h2>
+<p class="text-on-surface-variant" style="">Personalized based on your lifestyle and preferences</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Match Card 1 -->
+<a href="animal-details.html" class="group cursor-pointer block">
+<div class="relative mb-4 rounded-[1.5rem] overflow-hidden aspect-[4/5]">
+<img alt="pet photo" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="portrait of a beautiful beagle dog with big brown eyes sitting in a sunny garden with natural lighting" src="https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/6P0U/image/1OWftaQcOlM1040OyU83hKxBmgs" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-primary font-bold text-xs" style="">
+                                98% Match
+                            </div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="text-2xl font-bold" style="">모승</h3>
+<p class="text-sm opacity-90" style="">Beagle • 2 years</p>
+</div>
+</div>
+</a>
+<!-- Match Card 2 (Asymmetric / Breaking Grid) -->
+<a href="animal-details.html" class="group cursor-pointer md:-mt-6 block">
+<div class="relative mb-4 rounded-[1.5rem] overflow-hidden aspect-[4/5]">
+<img alt="pet photo" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="close-up of a curious tabby cat with bright green eyes peeking through indoor plants with soft bokeh background" src="https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/722/2d9606f443d27267e4d45b15e624e9ed_res.jpeg" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-primary font-bold text-xs" style="">
+                                94% Match
+                            </div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="text-2xl font-bold" style="">똘똘</h3>
+<p class="text-sm opacity-90" style="">Corgi • 1 year</p>
+</div>
+</div>
+</a>
+<!-- Match Card 3 -->
+<a href="animal-details.html" class="group cursor-pointer block">
+<div class="relative mb-4 rounded-[1.5rem] overflow-hidden aspect-[4/5]">
+<img alt="pet photo" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="happy golden retriever puppy running on a manicured lawn during sunset with warm glowing light" src="https://storage.enuri.info/pic_upload/knowbox2/202402/03494830920240229230d567a-153b-4806-8cc9-defc73434507.jpg" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-primary font-bold text-xs" style="">
+                                91% Match
+                            </div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="text-2xl font-bold" style="">공주</h3>
+<p class="text-sm opacity-90" style="">Golden Retriever • 4 months</p>
+</div>
+</div>
+</a>
+</div>
+</section>
+<!-- 3. Saved Animals Quick View Carousel -->
+<section class="mb-20">
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-4 flex-1">
+<h2 class="text-2xl font-bold text-on-background" style="">찜한 동물</h2>
+<div class="h-[1px] flex-1 bg-outline-variant opacity-20"></div>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 hover:underline ml-4" style="" onclick="window.location='animal-list.html'">
+                        전체 보기 <span class="material-symbols-outlined" style="">arrow_forward</span>
+</button>
+</div>
+<div class="flex gap-6 overflow-x-auto pb-6 scrollbar-hide">
+<!-- Carousel Item 1 -->
+<a href="animal-details.html" class="flex-shrink-0 w-48 group block">
+<div class="h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 transition-transform group-hover:scale-105">
+<img alt="animal" class="w-full h-full object-cover" data-alt="cute white rabbit sitting in soft green grass with tiny flowers and gentle morning light" src="https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/6P0U/image/1OWftaQcOlM1040OyU83hKxBmgs" style="">
+</div>
+<p class="text-center font-bold text-on-surface" style="">모승</p>
+<p class="text-center text-xs text-on-surface-variant" style=""><br></p>
+</a>
+<!-- Carousel Item 2 -->
+<a href="animal-details.html" class="flex-shrink-0 w-48 group block">
+<div class="h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 transition-transform group-hover:scale-105">
+<img alt="animal" class="w-full h-full object-cover" data-alt="a majestic white owl with large orange orange eyes perched on a branch in a dark forest setting" src="https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/722/2d9606f443d27267e4d45b15e624e9ed_res.jpeg" style="">
+</div>
+<p class="text-center font-bold text-on-surface" style="">똘똘</p>
+<p class="text-center text-xs text-on-surface-variant" style=""><br></p>
+</a>
+<!-- Carousel Item 3 -->
+<a href="animal-details.html" class="flex-shrink-0 w-48 group block">
+<div class="h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 transition-transform group-hover:scale-105">
+<img alt="animal" class="w-full h-full object-cover" data-alt="two small fluffy puppies of mixed breed cuddling together on a soft blue blanket with bright indoor lighting" src="https://mblogthumb-phinf.pstatic.net/MjAyMjExMDRfNTQg/MDAxNjY3NTM1MjUwMTM5.UbGKNsQspu-mN4M3husNKIkqrjxTZVqDz495I1sOHxYg.mQRYtPom0sUssuJaI2SpRBwyTgMMxm-267qxjZq4jGQg.JPEG.babion_1/4.jpg?type=w800" style="">
+</div>
+<p class="text-center font-bold text-on-surface" style="">메롱</p>
+<p class="text-center text-xs text-on-surface-variant" style=""><br></p>
+</a>
+<!-- Carousel Item 4 -->
+<a href="animal-details.html" class="flex-shrink-0 w-48 group block">
+<div class="h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 transition-transform group-hover:scale-105">
+<img alt="animal" class="w-full h-full object-cover" data-alt="an elegant ginger cat lying on a wooden floor stretched out in a sunbeam from a nearby window" src="https://img1.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202105/25/holapet/20210525051114398gyiz.jpg" style="">
+</div>
+<p class="text-center font-bold text-on-surface" style="">윙크</p>
+<p class="text-center text-xs text-on-surface-variant" style=""><br></p>
+</a>
+</div>
+</section>
+</main>
+</div>
+<!-- 4. Floating Action Button / Chat AI -->
+<div class="fixed bottom-8 right-8 z-[60]">
+<button class="flex items-center gap-3 bg-primary text-on-primary px-6 py-4 rounded-full shadow-2xl shadow-primary/40 hover:scale-105 transition-all active:scale-95 group" style="">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: &quot;FILL&quot; 1;">smart_toy</span>
+<span class="font-bold" style="">AI 펫봇 채팅</span>
+</button>
+</div>
+<!-- Footer -->
+<footer class="bg-[#091d2e] dark:bg-black text-[#f4a261] mt-20 p-12">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 max-w-screen-2xl mx-auto">
+<div class="space-y-4">
+<div class="text-[#f7f9ff] font-bold text-3xl brand-font" style="">All4Animal</div>
+<p class="text-slate-400 text-sm max-w-xs" style="">Connecting compassionate hearts with furry souls through curated matches and editorial storytelling.</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col space-y-3">
+<span class="text-white text-sm font-bold uppercase tracking-widest mb-2" style="">Company</span>
+<a class="text-slate-400 text-xs font-label hover:text-[#f4a261] transition-colors" href="#" style="">Terms of Service</a>
+<a class="text-slate-400 text-xs font-label hover:text-[#f4a261] transition-colors" href="#" style="">Privacy Policy</a>
+<a class="text-slate-400 text-xs font-label hover:text-[#f4a261] transition-colors" href="#" style="">Contact Us</a>
+</div>
+<div class="flex flex-col space-y-3">
+<span class="text-white text-sm font-bold uppercase tracking-widest mb-2" style="">Community</span>
+<a class="text-slate-400 text-xs font-label hover:text-[#f4a261] transition-colors" href="#" style="">Instagram</a>
+<a class="text-slate-400 text-xs font-label hover:text-[#f4a261] transition-colors" href="#" style="">Community Forum</a>
+<a class="text-slate-400 text-xs font-label hover:text-[#f4a261] transition-colors" href="#" style="">Stories</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

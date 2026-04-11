@@ -1,0 +1,223 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#ffdcc4",
+                    "outline-variant": "#d8c2b5",
+                    "on-secondary-container": "#79563c",
+                    "tertiary-fixed-dim": "#72d4ea",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f7f9ff",
+                    "surface": "#f7f9ff",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#203243",
+                    "surface-dim": "#c9dcf3",
+                    "primary": "#8e4e14",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#004e5b",
+                    "on-secondary-fixed-variant": "#5f4027",
+                    "secondary-fixed-dim": "#ebbd9d",
+                    "surface-variant": "#d1e4fb",
+                    "surface-container-high": "#d9eaff",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed": "#2d1603",
+                    "on-primary-fixed": "#2f1400",
+                    "secondary": "#7a573d",
+                    "inverse-primary": "#ffb780",
+                    "outline": "#867468",
+                    "secondary-container": "#fdcead",
+                    "inverse-on-surface": "#e8f2ff",
+                    "on-primary-container": "#6f3800",
+                    "on-primary-fixed-variant": "#6f3800",
+                    "primary-container": "#f4a261",
+                    "surface-container": "#e3efff",
+                    "primary-fixed-dim": "#ffb780",
+                    "on-surface-variant": "#534439",
+                    "surface-container-low": "#edf4ff",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#006878",
+                    "surface-container-highest": "#d1e4fb",
+                    "background": "#f7f9ff",
+                    "on-tertiary-fixed": "#001f25",
+                    "on-surface": "#091d2e",
+                    "on-error-container": "#93000a",
+                    "on-background": "#091d2e",
+                    "tertiary-container": "#5fc2d8",
+                    "surface-tint": "#8e4e14",
+                    "on-tertiary-container": "#004e5b",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#a8edff",
+                    "primary-fixed": "#ffdcc4"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "xxl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>body {
+    font-family: "Manrope", sans-serif
+    }
+h1, h2, h3, .headline {
+    font-family: "Plus Jakarta Sans", sans-serif
+    }
+.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.bg-grain {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuATpnEqsac9LuY7OkAY9NuwBmBFMFfkaK1Coa8sW4p2VcFKsCKQoKLRmy7rmDJOKCi0UXWzZP5R298r8k3GlWOMGF-vlKYoQO7WahJQ2lmQZrL03GlxY23ZCUABtHRoF9jVyqiqUvn768cIxL6NqVVQgw0uT3azXksyWeO1QHI6IKhneeGnvLSr0zK_p4fe-6-62L-tdJOmT1hdWi1-k-YIQ5SOSMt999xTEsfbcL02tDRmNGnCU9_GRSFaProrgqiinlwK2OXRc7w1);
+    background-repeat: repeat
+    }</style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="bg-[#f7f9ff] dark:bg-slate-950 fixed top-0 w-full z-50">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold text-[#091d2e] dark:text-white flex items-center gap-2" style="">
+<a class="flex items-center gap-2" href="home.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="font-variation-settings: &quot;FILL&quot; 1;">pets</span>
+                All4Animal
+            </a>
+            </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-[#8e4e14] dark:text-[#f4a261] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300" href="home.html" style="">홈</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="animal-list.html" style="">동물 목록</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="review-list.html" style="">입양 후기</a>
+
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#534439] dark:text-slate-400 cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all" style="">notifications</span>
+</div>
+<a class="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full cursor-pointer hover:scale-95 transition-all" href="profile.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="">account_circle</span>
+<span class="text-sm font-semibold" style="">프로필</span>
+</a>
+</div>
+</nav>
+</header>
+
+<div class="flex pt-20">
+<aside class="fixed left-0 top-20 flex flex-col p-6 gap-4 h-[calc(100vh-5rem)] w-72 rounded-r-3xl bg-[#edf4ff] dark:bg-slate-900 shadow-[0_8px_32px_rgba(9,29,46,0.04)] font-['Manrope'] font-medium z-40">
+<div class="flex items-center gap-4 mb-8 px-2">
+<img alt="User profile photo" class="w-12 h-12 rounded-2xl object-cover ring-2 ring-white" data-alt="Close-up portrait of a friendly man with a warm smile in natural outdoor lighting, professional yet approachable" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATDeCsoWYESuKSoceaCVGaYEWI6_gpfVWWFioyiWRC2XrRF9VgSkrg4v6FbCXcRF4HbgTDoVz8-8krS8WYXdB4gb0qCXF8asTGthxVhe-VhsDVrCHH1mS0z6H5BBj60CVu-EB4Lt9WV6FEXOJnrvEXrTLtFXELVmEQVDqkWlW1N64SYC6CBIOxvWz4oLOi8j4CaO7CECN92pyb7-nZi_WsuX6QqFwukmC3qkRf2WIaknqxlWSlq1Ya_i_Fo4TKDFuiHJczn34_9JRK" style="">
+<div>
+<h3 class="text-on-surface font-bold" style="">입양자</h3>
+<p class="text-xs text-on-surface-variant/70" style="">Adopter Member</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="text-[#8e4e14] dark:text-[#f4a261] font-bold flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl transition-all translate-x-1 duration-200" href="#" style="">
+<span class="material-symbols-outlined" style="">person_outline</span>
+                    프로필
+                </a>
+<a class="text-[#534439] dark:text-slate-400 flex items-center gap-3 p-3 hover:bg-[#ffffff] dark:hover:bg-slate-800 rounded-xl transition-all" href="#" style="">
+<span class="material-symbols-outlined" style="">pets</span>
+                    매칭 설문
+                </a>
+<a class="text-[#534439] dark:text-slate-400 flex items-center gap-3 p-3 hover:bg-[#ffffff] dark:hover:bg-slate-800 rounded-xl transition-all" href="#" style="">
+<span class="material-symbols-outlined" style="">shield</span>
+                    개인정보
+                </a>
+</nav>
+</aside>
+<main class="ml-72 flex-1 p-8 lg:p-12 min-h-screen">
+<div class="max-w-6xl mx-auto space-y-12">
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-2">
+<span class="text-primary font-bold tracking-widest text-xs uppercase" style="">당신의 보금자리</span>
+<h1 class="text-4xl md:text-5xl font-extrabold text-on-surface leading-tight" style="">환영합니다, 입양자님.</h1>
+<p class="text-on-surface-variant max-w-lg" style="">새로운 가족을 찾는 것을 도와드릴 수 있어 기쁩니다. 당신의 사랑의 여정이 시작됩니다.</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-3 rounded-full bg-secondary-container text-on-secondary-container font-bold text-sm hover:opacity-90 transition-opacity" style="">프로필 편집</button>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<section class="lg:col-span-7 space-y-8">
+<div class="bg-surface-container-low rounded-xxl p-8 space-y-6">
+<h2 class="text-2xl font-bold flex items-center gap-3" style="">
+<span class="material-symbols-outlined text-primary" style="">contact_page</span>
+                                개인 정보
+                            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant/60 ml-1" style="">이름</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed" type="text" value="입양자">
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant/60 ml-1" style="">이메일</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed" type="email" value="mouthsheepruler@gmail.com">
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant/60 ml-1" style="">전화번호</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed" type="tel" value="010-1234-5678">
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant/60 ml-1" style="">직업</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed" type="text" value="대학생">
+</div>
+<div class="md:col-span-2 space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant/60 ml-1" style="">주소</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed" type="text" value="시립대로 123, 서울특별시">
+</div>
+</div>
+</div>
+</section>
+<aside class="lg:col-span-5 space-y-8">
+<div class="relative group cursor-pointer overflow-hidden rounded-xxl bg-primary p-8 text-on-primary">
+<div class="absolute top-0 right-0 p-8 opacity-20 transform group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-9xl" style="font-variation-settings: &quot;FILL&quot; 1;">quiz</span>
+</div>
+<div class="relative z-10 space-y-4">
+<h2 class="text-3xl font-bold leading-tight" style="">매칭 설문조사 참여</h2>
+<p class="text-primary-container font-medium" style="">저희의 특별한 알고리즘은 당신의 라이프스타일과 맞는 반려동물을 찾기 위해 감정 데이터를 사용합니다.</p>
+<button class="mt-4 px-8 py-4 bg-white text-primary font-extrabold rounded-full shadow-2xl shadow-black/10 flex items-center gap-2 group-hover:gap-4 transition-all" onclick="window.location='preferences.html' "style="">
+                                    시작하기
+                                    <span class="material-symbols-outlined" style="">arrow_forward</span>
+</button>
+</div>
+<div class="mt-12 flex -space-x-4">
+<img class="w-12 h-12 rounded-full border-4 border-primary ring-2 ring-primary-container/20 object-cover" data-alt="Playful cat face close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADAHxDG-u52gl6XFmDImqgV_leKgDHqI5_YaA806xhfqlHa0h-qzMa1zRHkZvcgF1-9wHX3aW8mW5x4EfrMD5Rvvru1SDa5sd_CVGWSLob7UEks6bbcMHRH7aveJlBswN63W7Jp5y0MlM4WfKxV7hU9VMBJu3ugqqK5GNHfejs2w6JlHEyL7cDCFYs6VyWObUj1szkRIMD45gC7FZqu0LQDLpdLPz8BFTj4kE19xIwLiYFN5CeX8DvUt0yszjtGO6Rso6wmbH_bgl5" style="">
+<img class="w-12 h-12 rounded-full border-4 border-primary ring-2 ring-primary-container/20 object-cover" data-alt="Happy dog face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNjpX0aEjhqs7wuGNv26pBmaaLDAlhE4sRe_vcRj3nB1iCJgUn_CS28zeLNJg6GZCykEQT7sm04JcQZAeo0-sfrprNewuL34SdJl-8Np8qW1s4NJnZ2UJBZX782DNGEEwpbAycbm7GEJqpMeXFzU3PmlnLKmw-hLoMalYQCJeaJdccduhofDqHf6a17jw_TeS0DG7Aj7CNPDd3BZ0cfaBn55qKcCuF88FZ6gDY3FYZtZ4JgpoKgHz7Qg3_K59RTZGMhrqTKK9X9A_j" style="">
+<img class="w-12 h-12 rounded-full border-4 border-primary ring-2 ring-primary-container/20 object-cover" data-alt="Fluffy rabbit close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY1iFeXPjBF3nxrO2cdcuUU8hX8r_8HrivhzfCObEbgaElE8VykMcoWPQTSAOr_Xk9j0xPQLEmrgLzsTUpB0TncigHJUsYzFO4enYxf5pg_D2a6QTY1RSS4ra7piFJCiyWdz2Pyp2caWqRToh-oD9dLy-1Zoklh894YWQVEHpavzhEzJAYeF-clmF6laqxZ5sNWTfTB5tLafKzTTOnjGbXegIUhsw5dBGw1SUZ0zLZFwcFoY-kx2f5kO9Jn2ldXH3m0cRcxW-Kr_nl" style="">
+<div class="w-12 h-12 rounded-full border-4 border-primary bg-primary-container text-on-primary-container flex items-center justify-center text-xs font-bold" style="">+50</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</main>
+</div>
+<footer class="mt-12 full-width py-12 border-t border-[#091d2e]/10 bg-[#f7f9ff] dark:bg-slate-950">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 w-full font-['Manrope'] text-sm">
+<div class="font-['Plus_Jakarta_Sans'] font-bold text-[#091d2e] dark:text-white text-xl mb-6 md:mb-0" style="">All4Animal</div>
+<div class="flex gap-8 mb-6 md:mb-0">
+<a class="text-[#534439] dark:text-slate-500 hover:text-[#8e4e14] transition-opacity opacity-80 hover:opacity-100" href="#" style="">이용약관</a>
+<a class="text-[#534439] dark:text-slate-500 hover:text-[#8e4e14] transition-opacity opacity-80 hover:opacity-100" href="#" style="">개인정보처리방침</a>
+<a class="text-[#534439] dark:text-slate-500 hover:text-[#8e4e14] transition-opacity opacity-80 hover:opacity-100" href="#" style="">고객 지원</a>
+</div>
+<p class="text-[#534439] dark:text-slate-500 opacity-60" style="">© 2024 All4Animal. 모든 생명에 대한 공감으로 만들어졌습니다.</p>
+</div>
+</footer>
+</body></html>

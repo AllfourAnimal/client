@@ -1,0 +1,299 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-background": "#091d2e",
+              "tertiary-container": "#5fc2d8",
+              "primary-fixed-dim": "#ffb780",
+              "secondary-fixed": "#ffdcc4",
+              "surface-container-highest": "#d1e4fb",
+              "secondary": "#7a573d",
+              "surface-dim": "#c9dcf3",
+              "on-secondary-fixed-variant": "#5f4027",
+              "inverse-primary": "#ffb780",
+              "primary-container": "#f4a261",
+              "surface-container-low": "#edf4ff",
+              "tertiary-fixed": "#a8edff",
+              "outline-variant": "#d8c2b5",
+              "secondary-fixed-dim": "#ebbd9d",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#fdcead",
+              "on-tertiary-container": "#004e5b",
+              "surface-bright": "#f7f9ff",
+              "on-surface-variant": "#534439",
+              "on-primary": "#ffffff",
+              "outline": "#867468",
+              "background": "#f7f9ff",
+              "tertiary-fixed-dim": "#72d4ea",
+              "inverse-on-surface": "#e8f2ff",
+              "surface-variant": "#d1e4fb",
+              "primary": "#8e4e14",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-fixed-variant": "#004e5b",
+              "primary-fixed": "#ffdcc4",
+              "on-error": "#ffffff",
+              "tertiary": "#006878",
+              "on-error-container": "#93000a",
+              "on-tertiary-fixed": "#001f25",
+              "inverse-surface": "#203243",
+              "surface-tint": "#8e4e14",
+              "error": "#ba1a1a",
+              "on-primary-fixed-variant": "#6f3800",
+              "on-secondary-fixed": "#2d1603",
+              "on-secondary-container": "#79563c",
+              "surface-container-high": "#d9eaff",
+              "error-container": "#ffdad6",
+              "on-primary-fixed": "#2f1400",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#6f3800",
+              "surface": "#f7f9ff",
+              "surface-container": "#e3efff",
+              "on-surface": "#091d2e"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .grain-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.015;
+            pointer-events: none;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            background: #d1e4fb;
+            height: 8px;
+            border-radius: 9999px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            background: #8e4e14;
+            border-radius: 50%;
+            margin-top: -8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(142, 78, 20, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface selection:bg-primary-container/30">
+<div class="fixed inset-0 grain-overlay z-50"></div>
+<!-- TopNavBar -->
+<header class="bg-[#f7f9ff] dark:bg-slate-950 fixed top-0 w-full z-50">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold text-[#091d2e] dark:text-white flex items-center gap-2" style="">
+<a class="flex items-center gap-2" href="home.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="font-variation-settings: &quot;FILL&quot; 1;">pets</span>
+                All4Animal
+            </a>
+            </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-[#8e4e14] dark:text-[#f4a261] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300" href="home.html" style="">홈</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="animal-list.html" style="">동물 목록</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="review-list.html" style="">입양 후기</a>
+
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#534439] dark:text-slate-400 cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all" style="">notifications</span>
+</div>
+<a class="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full cursor-pointer hover:scale-95 transition-all" href="profile.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="">account_circle</span>
+<span class="text-sm font-semibold" style="">프로필</span>
+</a>
+</div>
+</nav>
+</header>
+<main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+<!-- Onboarding Header -->
+<div class="mb-16 text-center">
+<h1 class="font-headline text-5xl font-extrabold text-on-surface leading-tight mb-4 tracking-tight" style="">
+                당신에게 <span class="text-primary italic" style="">딱 맞는 동반자</span> 를 찾아봅시다!
+            </h1>
+<p class="text-on-surface-variant text-lg max-w-2xl mx-auto" style="">
+                저희의 매칭 시스템은 고객님의 취향과 생활 환경을 고려하여 고객님과 함께 진정으로 잘 지낼 수 있는 반려동물을 추천해 드립니다.
+            </p>
+</div>
+<!-- Progress Tracker -->
+<div class="flex justify-center mb-12 space-x-2">
+<div class="h-1.5 w-12 rounded-full bg-primary"></div>
+<div class="h-1.5 w-12 rounded-full bg-surface-container-high"></div>
+<div class="h-1.5 w-12 rounded-full bg-surface-container-high"></div>
+<div class="h-1.5 w-12 rounded-full bg-surface-container-high"></div>
+</div>
+<form id="preferencesForm" class="space-y-20" action="/api/preferences" method="post" onsubmit="handlePreferencesSubmit(event)">
+<!-- Section 1: Housing Type -->
+<section class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="flex items-center gap-3 mb-8">
+<span class="bg-primary-container text-on-primary-container w-8 h-8 rounded-full flex items-center justify-center font-bold font-headline" style="">1</span>
+<h2 class="font-headline text-2xl font-bold text-on-surface" style="">Where will your pet live?</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<label class="group relative cursor-pointer" style="">
+<input checked="" class="peer sr-only" name="housing" type="radio">
+<div class="p-8 rounded-[1.5rem] bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary-fixed/20 transition-all duration-300 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-4xl mb-4 text-primary" style="font-variation-settings: &quot;FILL&quot; 0;">apartment</span>
+<span class="font-headline font-bold text-lg block" style="">Apartment</span>
+<p class="text-sm text-on-surface-variant mt-2" style="">Compact living with cozy corners</p>
+</div>
+</label>
+<label class="group relative cursor-pointer" style="">
+<input class="peer sr-only" name="housing" type="radio">
+<div class="p-8 rounded-[1.5rem] bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary-fixed/20 transition-all duration-300 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-4xl mb-4 text-primary" style="font-variation-settings: &quot;FILL&quot; 0;">home</span>
+<span class="font-headline font-bold text-lg block" style="">House</span>
+<p class="text-sm text-on-surface-variant mt-2" style="">Spacious indoor and outdoor flow</p>
+</div>
+</label>
+<label class="group relative cursor-pointer" style="">
+<input class="peer sr-only" name="housing" type="radio">
+<div class="p-8 rounded-[1.5rem] bg-surface-container-lowest border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary-fixed/20 transition-all duration-300 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-4xl mb-4 text-primary" style="font-variation-settings: &quot;FILL&quot; 0;">castle</span>
+<span class="font-headline font-bold text-lg block" style="">Villa</span>
+<p class="text-sm text-on-surface-variant mt-2" style="">Grand spaces with a private yard</p>
+</div>
+</label>
+</div>
+</section>
+<!-- Section 2: Experience -->
+<section class="bg-surface-container-low rounded-[2rem] p-10 relative overflow-hidden">
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-primary-container/20 rounded-full blur-3xl"></div>
+<div class="flex items-center gap-3 mb-8 relative z-10">
+<span class="bg-primary-container text-on-primary-container w-8 h-8 rounded-full flex items-center justify-center font-bold font-headline" style="">2</span>
+<h2 class="font-headline text-2xl font-bold text-on-surface" style="">Your history with pets</h2>
+</div>
+<div class="flex flex-wrap gap-4 relative z-10">
+<label class="cursor-pointer" style="">
+<input checked="" class="peer sr-only" name="experience" type="radio">
+<div class="px-8 py-4 rounded-full bg-surface-container-lowest border border-outline/10 text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-transparent transition-all font-bold" style="">
+                            Beginner
+                        </div>
+</label>
+<label class="cursor-pointer" style="">
+<input class="peer sr-only" name="experience" type="radio">
+<div class="px-8 py-4 rounded-full bg-surface-container-lowest border border-outline/10 text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-transparent transition-all font-bold" style="">
+                            Experienced
+                        </div>
+</label>
+</div>
+</section>
+<!-- Section 3: Preferences -->
+<section>
+<div class="flex items-center gap-3 mb-8">
+<span class="bg-primary-container text-on-primary-container w-8 h-8 rounded-full flex items-center justify-center font-bold font-headline" style="">3</span>
+<h2 class="font-headline text-2xl font-bold text-on-surface" style="">Preferred size &amp; age</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<div class="space-y-4">
+<p class="font-headline font-bold text-on-surface-variant" style="">Animal Size</p>
+<div class="flex flex-wrap gap-3">
+<button class="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-primary-fixed transition-colors text-sm font-bold" type="button" style="">Small</button>
+<button class="px-6 py-2.5 rounded-full bg-primary text-on-primary text-sm font-bold shadow-md" type="button" style="">Medium</button>
+<button class="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-primary-fixed transition-colors text-sm font-bold" type="button" style="">Large</button>
+</div>
+</div>
+<div class="space-y-4">
+<p class="font-headline font-bold text-on-surface-variant" style="">Life Stage</p>
+<div class="flex flex-wrap gap-3">
+<button class="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-primary-fixed transition-colors text-sm font-bold" type="button" style="">Young</button>
+<button class="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-primary-fixed transition-colors text-sm font-bold" type="button" style="">Adult</button>
+<button class="px-6 py-2.5 rounded-full bg-primary text-on-primary text-sm font-bold shadow-md" type="button" style="">Senior</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Lifestyle Slider -->
+<section class="bg-surface-container-high rounded-[2rem] p-10">
+<div class="flex items-center gap-3 mb-8">
+<span class="bg-primary-container text-on-primary-container w-8 h-8 rounded-full flex items-center justify-center font-bold font-headline" style="">4</span>
+<h2 class="font-headline text-2xl font-bold text-on-surface" style="">Active lifestyle level</h2>
+</div>
+<div class="px-4">
+<input class="w-full h-2 bg-surface-container-highest rounded-full appearance-none cursor-pointer" max="5" min="1" type="range" value="3">
+<div class="flex justify-between mt-6 text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+<span class="" style="">Chilled &amp; Cozy</span>
+<span class="" style="">Very Active</span>
+</div>
+</div>
+</section>
+<!-- Asymmetric Image Integration (Editorial Feel) -->
+<div class="relative py-20 flex justify-center">
+<div class="relative w-full max-w-lg aspect-[4/3] rounded-[2rem] overflow-hidden rotate-2 bg-surface-container-low shadow-2xl">
+<img alt="Happy dogs" class="w-full h-full object-cover" data-alt="Two happy golden retrievers sitting in a sun-drenched living room with warm lighting and a cozy organic aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZQTC9IqwvGb3HVKjIEckrJsWP3IOKOjrAQ0eSeATR6sOoxfqAkKbCtTWz8QxDgaJqDIHaMw1PvkWRwHQcdTl0DZeBzr1BC_Yj9mPzPi9xUDPj35V6Tohi1OHB7OqQNRGMAb2SNbaWFMzCQhY7-q8ztTcSQfiR2CxcJM9PiVzP4f2-lL6th79pANtSqOV1Rybb-zRcX63rZhg756nAILnPJcOq8oC-NRRlwLlwuoHFx-gkFzX35e4aBRuayUk0r-8fGMR4z8hiSld-" style="">
+</div>
+<div class="absolute -bottom-6 -left-12 w-48 h-48 bg-tertiary-container/30 rounded-full blur-3xl -z-10"></div>
+<div class="absolute top-1/2 -right-20 transform -translate-y-1/2 p-8 bg-white/90 backdrop-blur-md rounded-[2rem] shadow-xl max-w-[240px] -rotate-3 border border-primary/5">
+<p class="font-headline font-extrabold text-primary leading-tight" style="">"We found Max through this curator. It was a perfect fit."</p>
+<p class="text-xs text-on-surface-variant mt-3 font-bold uppercase tracking-tighter" style="">— The Miller Family</p>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex flex-col md:flex-row items-center justify-between pt-12 gap-8">
+<button class="text-on-surface-variant font-bold text-sm uppercase tracking-widest hover:text-primary transition-colors order-2 md:order-1" type="button" style="" onclick="window.location.href='home.html'">
+                    지금은 건너뛰기
+                </button>
+<button class="bg-primary text-on-primary px-12 py-5 rounded-full font-headline font-extrabold text-lg shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all w-full md:w-auto order-1 md:order-2" type="submit" style="">
+                    설문 완료
+                </button>
+</div>
+</form>
+</main>
+<!-- Footer -->
+<footer class="bg-[#091d2e] dark:bg-black text-[#f4a261] full-width p-12 mt-20">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 max-w-screen-2xl mx-auto">
+<div class="space-y-4">
+<div class="text-[#f7f9ff] font-bold text-2xl font-headline italic" style="">All4Animal</div>
+<p class="text-slate-400 text-sm max-w-xs leading-relaxed" style="">
+                    © 2024 All4Animal. Organic Sophistication in Pet Care.
+                </p>
+</div>
+<div class="flex flex-col space-y-3 font-label uppercase text-[10px] tracking-[0.2em] font-bold">
+<a class="text-slate-400 hover:text-[#f4a261] transition-colors" href="#" style="">Terms of Service</a>
+<a class="text-slate-400 hover:text-[#f4a261] transition-colors" href="#" style="">Privacy Policy</a>
+<a class="text-slate-400 hover:text-[#f4a261] transition-colors" href="#" style="">Contact Us</a>
+</div>
+<div class="flex flex-col space-y-3 font-label uppercase text-[10px] tracking-[0.2em] font-bold">
+<a class="text-slate-400 hover:text-[#f4a261] transition-colors" href="#" style="">Instagram</a>
+<a class="text-slate-400 hover:text-[#f4a261] transition-colors" href="#" style="">Community</a>
+</div>
+</div>
+</footer>
+<script>
+  function handlePreferencesSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+      method: form.method || 'POST',
+      body: formData,
+    })
+      .catch(() => {
+        // Ignore fetch errors and redirect anyway.
+      })
+      .finally(() => {
+        window.location.href = 'home.html';
+      });
+  }
+</script>
+</body></html>

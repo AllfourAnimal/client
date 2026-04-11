@@ -1,24 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('login');
+
+  const navigate = (page) => setCurrentPage(page);
+
+  if (currentPage === 'home') {
+    return (
+      <HomePage
+        onNavigateAnimalList={() => navigate('animal-list')}
+        onNavigatePreferences={() => navigate('preferences')}
+        onNavigateAnimalDetails={() => navigate('animal-details')}
+        onNavigateProfile={() => navigate('profile')}
+        onNavigateReviews={() => navigate('review-list')}
+      />
+    );
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          자 이제 시작이야.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <LoginPage
+      onNavigateHome={() => navigate('home')}
+      onNavigatePreferences={() => navigate('preferences')}
+      onNavigateSignup={() => navigate('signup')}
+    />
   );
 }
 

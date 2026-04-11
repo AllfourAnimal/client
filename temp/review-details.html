@@ -1,0 +1,225 @@
+<!DOCTYPE html><html class="light" lang="ko"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#091d2e",
+                        "inverse-primary": "#ffb780",
+                        "secondary": "#7a573d",
+                        "on-tertiary-fixed-variant": "#004e5b",
+                        "surface-container-low": "#edf4ff",
+                        "surface-variant": "#d1e4fb",
+                        "surface-dim": "#c9dcf3",
+                        "outline": "#867468",
+                        "on-primary-container": "#6f3800",
+                        "surface-bright": "#f7f9ff",
+                        "inverse-on-surface": "#e8f2ff",
+                        "on-secondary-fixed-variant": "#5f4027",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#e3efff",
+                        "background": "#f7f9ff",
+                        "surface": "#f7f9ff",
+                        "on-tertiary-container": "#004e5b",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#ebbd9d",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#72d4ea",
+                        "on-secondary-fixed": "#2d1603",
+                        "surface-tint": "#8e4e14",
+                        "on-error-container": "#93000a",
+                        "on-background": "#091d2e",
+                        "secondary-fixed": "#ffdcc4",
+                        "inverse-surface": "#203243",
+                        "tertiary-fixed": "#a8edff",
+                        "secondary-container": "#fdcead",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#5fc2d8",
+                        "on-tertiary-fixed": "#001f25",
+                        "on-surface-variant": "#534439",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#d1e4fb",
+                        "on-secondary-container": "#79563c",
+                        "on-primary-fixed": "#2f1400",
+                        "on-primary-fixed-variant": "#6f3800",
+                        "primary-fixed": "#ffdcc4",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#f4a261",
+                        "primary-fixed-dim": "#ffb780",
+                        "tertiary": "#006878",
+                        "outline-variant": "#d8c2b5",
+                        "surface-container-high": "#d9eaff",
+                        "primary": "#8e4e14"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-nav {
+            background: rgba(247, 249, 255, 0.95);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-[#f7f9ff] dark:bg-slate-950 fixed top-0 w-full z-50">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold text-[#091d2e] dark:text-white flex items-center gap-2" style="">
+<a class="flex items-center gap-2" href="home.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="font-variation-settings: &quot;FILL&quot; 1;">pets</span>
+                All4Animal
+            </a>
+            </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="home.html" style="">홈</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="animal-list.html" style="">동물 목록</a>
+<a class="text-[#8e4e14] dark:text-[#f4a261] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300" href="review-list.html" style="">입양 후기</a>
+
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#534439] dark:text-slate-400 cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all" style="">notifications</span>
+</div>
+<a class="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full cursor-pointer hover:scale-95 transition-all" href="profile.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="">account_circle</span>
+<span class="text-sm font-semibold" style="">프로필</span>
+</a>
+</div>
+</nav>
+</header>
+
+<main class="pt-24 pb-20 max-w-7xl mx-auto px-6">
+<!-- Hero Image Gallery -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-12">
+<div class="md:col-span-8 overflow-hidden rounded-2xl relative group">
+<img class="w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-105" data-alt="joyful golden retriever sitting on a lush green lawn in the golden morning sunlight with a happy expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo9ik3k6gN_UhSmJreSlGSUI5VzWKvjp3CgOeibsIrq0XlBIG0HEp3b_Ys65TNAEDyavboCTBMu3eKNxxy3-onVt-8N1Idsrzn7H5Ju947cnt9HLa9II_K42DYxIgkeXfMEaN2zwbP8_j8V3RWqAFXYGTXW4qMXxvi_f3ygMEFbUdkcpQA1vXS2garPrJTLcOUOq-UxhqStj2dz64j3PyDT-njmNLC1F3AG6FX_z5I-KolzrFUaOMG-_67OQnhEqAnAGXFT86XDFRb" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+</div>
+<div class="md:col-span-4 flex flex-col gap-4">
+<div class="h-1/2 overflow-hidden rounded-2xl">
+<img class="w-full h-full object-cover" data-alt="close-up of a golden retriever dog resting its head on human hands with gentle and warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSIE5TNdMb-qFNVKS8KN0x_PgHH1itsnUod6zY0mDDaPxU_EQvk4Wrnki3VL3IKC6XrjF5IHw_dNeyftrU2tizVss0FtFZp5XP8CkFXubfXCJZJmEd0k62WYuT1r7FXVeUU15h0Gx4IKHWyZQvwbC6kYg0YqVjUlLlFRJam3ZaNZ9zsLE8gNjVUyBQOjPU5f3ZFLyTen2LVGk2koIbXMdasyMdqZYCAiPPwDMbNAHo3neKL2jq8MMNZNk2GSiDrgOji6-MuNor2zID" style="">
+</div>
+<div class="h-1/2 overflow-hidden rounded-2xl">
+<img class="w-full h-full object-cover" data-alt="happy dog running through a park with autumn leaves on the ground, energetic and bright atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNjv4uDoV-LjHNk-uRxVwRzCIE1Iopk99OTj7qjixIU8K0zVD9t79or9FlSSwehCZ6-XgtX_Dq-fAMao_iZKGXVgVVFfkZHYUGWSf0y3K0ETKOmhKIL_QGYnHtKMsnTiZWqYrdXcJ90jjihpcxy2YmJfbzylDPpQIM1wVCEWgM3OIBGqNDAn9noQ7YcxEu73lyuPvWQXefQ6dVpWDqIXh9NfZqW7q3iJIxujGSwujDdNSsd5GL6ONjDVJX96fECK_4hFj5tuK1RkqC" style="">
+</div>
+</div>
+</section>
+<!-- Quick Info Bar -->
+<section class="bg-surface-container-lowest rounded-2xl p-8 mb-12 shadow-[0_8px_32px_rgba(9,29,46,0.04)] flex flex-wrap justify-between items-center gap-6">
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-sm font-medium mb-1" style="">이름</span>
+<span class="text-2xl font-extrabold text-primary" style="">준수</span>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-sm font-medium mb-1" style="">공고번호</span>
+<span class="text-lg font-bold text-on-surface" style="">제 2024-00123호</span>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-sm font-medium mb-1" style="">구조 위치</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-sm" style="">location_on</span>
+<span class="text-lg font-bold text-on-surface" style="">서울 동물복지지원센터</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-sm font-medium mb-1" style="">입양 날짜</span>
+<span class="text-lg font-bold text-on-surface" style="">2026.10.15</span>
+</div>
+<div class="hidden lg:block">
+<div class="bg-primary-container/20 text-on-primary-container px-6 py-3 rounded-full font-bold flex items-center gap-2" style="">
+<span class="material-symbols-outlined" style="">favorite</span>
+                    입양 완료
+                </div>
+</div>
+</section>
+<!-- Content Section -->
+<article class="max-w-4xl mx-auto">
+<header class="mb-10 text-center">
+<h1 class="text-4xl md:text-5xl font-extrabold text-on-surface mb-4 leading-tight" style="">준수와 함께하는 두 번째 봄</h1>
+<div class="flex items-center justify-center gap-4 text-on-surface-variant">
+<span class="" style="">작성자: 김정묵 님</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="" style="">2026.11.20</span>
+</div>
+</header>
+<div class="space-y-8 text-lg leading-relaxed text-on-surface-variant">
+<p class="" style="">
+                    처음 준수를 만났던 날을 기억합니다. 보호소 구석에서 겁에 질린 눈으로 우리를 바라보던 그 작은 생명이 지금은 우리 집의 가장 큰 행복이 되었습니다. 
+                    처음에는 낯선 환경에 적응하는 것이 쉽지 않았지만, 조금씩 마음을 열어주던 준수의 모습은 우리 가족에게 잊지 못할 감동을 주었습니다.
+                </p>
+<div class="relative py-8">
+<div class="absolute left-0 top-0 w-2 h-full bg-primary-container rounded-full"></div>
+<blockquote class="pl-8 italic text-2xl font-medium text-on-surface" style="">
+                        "준수는 단순히 강아지가 아니라, 우리 삶에 찾아온 가장 소중한 선물입니다."
+                    </blockquote>
+</div>
+<p class="" style="">
+                    산책을 나갈 때마다 세상을 향해 꼬리를 흔드는 준수를 보며, 입양이라는 선택이 얼마나 가치 있는 일인지 매일 깨닫습니다. 
+                    보호소에 있는 수많은 아이들이 준수처럼 따뜻한 가족을 만나 각자의 이야기를 써 내려갈 수 있기를 진심으로 바랍니다.
+                </p>
+<!-- Image Insert -->
+<div class="relative py-12">
+<div class="bg-surface-container-low rounded-2xl p-10 flex flex-col md:flex-row items-center gap-8">
+<div class="md:w-1/2 -mt-20 md:-ml-20 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
+<img class="w-full h-80 object-cover" data-alt="a golden retriever wearing a yellow bandana sitting proudly on a wooden porch in afternoon sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0DmRuMjH_5yYehJh1QCQClH1gd5rGKGSyX_zdIXfhwu1dFgrXnEJfbDrkJYZ6GRhpctdhSDci1v6Bmbv1rR3BPjVbNrAXwcx4V4lzKxI44LU8htTp78uISWnT7No4FLiVN8t4O9lUeiozT-fb33PNU8WiEhFU_uQ_GwNte3qmO6pptKXWTp24ibtIil5lBo8-kQfqvUPVpFbfjL37GERkMAMEbNQK8wp1KqhQGcnZPGCxVAbEULJ88T_TBqfB7p1JK-wkQ7jRufb1" style="">
+</div>
+<div class="md:w-1/2">
+<h3 class="text-2xl font-bold text-on-surface mb-4" style="">함께하는 일상</h3>
+<p class="text-base" style="">매일 아침 준수의 젖은 코가 제 손을 터치할 때마다 하루를 시작할 용기를 얻습니다. 함께 공원을 뛰고, 나른한 오후에는 거실 바닥에 누워 햇살을 받는 소소한 모든 순간들이 기적 같습니다.</p>
+</div>
+</div>
+</div>
+<p class="" style="">
+                    동물복지지원센터 직원분들께도 다시 한번 감사의 인사를 전합니다. 실버를 건강하게 돌봐주시고 우리 가족과 연결해주신 덕분에 저희의 삶이 더욱 풍요로워졌습니다. 
+                    혹시 입양을 고민하고 계신 분이 있다면, 주저하지 마세요. 당신의 세상이 완전히 바뀔 것입니다.
+                </p>
+</div>
+<!-- Action Area -->
+<div class="mt-16 pt-12 border-t border-outline-variant/15 flex justify-center">
+<a class="bg-secondary-container text-on-secondary-container px-10 py-4 rounded-full font-bold flex items-center gap-2 hover:bg-secondary-container/80 transition-all active:scale-95 shadow-md" href="#" style="">
+<span class="material-symbols-outlined" style="">list</span>
+                    목록으로 돌아가기
+                </a>
+</div>
+</article>
+</main>
+<!-- Simplified Footer (Removing corporate info, keeping links/copyright) -->
+<footer class="bg-surface-container-low dark:bg-slate-900 border-t border-outline-variant/15">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-8 py-12 max-w-7xl mx-auto">
+<div class="mb-6 md:mb-0">
+<div class="text-lg font-bold text-orange-800 dark:text-orange-300 mb-2" style="">All4Animal</div>
+<p class="font-manrope text-sm text-on-surface-variant dark:text-slate-400" style="">© 2024 All4Animal. 모든 동물에게는 이야기가 있습니다.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="font-manrope text-sm text-on-surface-variant dark:text-slate-500 hover:underline hover:text-orange-800" href="#" style="">개인정보처리방침</a>
+<a class="font-manrope text-sm text-on-surface-variant dark:text-slate-500 hover:underline hover:text-orange-800" href="#" style="">이용약관</a>
+<a class="font-manrope text-sm text-on-surface-variant dark:text-slate-500 hover:underline hover:text-orange-800" href="#" style="">고객센터</a>
+<a class="font-manrope text-sm text-on-surface-variant dark:text-slate-500 hover:underline hover:text-orange-800" href="#" style="">보호소 파트너</a>
+</div>
+</div>
+</footer>
+</body></html>

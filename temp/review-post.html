@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>입양 스토리 작성 - All4Animal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#edf4ff",
+                        "inverse-surface": "#203243",
+                        "tertiary-fixed-dim": "#72d4ea",
+                        "secondary-container": "#fdcead",
+                        "on-tertiary-fixed": "#001f25",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#d1e4fb",
+                        "secondary": "#7a573d",
+                        "on-tertiary-fixed-variant": "#004e5b",
+                        "on-secondary-fixed-variant": "#5f4027",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#c9dcf3",
+                        "outline-variant": "#d8c2b5",
+                        "primary-fixed": "#ffdcc4",
+                        "surface": "#f7f9ff",
+                        "surface-container": "#e3efff",
+                        "surface-bright": "#f7f9ff",
+                        "tertiary-fixed": "#a8edff",
+                        "on-primary-fixed": "#2f1400",
+                        "background": "#f7f9ff",
+                        "surface-variant": "#d1e4fb",
+                        "on-secondary-fixed": "#2d1603",
+                        "on-secondary-container": "#79563c",
+                        "outline": "#867468",
+                        "tertiary-container": "#5fc2d8",
+                        "on-surface": "#091d2e",
+                        "inverse-on-surface": "#e8f2ff",
+                        "surface-container-high": "#d9eaff",
+                        "surface-tint": "#8e4e14",
+                        "primary": "#8e4e14",
+                        "on-background": "#091d2e",
+                        "primary-container": "#f4a261",
+                        "primary-fixed-dim": "#ffb780",
+                        "on-primary-fixed-variant": "#6f3800",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#6f3800",
+                        "tertiary": "#006878",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#ebbd9d",
+                        "secondary-fixed": "#ffdcc4",
+                        "on-surface-variant": "#534439",
+                        "on-tertiary-container": "#004e5b",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb780",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .editor-btn:hover { background-color: #d1e4fb; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-[#f7f9ff] dark:bg-slate-950 fixed top-0 w-full z-50">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold text-[#091d2e] dark:text-white flex items-center gap-2" style="">
+<a class="flex items-center gap-2" href="home.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="font-variation-settings: &quot;FILL&quot; 1;">pets</span>
+                All4Animal
+            </a>
+            </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="home.html" style="">홈</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="animal-list.html" style="">동물 목록</a>
+<a class="text-[#8e4e14] dark:text-[#f4a261] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300" href="review-list.html" style="">입양 후기</a>
+
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#534439] dark:text-slate-400 cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all" style="">notifications</span>
+</div>
+<a class="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full cursor-pointer hover:scale-95 transition-all" href="profile.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="">account_circle</span>
+<span class="text-sm font-semibold" style="">프로필</span>
+</a>
+</div>
+</nav>
+</header>
+
+<main class="flex-grow max-w-5xl mx-auto w-full px-6 py-12 pt-20">
+<!-- Page Title -->
+<div class="mb-12">
+<h1 class="text-4xl font-extrabold text-on-surface tracking-tight mb-2">입양 후기 작성</h1>
+<p class="text-on-surface-variant font-medium">당신의 소중한 가족이 된 반려동물과의 따뜻한 이야기를 들려주세요.</p>
+</div>
+<form class="space-y-10">
+<!-- Title Input Area -->
+<div class="space-y-4">
+<label class="text-sm font-bold text-primary tracking-wide uppercase" for="story-title">Story Title</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-2xl p-6 text-2xl font-semibold placeholder:text-outline focus:ring-2 focus:ring-primary-fixed transition-all outline-none" id="story-title" placeholder="Enter the title of your story" type="text"/>
+</div>
+<!-- Asymmetric Grid: Companion Pet & Image Upload -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Companion Pet Section (4 cols) -->
+<div class="lg:col-span-4 space-y-4">
+<h3 class="text-sm font-bold text-primary tracking-wide uppercase">Companion Pet</h3>
+<div class="bg-surface-container-high p-6 rounded-2xl relative overflow-hidden group">
+<div class="flex items-center gap-4 relative z-10">
+<div class="w-20 h-20 rounded-2xl overflow-hidden shadow-sm">
+<img alt="Louie the Beagle" class="w-full h-full object-cover" data-alt="Close-up portrait of a tricolor Beagle dog named Louie with floppy ears and a gentle expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5C6I8s9srU0ToETCSbFRrv6f3mYUgZ45qwONPlD4BWRnC1vYXyLz75pDAgo2ckFVrduhZ72Nb796CEjPADhDPeVva-uYciyU24j_53ZRtqSSsz-C2aKbroJuK2NdSXCxmjZ_DyktK4v5ytRlPmIa0AhGc9s-BixxYWK4Y6ZwII1F5lZ96gp_3TpM9OL116AHgGFL59y4J3-V03olSuArw3U3WGPDHiMp6VnydzNA6TylGquflbe1PlATOsnR5flQOHVBBquyC3xPh"/>
+</div>
+<div>
+<h4 class="font-bold text-xl text-on-surface">Louie</h4>
+<p class="text-sm text-on-surface-variant">Beagle • Oct 2023</p>
+<button class="mt-2 text-sm font-bold text-tertiary flex items-center gap-1 hover:underline" type="button">
+<span class="material-symbols-outlined text-sm">swap_horiz</span> Change Pet
+                                </button>
+</div>
+</div>
+<!-- Background Accent -->
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">pets</span>
+</div>
+</div>
+</div>
+<!-- Image Upload Area (8 cols) -->
+<div class="lg:col-span-8 space-y-4">
+<h3 class="text-sm font-bold text-primary tracking-wide uppercase">Upload Photos</h3>
+<div class="grid grid-cols-3 gap-4">
+<!-- Upload Trigger -->
+<div class="col-span-3 md:col-span-1 border-2 border-dashed border-outline-variant rounded-2xl flex flex-col items-center justify-center p-6 bg-surface-container-lowest hover:bg-surface-bright transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-primary mb-2 group-hover:scale-110 transition-transform">add_a_photo</span>
+<p class="text-xs font-bold text-on-surface-variant text-center">Drag photos or click to upload</p>
+</div>
+<!-- Preview 1 -->
+<div class="aspect-square rounded-2xl overflow-hidden relative group shadow-sm">
+<img alt="Happy dog in park" class="w-full h-full object-cover" data-alt="A happy Beagle running through a sunlit green park with ears flying, bright morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByuhI8JIl5uxGxEbvCIAx6DYsfwuuo7mUY0FTaYVxNEeFqxekR_SUNlZL5DXymQo4vFXfTXlkIotwHKsuWvMa25SV_pwN79NpZ9TbdXJbdOFSP-SRmocQOwGg27lb0tmUPt63hpvm9ZDK7tPE-I_lETn07qNOErBXJS-F8BbHUvI98UnTdagbRkcl6PeDf9k8BSmK0RLFlAApNdiuIZRsqifadslAmN7a6wxKIeml5fmC1QFO31Z46MR2wzIfDtZbIvzwyo_kBOm6G"/>
+<button class="absolute top-2 right-2 bg-inverse-surface/80 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<!-- Preview 2 -->
+<div class="aspect-square rounded-2xl overflow-hidden relative group shadow-sm">
+<img alt="Dog sleeping" class="w-full h-full object-cover" data-alt="A peaceful Beagle puppy sleeping on a soft white blanket in a cozy sunlit room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoT2FaAyC4H-NXoZ2apGHUjlZUIGCUnHw7E-AQye3-VXqwQRPBDw3Jh6dXBanN3S2jKIGpeXx3B0b-OAjUeASYqFKMGjC-Lxo2_vkhsTcDa3Z7pLwVWlf5yYfwv1mZ-GCrdWldwlZaUWW5ElzcTz3YIfyI8bkUkU0u1vwYqmMCqOUpz95MHuQGEPibT35Kcs9OmxpLAIQVpFACBrwMvuAZ6LYARBCJV56zc90z4A1oOrCkdcrwsGGsUcOB1PW9teZZtqCSUSz55YC2"/>
+<button class="absolute top-2 right-2 bg-inverse-surface/80 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Rich Text Editor Section -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-surface-container-high">
+<!-- Toolbar -->
+<div class="flex flex-wrap gap-1 p-3 bg-surface-container-low border-b border-surface-container-high">
+<button class="editor-btn p-2 rounded-lg text-on-surface-variant" type="button"><span class="material-symbols-outlined">format_bold</span></button>
+<button class="editor-btn p-2 rounded-lg text-on-surface-variant" type="button"><span class="material-symbols-outlined">format_italic</span></button>
+<button class="editor-btn p-2 rounded-lg text-on-surface-variant" type="button"><span class="material-symbols-outlined">format_underlined</span></button>
+<div class="w-px h-6 bg-outline-variant mx-1 self-center"></div>
+<button class="editor-btn p-2 rounded-lg text-on-surface-variant" type="button"><span class="material-symbols-outlined">format_list_bulleted</span></button>
+<button class="editor-btn p-2 rounded-lg text-on-surface-variant" type="button"><span class="material-symbols-outlined">format_list_numbered</span></button>
+<button class="editor-btn p-2 rounded-lg text-on-surface-variant" type="button"><span class="material-symbols-outlined">format_quote</span></button>
+<div class="w-px h-6 bg-outline-variant mx-1 self-center"></div>
+<button class="editor-btn p-2 rounded-lg text-on-surface-variant" type="button"><span class="material-symbols-outlined">link</span></button>
+<button class="editor-btn p-2 rounded-lg text-on-surface-variant" type="button"><span class="material-symbols-outlined">mood</span></button>
+</div>
+<!-- Content Area -->
+<textarea class="w-full p-8 text-lg border-none focus:ring-0 text-on-surface placeholder:text-outline bg-transparent resize-none leading-relaxed" id="story-content" placeholder="Share your special daily life with Louie..." rows="12"></textarea>
+</div>
+<!-- Guidelines Notice -->
+<div class="flex items-start gap-4 p-5 bg-tertiary-fixed/30 rounded-2xl">
+<span class="material-symbols-outlined text-tertiary">info</span>
+<p class="text-sm text-on-tertiary-fixed-variant leading-relaxed">
+<strong class="block mb-1">Community Guidelines Notice</strong>
+                    작성하신 스토리는 모든 사용자에게 공개됩니다. 반려동물과 가족의 개인정보 보호를 위해 상세 주소나 연락처 노출은 지양해 주세요. 건강하고 따뜻한 입양 문화 정착을 위해 욕설이나 비방은 금지됩니다.
+                </p>
+</div>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t border-surface-container-high">
+<button class="px-8 py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-all" type="button">
+                    Save Draft
+                </button>
+<button class="px-10 py-4 rounded-full bg-primary text-on-primary font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all" type="submit">
+                    Publish Story
+                </button>
+</div>
+</form>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-auto rounded-t-2xl bg-[#edf4ff] dark:bg-slate-900">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-10 w-full max-w-7xl mx-auto">
+<div class="flex flex-col items-center md:items-start mb-6 md:mb-0">
+<div class="text-xl font-bold text-[#091d2e] dark:text-slate-100 mb-2">All4Animal</div>
+<p class="font-['Manrope'] text-sm text-[#534439] dark:text-slate-400">© 2024 All4Animal. Every pet deserves a story.</p>
+</div>
+<div class="flex gap-6 font-['Manrope'] text-sm text-[#534439] dark:text-slate-400">
+<a class="hover:underline decoration-[#f4a261] underline-offset-4 transition-all duration-300" href="#">Our Mission</a>
+<a class="hover:underline decoration-[#f4a261] underline-offset-4 transition-all duration-300" href="#">Success Stories</a>
+<a class="hover:underline decoration-[#f4a261] underline-offset-4 transition-all duration-300" href="#">Privacy Policy</a>
+<a class="hover:underline decoration-[#f4a261] underline-offset-4 transition-all duration-300" href="#">Contact Us</a>
+</div>
+</div>
+</footer>
+</body></html>
