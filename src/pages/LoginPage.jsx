@@ -1,12 +1,23 @@
 import { useState } from 'react';
+import { loginUser } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) {
-  const [email, setEmail] = useState('');
+  const [id, setId] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onNavigatePreferences) onNavigatePreferences();
+    setError('');
+    try {
+      const data = await loginUser({ loginId: id, password });
+      login(data.accessToken);  // 로그인 성공 시 context에 토큰 저장
+      if (onNavigatePreferences) onNavigatePreferences(); 
+    } catch (err) {
+      setError(err.response.data.message);
+    }
   };
 
   return (
@@ -54,13 +65,13 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
             <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-on-surface/80 ml-1">
-                  이메일 주소
+                  아이디
                 </label>
                 <input
-                  type="email"
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="id"
+                  placeholder="all4animal"
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
                   className="w-full rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright h-14 px-5 text-on-surface placeholder:text-outline transition-all duration-300"
                 />
               </div>
@@ -85,6 +96,10 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
                   className="w-full rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright h-14 px-5 text-on-surface placeholder:text-outline transition-all duration-300"
                 />
               </div>
+
+              {error && (
+                <p className="text-sm text-error text-center -mt-2">{error}</p>
+              )}
 
               <div className="flex flex-col gap-4 mt-2">
                 <button

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import LoginPage from './pages/LoginPage';
+import { useAuth } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import AnimalListPage from './pages/AnimalListPage';
 import AnimalDetailsPage from './pages/AnimalDetailsPage';
@@ -11,6 +12,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [selectedAnimal, setSelectedAnimal] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
+  const { isLoggedIn } = useAuth();
 
   const navigate = (page) => setCurrentPage(page);
 
@@ -23,6 +25,16 @@ function App() {
     setSelectedReview(id ?? null);
     setCurrentPage('review-details');
   };
+
+  if (currentPage === 'login' || !isLoggedIn()) {
+    return (
+      <LoginPage
+        onNavigateHome={() => navigate('home')}
+        onNavigatePreferences={() => navigate('home')}
+        onNavigateSignup={() => navigate('signup')}
+      />
+    );
+  }
 
   if (currentPage === 'home') {
     return (
@@ -94,13 +106,7 @@ function App() {
     );
   }
 
-  return (
-    <LoginPage
-      onNavigateHome={() => navigate('home')}
-      onNavigatePreferences={() => navigate('preferences')}
-      onNavigateSignup={() => navigate('signup')}
-    />
-  );
+  return null;
 }
 
 export default App;
