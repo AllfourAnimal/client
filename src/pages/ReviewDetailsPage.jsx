@@ -1,0 +1,291 @@
+const DEFAULT_ID = 1;
+
+const REVIEW_DETAILS = {
+  1: {
+    title: '소이와 함께하는 두 번째 봄',
+    author: '김정묵 님',
+    date: '2026.11.20',
+    petName: '소이',
+    noticeNumber: '제 2024-00123호',
+    rescueLocation: '서울 동물복지지원센터',
+    adoptionDate: '2026.10.15',
+    heroMain: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAo9ik3k6gN_UhSmJreSlGSUI5VzWKvjp3CgOeibsIrq0XlBIG0HEp3b_Ys65TNAEDyavboCTBMu3eKNxxy3-onVt-8N1Idsrzn7H5Ju947cnt9HLa9II_K42DYxIgkeXfMEaN2zwbP8_j8V3RWqAFXYGTXW4qMXxvi_f3ygMEFbUdkcpQA1vXS2garPrJTLcOUOq-UxhqStj2dz64j3PyDT-njmNLC1F3AG6FX_z5I-KolzrFUaOMG-_67OQnhEqAnAGXFT86XDFRb',
+    heroSide1: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSIE5TNdMb-qFNVKS8KN0x_PgHH1itsnUod6zY0mDDaPxU_EQvk4Wrnki3VL3IKC6XrjF5IHw_dNeyftrU2tizVss0FtFZp5XP8CkFXubfXCJZJmEd0k62WYuT1r7FXVeUU15h0Gx4IKHWyZQvwbC6kYg0YqVjUlLlFRJam3ZaNZ9zsLE8gNjVUyBQOjPU5f3ZFLyTen2LVGk2koIbXMdasyMdqZYCAiPPwDMbNAHo3neKL2jq8MMNZNk2GSiDrgOji6-MuNor2zID',
+    heroSide2: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDNjv4uDoV-LjHNk-uRxVwRzCIE1Iopk99OTj7qjixIU8K0zVD9t79or9FlSSwehCZ6-XgtX_Dq-fAMao_iZKGXVgVVFfkZHYUGWSf0y3K0ETKOmhKIL_QGYnHtKMsnTiZWqYrdXcJ90jjihpcxy2YmJfbzylDPpQIM1wVCEWgM3OIBGqNDAn9noQ7YcxEu73lyuPvWQXefQ6dVpWDqIXh9NfZqW7q3iJIxujGSwujDdNSsd5GL6ONjDVJX96fECK_4hFj5tuK1RkqC',
+    inlineImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0DmRuMjH_5yYehJh1QCQClH1gd5rGKGSyX_zdIXfhwu1dFgrXnEJfbDrkJYZ6GRhpctdhSDci1v6Bmbv1rR3BPjVbNrAXwcx4V4lzKxI44LU8htTp78uISWnT7No4FLiVN8t4O9lUeiozT-fb33PNU8WiEhFU_uQ_GwNte3qmO6pptKXWTp24ibtIil5lBo8-kQfqvUPVpFbfjL37GERkMAMEbNQK8wp1KqhQGcnZPGCxVAbEULJ88T_TBqfB7p1JK-wkQ7jRufb1',
+    para1: '처음 소이를 만났던 날을 기억합니다. 보호소 구석에서 겁에 질린 눈으로 우리를 바라보던 그 작은 생명이 지금은 우리 집의 가장 큰 행복이 되었습니다. 처음에는 낯선 환경에 적응하는 것이 쉽지 않았지만, 조금씩 마음을 열어주던 소이의 모습은 우리 가족에게 잊지 못할 감동을 주었습니다.',
+    blockquote: '소이는 단순한 강아지가 아니라, 우리 삶에 찾아온 가장 확실한 선물이었습니다.',
+    para2: '산책을 나갈 때마다 세상을 향해 꼬리를 흔드는 소이를 보며, 입양이라는 선택이 얼마나 가치 있는 일인지 매일 깨닫습니다. 보호소에 있는 수많은 아이들이 소이처럼 따뜻한 가족을 만나 기쁨의 이야기를 써 내려갈 수 있기를 진심으로 바랍니다.',
+    inlineCaption: '함께한 일상',
+    inlineBody: '매일 아침 소이가 살짝 코를 들이밀며 하루를 깨우는 순간마다 힘을 얻습니다. 함께 공원을 걷고, 따뜻한 소파에 기대어 쉬는 모든 시간들이 소중한 기억이 되었습니다.',
+    para3: '동물복지지원센터 직원분들께도 다시 한번 감사의 인사를 드립니다. 소이를 건강하게 돌봐주시고 우리 가족과 연결해주신 덕분에 저희의 삶이 더욱 풍요로워졌습니다. 혹시 입양을 고민하고 계신 분이 있다면, 주저하지 마세요. 당신의 인생이 완전히 바뀔 것입니다.',
+  },
+  2: {
+    title: '14살의 짖음: 벨라의 이야기',
+    author: 'Elena Rossi',
+    date: '2024.10.08',
+    petName: '벨라',
+    noticeNumber: '제 2024-00089호',
+    rescueLocation: '부산 반려동물보호센터',
+    adoptionDate: '2024.09.01',
+    heroMain: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAF22IQDioBAIsal0IhSOXORtvv9Y818-9-TnE-CuA5tRKIbuaGtyL0VOl-hXCmnKThatYN82pOe5MUxowdWE9E9_Za4-93qKs3iS5RA9Sw-mVrUCRRBTHnNglyNMY08EgXfTLCsKpbfxoGBAo08M6MKIi3qVG2ULbypZca9WGa0KRTYqRR6CqahoEiOrESIQ8AzSNK3xuxx2qLop_F_Z2jAQP6jYos7P79S5V1QEbOX1WcpYMKU9VYkDZ4-ud19hUbkMibdblGqqyi',
+    heroSide1: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSIE5TNdMb-qFNVKS8KN0x_PgHH1itsnUod6zY0mDDaPxU_EQvk4Wrnki3VL3IKC6XrjF5IHw_dNeyftrU2tizVss0FtFZp5XP8CkFXubfXCJZJmEd0k62WYuT1r7FXVeUU15h0Gx4IKHWyZQvwbC6kYg0YqVjUlLlFRJam3ZaNZ9zsLE8gNjVUyBQOjPU5f3ZFLyTen2LVGk2koIbXMdasyMdqZYCAiPPwDMbNAHo3neKL2jq8MMNZNk2GSiDrgOji6-MuNor2zID',
+    heroSide2: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDNjv4uDoV-LjHNk-uRxVwRzCIE1Iopk99OTj7qjixIU8K0zVD9t79or9FlSSwehCZ6-XgtX_Dq-fAMao_iZKGXVgVVFfkZHYUGWSf0y3K0ETKOmhKIL_QGYnHtKMsnTiZWqYrdXcJ90jjihpcxy2YmJfbzylDPpQIM1wVCEWgM3OIBGqNDAn9noQ7YcxEu73lyuPvWQXefQ6dVpWDqIXh9NfZqW7q3iJIxujGSwujDdNSsd5GL6ONjDVJX96fECK_4hFj5tuK1RkqC',
+    inlineImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0DmRuMjH_5yYehJh1QCQClH1gd5rGKGSyX_zdIXfhwu1dFgrXnEJfbDrkJYZ6GRhpctdhSDci1v6Bmbv1rR3BPjVbNrAXwcx4V4lzKxI44LU8htTp78uISWnT7No4FLiVN8t4O9lUeiozT-fb33PNU8WiEhFU_uQ_GwNte3qmO6pptKXWTp24ibtIil5lBo8-kQfqvUPVpFbfjL37GERkMAMEbNQK8wp1KqhQGcnZPGCxVAbEULJ88T_TBqfB7p1JK-wkQ7jRufb1',
+    para1: '노령견 입양을 결심했을 때 주변의 걱정이 많았습니다. 하지만 벨라는 우리 가족에게 성숙한 사랑의 의미를 직접 가르쳐 주었습니다. 천천히 걷는 산책, 조용한 오후의 낮잠, 그 모든 순간이 우리에게는 더없이 소중한 선물이었습니다.',
+    blockquote: '벨라는 나이 든 눈빛으로 세상의 모든 것을 이해하고 있었습니다. 그 깊은 눈빛이 우리 가족을 치유했습니다.',
+    para2: '노령견은 더 많은 돌봄이 필요하지만, 그만큼 더 깊은 유대감을 줍니다. 벨라 덕분에 우리 가족은 매 순간을 소중히 여기는 법을 배웠습니다. 함께한 모든 하루가 감사함으로 가득했습니다.',
+    inlineCaption: '벨라와의 일상',
+    inlineBody: '매일 저녁 소파에 함께 앉아 보내는 시간이 하루 중 가장 행복한 순간입니다. 벨라의 따뜻한 체온이 곁에 있다는 것만으로도 마음이 평온해집니다.',
+    para3: '노령견 입양을 고민하고 계신 분들께 꼭 권하고 싶습니다. 그들은 이미 충분히 삶을 알고 있으며, 그 지혜로운 존재와 함께하는 시간은 당신의 삶을 더욱 풍요롭게 만들어 줄 것입니다.',
+  },
+  3: {
+    title: '트랙에서 소파로: 블루의 새로운 삶',
+    author: 'Sam Wilson',
+    date: '2024.09.25',
+    petName: '블루',
+    noticeNumber: '제 2024-00057호',
+    rescueLocation: '경기 유기동물보호소',
+    adoptionDate: '2024.08.10',
+    heroMain: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDbmzdYmtUgsFc7qPZ6d82JZTREf3i_BoLSJwZOQk5BbandjcIXzFlCpJQetS0TrPM0SiDXK7kRJ-6ld_4ziEyKKvEvwE0qdHI4Zj4uiJhWkY390DKgSYcm8n1F_-fOalJ0k38iHRCjwdf_hksXL9On_wSWQlfh_Oq0hLfrWJ8_uOQW6ufBVTieGzffZ623puIVO8Vo-m0f1XGOx1nnPrMBqG1t_OETglvCpInlmmoEThIHcYhD4BclmljDuHNWeoTxgwO3zKsDNY14',
+    heroSide1: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSIE5TNdMb-qFNVKS8KN0x_PgHH1itsnUod6zY0mDDaPxU_EQvk4Wrnki3VL3IKC6XrjF5IHw_dNeyftrU2tizVss0FtFZp5XP8CkFXubfXCJZJmEd0k62WYuT1r7FXVeUU15h0Gx4IKHWyZQvwbC6kYg0YqVjUlLlFRJam3ZaNZ9zsLE8gNjVUyBQOjPU5f3ZFLyTen2LVGk2koIbXMdasyMdqZYCAiPPwDMbNAHo3neKL2jq8MMNZNk2GSiDrgOji6-MuNor2zID',
+    heroSide2: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDNjv4uDoV-LjHNk-uRxVwRzCIE1Iopk99OTj7qjixIU8K0zVD9t79or9FlSSwehCZ6-XgtX_Dq-fAMao_iZKGXVgVVFfkZHYUGWSf0y3K0ETKOmhKIL_QGYnHtKMsnTiZWqYrdXcJ90jjihpcxy2YmJfbzylDPpQIM1wVCEWgM3OIBGqNDAn9noQ7YcxEu73lyuPvWQXefQ6dVpWDqIXh9NfZqW7q3iJIxujGSwujDdNSsd5GL6ONjDVJX96fECK_4hFj5tuK1RkqC',
+    inlineImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0DmRuMjH_5yYehJh1QCQClH1gd5rGKGSyX_zdIXfhwu1dFgrXnEJfbDrkJYZ6GRhpctdhSDci1v6Bmbv1rR3BPjVbNrAXwcx4V4lzKxI44LU8htTp78uISWnT7No4FLiVN8t4O9lUeiozT-fb33PNU8WiEhFU_uQ_GwNte3qmO6pptKXWTp24ibtIil5lBo8-kQfqvUPVpFbfjL37GERkMAMEbNQK8wp1KqhQGcnZPGCxVAbEULJ88T_TBqfB7p1JK-wkQ7jRufb1',
+    para1: '은퇴한 경주견 블루를 입양하던 날, 그는 소파가 뭔지도 몰랐습니다. 계단 앞에서 멈춰 서던 블루가, 이제는 소파 위에서 당당히 자리를 잡고 낮잠을 자는 모습이 믿기지 않을 만큼 감동적입니다. 경주로 밖의 세계가 낯선 그에게 매일이 새로운 발견이었습니다.',
+    blockquote: '블루는 트랙 위가 아닌 우리 곁에서 비로소 진정한 자유를 찾았습니다.',
+    para2: '땅콩버터를 처음 맛보던 날의 표정은 평생 잊지 못할 것입니다. 빠른 속도로 달리는 법만 알던 아이가 천천히 삶을 즐기는 법을 배워가는 과정이 우리 가족에게도 큰 가르침이 되었습니다.',
+    inlineCaption: '소파 위의 블루',
+    inlineBody: '처음엔 소파에 올라가는 것도 두려워했던 블루가 이제는 자기 자리를 완전히 차지했습니다. 저 편안한 표정이 입양의 의미를 모두 설명해줍니다.',
+    para3: '은퇴 경주견 입양은 특별한 경험입니다. 그들은 이미 충분히 달렸고, 이제는 사랑받을 차례입니다. 블루처럼 쉴 곳이 필요한 아이들에게 따뜻한 가족이 되어주세요.',
+  },
+  4: {
+    title: '새로운 무리의 발견',
+    author: 'Julian King',
+    date: '2024.09.18',
+    petName: '코코',
+    noticeNumber: '제 2024-00041호',
+    rescueLocation: '인천 동물보호센터',
+    adoptionDate: '2024.07.20',
+    heroMain: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDPLldKx6LhZFOINhaus2eBEQxMsSdyZHN7_ibZpQ8UBch8KMlwJ3n-55aXxXFYkqYvjecIx_SKrYatTUb9MTCBlpckyat1lg1jEMwqR6FcE0ckj7e1vZ5CH_txtcGr7kWcoKgXjRN2cqgdaE528NxcEt_B-tITskudu7Hw0SdX2kcP2gG0LXYH-pY2fVo4keLwTeXeK4GxosA3RHPczcQWzS6pJs4qohePpbmGIGRwS_MFe90rd_r2GUOwIjtcHWDu8OWgCP0N_kns',
+    heroSide1: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSIE5TNdMb-qFNVKS8KN0x_PgHH1itsnUod6zY0mDDaPxU_EQvk4Wrnki3VL3IKC6XrjF5IHw_dNeyftrU2tizVss0FtFZp5XP8CkFXubfXCJZJmEd0k62WYuT1r7FXVeUU15h0Gx4IKHWyZQvwbC6kYg0YqVjUlLlFRJam3ZaNZ9zsLE8gNjVUyBQOjPU5f3ZFLyTen2LVGk2koIbXMdasyMdqZYCAiPPwDMbNAHo3neKL2jq8MMNZNk2GSiDrgOji6-MuNor2zID',
+    heroSide2: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDNjv4uDoV-LjHNk-uRxVwRzCIE1Iopk99OTj7qjixIU8K0zVD9t79or9FlSSwehCZ6-XgtX_Dq-fAMao_iZKGXVgVVFfkZHYUGWSf0y3K0ETKOmhKIL_QGYnHtKMsnTiZWqYrdXcJ90jjihpcxy2YmJfbzylDPpQIM1wVCEWgM3OIBGqNDAn9noQ7YcxEu73lyuPvWQXefQ6dVpWDqIXh9NfZqW7q3iJIxujGSwujDdNSsd5GL6ONjDVJX96fECK_4hFj5tuK1RkqC',
+    inlineImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0DmRuMjH_5yYehJh1QCQClH1gd5rGKGSyX_zdIXfhwu1dFgrXnEJfbDrkJYZ6GRhpctdhSDci1v6Bmbv1rR3BPjVbNrAXwcx4V4lzKxI44LU8htTp78uISWnT7No4FLiVN8t4O9lUeiozT-fb33PNU8WiEhFU_uQ_GwNte3qmO6pptKXWTp24ibtIil5lBo8-kQfqvUPVpFbfjL37GERkMAMEbNQK8wp1KqhQGcnZPGCxVAbEULJ88T_TBqfB7p1JK-wkQ7jRufb1',
+    para1: '우리 집에는 이미 고양이 두 마리, 토끼 한 마리, 앵무새 두 마리가 있었습니다. 그래서 코코를 데려왔을 때 모두가 걱정했습니다. 하지만 첫 주가 지나기도 전에 코코는 다섯 마리 모두의 친구가 되어 있었습니다. 구조된 유기견의 적응력과 사교성이 이토록 놀라울 수 있다는 것을 몸소 배웠습니다.',
+    blockquote: '코코가 들어오면서 우리 집은 동물원이 아닌 진짜 가족이 되었습니다.',
+    para2: '처음에는 서로 거리를 두던 아이들이 이제는 함께 낮잠을 자고 밥그릇 앞에서 차례를 기다립니다. 코코가 이 모든 화합의 중심이 되어준 것이 지금도 신기합니다. 동물들도 서로를 이해하고 배려하는 법을 안다는 것을 배웠습니다.',
+    inlineCaption: '함께하는 무리',
+    inlineBody: '고양이 옆에서 평화롭게 잠든 코코의 모습이 이제는 일상이 되었습니다. 처음 만나던 날의 긴장감이 믿기지 않을 만큼, 이들은 이미 하나의 가족입니다.',
+    para3: '다동물 가정에서의 입양을 망설이고 계신 분들께 말씀드립니다. 충분한 준비와 인내심이 있다면, 모두가 행복한 대가족을 만들 수 있습니다. 코코가 그 증거입니다.',
+  },
+  5: {
+    title: '처음 데려온 날의 긍정 교육',
+    author: 'Kim Min-su',
+    date: '2024.09.10',
+    petName: '몽이',
+    noticeNumber: '제 2024-00018호',
+    rescueLocation: '대전 동물보호센터',
+    adoptionDate: '2024.06.15',
+    heroMain: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDJyfFd92BD_R-KLs7b_zX7784zzxAIYu43k85sbjh4xzPZcLDAUPTPS3R_jJhmdwAuZUUWMEUKSdxPOr5IcLa6h3Ic3UH3RcbKM-PdlMwMPlT5W_MM4YYn0eL3f7dLsopjX34v7P2Pmy8CW1AWwtNC8W2OlEyJ0QiGYGtmKlyJeM6Tx6V5t2QW2cKGTStmuJuYaOM9e1xh5DRSsjVE53aPqWVQf0Sbmx5Rvet9tpixSXSCCFGV7s0xR4gMN8hSn8suXoTPlF6rLjPo',
+    heroSide1: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSIE5TNdMb-qFNVKS8KN0x_PgHH1itsnUod6zY0mDDaPxU_EQvk4Wrnki3VL3IKC6XrjF5IHw_dNeyftrU2tizVss0FtFZp5XP8CkFXubfXCJZJmEd0k62WYuT1r7FXVeUU15h0Gx4IKHWyZQvwbC6kYg0YqVjUlLlFRJam3ZaNZ9zsLE8gNjVUyBQOjPU5f3ZFLyTen2LVGk2koIbXMdasyMdqZYCAiPPwDMbNAHo3neKL2jq8MMNZNk2GSiDrgOji6-MuNor2zID',
+    heroSide2: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDNjv4uDoV-LjHNk-uRxVwRzCIE1Iopk99OTj7qjixIU8K0zVD9t79or9FlSSwehCZ6-XgtX_Dq-fAMao_iZKGXVgVVFfkZHYUGWSf0y3K0ETKOmhKIL_QGYnHtKMsnTiZWqYrdXcJ90jjihpcxy2YmJfbzylDPpQIM1wVCEWgM3OIBGqNDAn9noQ7YcxEu73lyuPvWQXefQ6dVpWDqIXh9NfZqW7q3iJIxujGSwujDdNSsd5GL6ONjDVJX96fECK_4hFj5tuK1RkqC',
+    inlineImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0DmRuMjH_5yYehJh1QCQClH1gd5rGKGSyX_zdIXfhwu1dFgrXnEJfbDrkJYZ6GRhpctdhSDci1v6Bmbv1rR3BPjVbNrAXwcx4V4lzKxI44LU8htTp78uISWnT7No4FLiVN8t4O9lUeiozT-fb33PNU8WiEhFU_uQ_GwNte3qmO6pptKXWTp24ibtIil5lBo8-kQfqvUPVpFbfjL37GERkMAMEbNQK8wp1KqhQGcnZPGCxVAbEULJ88T_TBqfB7p1JK-wkQ7jRufb1',
+    para1: '몽이를 처음 집에 데려온 날, 그 아이는 구석에서 꼼짝도 하지 않았습니다. 보호소 생활이 남긴 두려움이 온몸에 배어있었습니다. 그날부터 저는 절대 강압적인 방법을 쓰지 않겠다고 다짐했습니다. 기다림과 간식, 그리고 낮은 목소리가 긍정 교육의 시작이었습니다.',
+    blockquote: '기다려주는 것이 사랑입니다. 몽이는 기다림 속에서 비로소 웃기 시작했습니다.',
+    para2: '간식을 이용한 클리커 트레이닝을 시작한 지 2주 만에 몽이는 "앉아"를 배웠습니다. 처음으로 명령에 반응해 앉았을 때의 뿌듯함은 말로 표현하기 어렵습니다. 강압 없이도 충분히 교육할 수 있다는 것을 몽이가 증명해주었습니다.',
+    inlineCaption: '교육 중인 몽이',
+    inlineBody: '간식을 손에 쥐고 눈을 마주칠 때의 집중력이 놀랍습니다. 긍정 강화는 강아지의 자신감을 키워줍니다. 몽이의 눈빛이 매일 더 밝아지는 것을 느낍니다.',
+    para3: '새로 입양한 반려동물이 두려워한다면, 서두르지 마세요. 시간과 인내, 그리고 일관된 긍정 강화가 모든 것을 바꿔줍니다. 몽이의 변화가 그 증거입니다. 여러분도 할 수 있습니다.',
+  },
+};
+
+function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onNavigateReviewList, onNavigateProfile }) {
+  const id = reviewId && REVIEW_DETAILS[reviewId] ? reviewId : DEFAULT_ID;
+  const r = REVIEW_DETAILS[id];
+
+  return (
+    <div className="bg-surface text-on-surface font-body">
+      {/* TopNavBar */}
+      <header className="bg-[#f7f9ff] fixed top-0 w-full z-50">
+        <nav className="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+          <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2">
+            <button className="flex items-center gap-2" onClick={onNavigateHome}>
+              <span
+                className="material-symbols-outlined text-[#8e4e14]"
+                style={{ fontVariationSettings: '"FILL" 1' }}
+              >
+                pets
+              </span>
+              All4Animal
+            </button>
+          </div>
+          <div className="hidden md:flex items-center space-x-8">
+            <button
+              className="text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300"
+              onClick={onNavigateHome}
+            >
+              홈
+            </button>
+            <button
+              className="text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300"
+              onClick={onNavigateAnimalList}
+            >
+              동물 목록
+            </button>
+            <button
+              className="text-[#8e4e14] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300"
+              onClick={onNavigateReviewList}
+            >
+              입양 후기
+            </button>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="relative group">
+              <span className="material-symbols-outlined text-[#534439] cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all">
+                notifications
+              </span>
+            </div>
+            <button
+              className="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full hover:scale-95 transition-all"
+              onClick={onNavigateProfile}
+            >
+              <span className="material-symbols-outlined text-[#8e4e14]">account_circle</span>
+              <span className="text-sm font-semibold">프로필</span>
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <main className="pt-24 pb-20 max-w-7xl mx-auto px-6">
+        {/* Hero Image Gallery */}
+        <section className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-12">
+          <div className="md:col-span-8 overflow-hidden rounded-2xl relative group">
+            <img
+              className="w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
+              alt={r.petName}
+              src={r.heroMain}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          </div>
+          <div className="md:col-span-4 flex flex-col gap-4">
+            <div className="h-1/2 overflow-hidden rounded-2xl">
+              <img className="w-full h-full object-cover" alt={`${r.petName} 사진 1`} src={r.heroSide1} />
+            </div>
+            <div className="h-1/2 overflow-hidden rounded-2xl">
+              <img className="w-full h-full object-cover" alt={`${r.petName} 사진 2`} src={r.heroSide2} />
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Info Bar */}
+        <section className="bg-surface-container-lowest rounded-2xl p-8 mb-12 shadow-[0_8px_32px_rgba(9,29,46,0.04)] flex flex-wrap justify-between items-center gap-6">
+          <div className="flex flex-col">
+            <span className="text-on-surface-variant text-sm font-medium mb-1">이름</span>
+            <span className="text-2xl font-extrabold text-primary">{r.petName}</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-on-surface-variant text-sm font-medium mb-1">공고번호</span>
+            <span className="text-lg font-bold text-on-surface">{r.noticeNumber}</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-on-surface-variant text-sm font-medium mb-1">구조 위치</span>
+            <div className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-tertiary text-sm">location_on</span>
+              <span className="text-lg font-bold text-on-surface">{r.rescueLocation}</span>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-on-surface-variant text-sm font-medium mb-1">입양 날짜</span>
+            <span className="text-lg font-bold text-on-surface">{r.adoptionDate}</span>
+          </div>
+          <div className="hidden lg:block">
+            <div className="bg-primary-container/20 text-on-primary-container px-6 py-3 rounded-full font-bold flex items-center gap-2">
+              <span className="material-symbols-outlined">favorite</span>
+              입양 완료
+            </div>
+          </div>
+        </section>
+
+        {/* Article */}
+        <article className="max-w-4xl mx-auto">
+          <header className="mb-10 text-center">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-on-surface mb-4 leading-tight font-headline">
+              {r.title}
+            </h1>
+            <div className="flex items-center justify-center gap-4 text-on-surface-variant">
+              <span>작성자: {r.author}</span>
+              <span className="w-1 h-1 bg-outline-variant rounded-full" />
+              <span>{r.date}</span>
+            </div>
+          </header>
+
+          <div className="space-y-8 text-lg leading-relaxed text-on-surface-variant">
+            <p>{r.para1}</p>
+
+            <div className="relative py-8">
+              <div className="absolute left-0 top-0 w-2 h-full bg-primary-container rounded-full" />
+              <blockquote className="pl-8 italic text-2xl font-medium text-on-surface">
+                "{r.blockquote}"
+              </blockquote>
+            </div>
+
+            <p>{r.para2}</p>
+
+            {/* Inline Image */}
+            <div className="relative py-12">
+              <div className="bg-surface-container-low rounded-2xl p-10 flex flex-col md:flex-row items-center gap-8">
+                <div className="md:w-1/2 -mt-20 md:-ml-20 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
+                  <img className="w-full h-80 object-cover" alt={r.inlineCaption} src={r.inlineImage} />
+                </div>
+                <div className="md:w-1/2">
+                  <h3 className="text-2xl font-bold text-on-surface mb-4 font-headline">{r.inlineCaption}</h3>
+                  <p className="text-base">{r.inlineBody}</p>
+                </div>
+              </div>
+            </div>
+
+            <p>{r.para3}</p>
+          </div>
+
+          {/* Back button */}
+          <div className="mt-16 pt-12 border-t border-outline-variant/15 flex justify-center">
+            <button
+              className="bg-secondary-container text-on-secondary-container px-10 py-4 rounded-full font-bold flex items-center gap-2 hover:bg-secondary-container/80 transition-all active:scale-95 shadow-md"
+              onClick={onNavigateReviewList}
+            >
+              <span className="material-symbols-outlined">list</span>
+              목록으로 돌아가기
+            </button>
+          </div>
+        </article>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-[#091d2e] text-[#f4a261] mt-20 p-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 max-w-screen-2xl mx-auto">
+          <div className="space-y-4">
+            <div className="text-[#f7f9ff] font-bold text-3xl font-headline">All4Animal</div>
+            <p className="text-slate-400 text-sm max-w-xs">
+              반려동물 입양을 혁신하는 All4Animal과 함께 새로운 가족을 만나보세요. 우리의 AI 매칭 시스템이 당신과 완벽한 반려동물을 연결해드립니다.
+            </p>
+          </div>
+          {/* <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col space-y-3">
+              <span className="text-white text-sm font-bold uppercase tracking-widest mb-2">Company</span>
+              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Terms of Service</a>
+              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Privacy Policy</a>
+              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Contact Us</a>
+            </div>
+            <div className="flex flex-col space-y-3">
+              <span className="text-white text-sm font-bold uppercase tracking-widest mb-2">Community</span>
+              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Instagram</a>
+              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Community Forum</a>
+              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Stories</a>
+            </div>
+          </div> */}
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default ReviewDetailsPage;

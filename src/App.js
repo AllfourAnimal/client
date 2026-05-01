@@ -4,16 +4,23 @@ import HomePage from './pages/HomePage';
 import AnimalListPage from './pages/AnimalListPage';
 import AnimalDetailsPage from './pages/AnimalDetailsPage';
 import ReviewListPage from './pages/ReviewListPage';
+import ReviewDetailsPage from './pages/ReviewDetailsPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [selectedAnimal, setSelectedAnimal] = useState(null);
+  const [selectedReview, setSelectedReview] = useState(null);
 
   const navigate = (page) => setCurrentPage(page);
 
   const navigateToAnimal = (name) => {
     setSelectedAnimal(typeof name === 'string' ? name : null);
     setCurrentPage('animal-details');
+  };
+
+  const navigateToReview = (id) => {
+    setSelectedReview(id ?? null);
+    setCurrentPage('review-details');
   };
 
   if (currentPage === 'home') {
@@ -45,7 +52,19 @@ function App() {
         onNavigateHome={() => navigate('home')}
         onNavigateAnimalList={() => navigate('animal-list')}
         onNavigateProfile={() => navigate('profile')}
-        onNavigateReviewDetails={() => navigate('review-details')}
+        onNavigateReviewDetails={navigateToReview}
+      />
+    );
+  }
+
+  if (currentPage === 'review-details') {
+    return (
+      <ReviewDetailsPage
+        reviewId={selectedReview}
+        onNavigateHome={() => navigate('home')}
+        onNavigateAnimalList={() => navigate('animal-list')}
+        onNavigateReviewList={() => navigate('review-list')}
+        onNavigateProfile={() => navigate('profile')}
       />
     );
   }
