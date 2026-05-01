@@ -60,7 +60,7 @@ const REVIEWS = [
 
 const FILTERS = ['전체', '강아지', '고양이', '입양 인증'];
 
-function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfile, onNavigateReviewDetails }) {
+function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfile, onNavigateReviewDetails, onNavigateReviewPost }) {
   const [activeFilter, setActiveFilter] = useState('전체');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -141,7 +141,10 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
               </p>
             </div>
             <div className="relative z-10 shrink-0">
-              <button className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-2">
+              <button
+                className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-2"
+                onClick={onNavigateReviewPost}
+              >
                 <span className="material-symbols-outlined">edit_square</span>
                 후기 작성하기
               </button>

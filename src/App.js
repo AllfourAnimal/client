@@ -5,6 +5,7 @@ import AnimalListPage from './pages/AnimalListPage';
 import AnimalDetailsPage from './pages/AnimalDetailsPage';
 import ReviewListPage from './pages/ReviewListPage';
 import ReviewDetailsPage from './pages/ReviewDetailsPage';
+import ReviewPostPage from './pages/ReviewPostPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
@@ -53,6 +54,18 @@ function App() {
         onNavigateAnimalList={() => navigate('animal-list')}
         onNavigateProfile={() => navigate('profile')}
         onNavigateReviewDetails={navigateToReview}
+        onNavigateReviewPost={() => navigate('review-post')}
+      />
+    );
+  }
+
+  if (currentPage === 'review-post') {
+    return (
+      <ReviewPostPage
+        onNavigateHome={() => navigate('home')}
+        onNavigateAnimalList={() => navigate('animal-list')}
+        onNavigateReviewList={() => navigate('review-list')}
+        onNavigateProfile={() => navigate('profile')}
       />
     );
   }
