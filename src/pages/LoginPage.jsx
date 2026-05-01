@@ -108,7 +108,7 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
           </div>
 
           {/* 푸터 */}
-          <div className="flex justify-center items-center gap-6 text-outline">
+          {/* <div className="flex justify-center items-center gap-6 text-outline">
             <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
               © 2024 All4Animal
             </span>
@@ -126,7 +126,7 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
             >
               Support
             </a>
-          </div>
+          </div> */}
 
         </div>
       </div>

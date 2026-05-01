@@ -103,13 +103,13 @@ function HomePage({
               <span className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 1' }}>dashboard</span>
               <span className="font-medium">개요</span>
             </a>
-            <a
+            {/* <a
               href="#"
               className="flex items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
             >
               <span className="material-symbols-outlined">insights</span>
               <span className="font-medium">통계</span>
-            </a>
+            </a> */}
             <a
               href="#"
               className="flex items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
@@ -283,10 +283,10 @@ function HomePage({
           <div className="space-y-4">
             <div className="text-[#f7f9ff] font-bold text-3xl font-headline">All4Animal</div>
             <p className="text-slate-400 text-sm max-w-xs">
-              Connecting compassionate hearts with furry souls through curated matches and editorial storytelling.
+              반려동물 입양을 혁신하는 All4Animal과 함께 새로운 가족을 만나보세요. 우리의 AI 매칭 시스템이 당신과 완벽한 반려동물을 연결해드립니다.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col space-y-3">
               <span className="text-white text-sm font-bold uppercase tracking-widest mb-2">Company</span>
               <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Terms of Service</a>
@@ -299,7 +299,7 @@ function HomePage({
               <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Community Forum</a>
               <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Stories</a>
             </div>
-          </div>
+          </div> */}
         </div>
       </footer>
 
