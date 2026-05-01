@@ -208,7 +208,7 @@ function HomePage({
                 <button
                   key={card.name}
                   className={`group cursor-pointer block text-left w-full${card.offset ? ' md:-mt-6' : ''}`}
-                  onClick={onNavigateAnimalDetails}
+                  onClick={() => onNavigateAnimalDetails(card.name)}
                 >
                   <div className="relative mb-4 rounded-[1.5rem] overflow-hidden aspect-[4/5]">
                     <img
@@ -250,7 +250,7 @@ function HomePage({
                 <button
                   key={animal.name}
                   className="flex-shrink-0 w-48 group block"
-                  onClick={onNavigateAnimalDetails}
+                  onClick={() => onNavigateAnimalDetails(animal.name)}
                 >
                   <div className="h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 transition-transform group-hover:scale-105">
                     <img alt="animal" className="w-full h-full object-cover" src={animal.src} />
