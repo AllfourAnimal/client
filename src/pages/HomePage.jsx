@@ -1,3 +1,6 @@
+import Navbar from '../components/layout/Navbar';
+import AppFooter from '../components/layout/AppFooter';
+
 const MATCH_CARDS = [
   {
     name: '모승',
@@ -39,55 +42,13 @@ function HomePage({
   return (
     <div className="bg-surface text-on-surface font-body">
 
-      {/* TopNavBar */}
-      <header className="bg-[#f7f9ff] fixed top-0 w-full z-50">
-        <nav className="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
-          <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2">
-            <span className="flex items-center gap-2">
-              <span
-                className="material-symbols-outlined text-[#8e4e14]"
-                style={{ fontVariationSettings: '"FILL" 1' }}
-              >
-                pets
-              </span>
-              All4Animal
-            </span>
-          </div>
-
-          <div className="hidden md:flex items-center space-x-8">
-            <span className="text-[#8e4e14] font-bold border-b-2 border-[#8e4e14] pb-1 cursor-default">
-              홈
-            </span>
-            <button
-              className="text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300"
-              onClick={onNavigateAnimalList}
-            >
-              동물 목록
-            </button>
-            <button
-              className="text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300"
-              onClick={onNavigateReviews}
-            >
-              입양 후기
-            </button>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="relative group">
-              <span className="material-symbols-outlined text-[#534439] cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all">
-                notifications
-              </span>
-            </div>
-            <button
-              className="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full hover:scale-95 transition-all"
-              onClick={onNavigateProfile}
-            >
-              <span className="material-symbols-outlined text-[#8e4e14]">account_circle</span>
-              <span className="text-sm font-semibold">프로필</span>
-            </button>
-          </div>
-        </nav>
-      </header>
+      <Navbar
+        activePage="home"
+        isCurrentPage
+        onNavigateAnimalList={onNavigateAnimalList}
+        onNavigateReviews={onNavigateReviews}
+        onNavigateProfile={onNavigateProfile}
+      />
 
       <div className="flex pt-20">
         {/* SideNavBar */}
@@ -103,13 +64,6 @@ function HomePage({
               <span className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 1' }}>dashboard</span>
               <span className="font-medium">개요</span>
             </a>
-            {/* <a
-              href="#"
-              className="flex items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
-            >
-              <span className="material-symbols-outlined">insights</span>
-              <span className="font-medium">통계</span>
-            </a> */}
             <a
               href="#"
               className="flex items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
@@ -277,31 +231,7 @@ function HomePage({
         </button>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-[#091d2e] text-[#f4a261] mt-20 p-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 max-w-screen-2xl mx-auto">
-          <div className="space-y-4">
-            <div className="text-[#f7f9ff] font-bold text-3xl font-headline">All4Animal</div>
-            <p className="text-slate-400 text-sm max-w-xs">
-              반려동물 입양을 혁신하는 All4Animal과 함께 새로운 가족을 만나보세요. 우리의 AI 매칭 시스템이 당신과 완벽한 반려동물을 연결해드립니다.
-            </p>
-          </div>
-          {/* <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-3">
-              <span className="text-white text-sm font-bold uppercase tracking-widest mb-2">Company</span>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Terms of Service</a>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Privacy Policy</a>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Contact Us</a>
-            </div>
-            <div className="flex flex-col space-y-3">
-              <span className="text-white text-sm font-bold uppercase tracking-widest mb-2">Community</span>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Instagram</a>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Community Forum</a>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Stories</a>
-            </div>
-          </div> */}
-        </div>
-      </footer>
+      <AppFooter />
 
     </div>
   );

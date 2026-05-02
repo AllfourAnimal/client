@@ -1,4 +1,5 @@
 import { useState, Fragment } from 'react';
+import Navbar from '../components/layout/Navbar';
 
 const COMPANION_PET = {
   name: 'Louie',
@@ -40,56 +41,14 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateReview
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col font-body">
-      {/* TopNavBar */}
-      <header className="bg-[#f7f9ff] fixed top-0 w-full z-50">
-        <nav className="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
-          <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2">
-            <button className="flex items-center gap-2" onClick={onNavigateHome}>
-              <span
-                className="material-symbols-outlined text-[#8e4e14]"
-                style={{ fontVariationSettings: '"FILL" 1' }}
-              >
-                pets
-              </span>
-              All4Animal
-            </button>
-          </div>
-          <div className="hidden md:flex items-center space-x-8">
-            <button
-              className="text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300"
-              onClick={onNavigateHome}
-            >
-              홈
-            </button>
-            <button
-              className="text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300"
-              onClick={onNavigateAnimalList}
-            >
-              동물 목록
-            </button>
-            <button
-              className="text-[#8e4e14] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300"
-              onClick={onNavigateReviewList}
-            >
-              입양 후기
-            </button>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative group">
-              <span className="material-symbols-outlined text-[#534439] cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all">
-                notifications
-              </span>
-            </div>
-            <button
-              className="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full hover:scale-95 transition-all"
-              onClick={onNavigateProfile}
-            >
-              <span className="material-symbols-outlined text-[#8e4e14]">account_circle</span>
-              <span className="text-sm font-semibold">프로필</span>
-            </button>
-          </div>
-        </nav>
-      </header>
+
+      <Navbar
+        activePage="review-list"
+        onNavigateHome={onNavigateHome}
+        onNavigateAnimalList={onNavigateAnimalList}
+        onNavigateReviews={onNavigateReviewList}
+        onNavigateProfile={onNavigateProfile}
+      />
 
       <main className="flex-grow max-w-5xl mx-auto w-full px-6 py-12 pt-24">
         {/* Page Title */}
@@ -239,7 +198,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateReview
         </form>
       </main>
 
-      {/* Footer */}
+      {/* ReviewPostPage 전용 라이트 푸터 */}
       <footer className="w-full mt-auto rounded-t-2xl bg-[#edf4ff]">
         <div className="flex flex-col md:flex-row justify-between items-center px-12 py-10 w-full max-w-7xl mx-auto">
           <div className="flex flex-col items-center md:items-start mb-6 md:mb-0">

@@ -1,66 +1,8 @@
 import { useState, useEffect } from 'react';
 import { fetchAnimals } from '../api/animals';
-
-function HeartButton({ isFavorited, onToggle }) {
-  return (
-    <button
-      className="absolute top-4 right-4 bg-white/90 backdrop-blur-md p-2 rounded-full shadow-sm flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
-      onClick={(e) => { e.stopPropagation(); onToggle(); }}
-    >
-      <span
-        className={`material-symbols-outlined transition-colors ${
-          isFavorited ? 'text-red-500' : 'text-on-surface-variant hover:text-red-500'
-        }`}
-        style={{
-          fontVariationSettings: `'FILL' ${isFavorited ? 1 : 0}, 'wght' 400, 'GRAD' 0, 'opsz' 24`,
-        }}
-      >
-        favorite
-      </span>
-    </button>
-  );
-}
-
-function AnimalCard({ animal, isFavorited, onToggleFavorite, onNavigateAnimalDetails, compact = false }) {
-  return (
-    <div
-      className="bg-surface-container-lowest rounded-3xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 border border-outline-variant/10 hover:shadow-2xl hover:shadow-primary/10 cursor-pointer"
-      onClick={() => onNavigateAnimalDetails(animal.name)}
-    >
-      <div className={`relative ${compact ? 'h-60' : 'h-72'} overflow-hidden`}>
-        <img
-          alt={`강아지 ${animal.name}`}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src={animal.src}
-        />
-        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-primary shadow-sm">
-          {animal.status}
-        </div>
-        <HeartButton isFavorited={isFavorited} onToggle={() => onToggleFavorite(animal.name)} />
-      </div>
-      <div className="p-6">
-        <h3 className={`font-bold text-on-surface mb-2 ${compact ? 'text-xl' : 'text-2xl'}`}>
-          {animal.name}
-        </h3>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {animal.tags.map((tag) => (
-            <span
-              key={tag}
-              className={`bg-surface-container-low text-on-secondary-container text-xs font-semibold rounded-full ${
-                compact ? 'px-2 py-1' : 'px-3 py-1'
-              }`}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-        {!compact && (
-          <p className="text-on-surface-variant text-sm leading-relaxed">{animal.description}</p>
-        )}
-      </div>
-    </div>
-  );
-}
+import Navbar from '../components/layout/Navbar';
+import AppFooter from '../components/layout/AppFooter';
+import AnimalCard from '../components/animals/AnimalCard';
 
 function AnimalListPage({
   onNavigateHome,
@@ -96,51 +38,13 @@ function AnimalListPage({
   return (
     <div className="bg-background text-on-background font-body">
 
-      {/* TopNavBar */}
-      <header className="bg-[#f7f9ff] fixed top-0 w-full z-50">
-        <nav className="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
-          <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2">
-            <button className="flex items-center gap-2" onClick={onNavigateHome}>
-              <span
-                className="material-symbols-outlined text-[#8e4e14]"
-                style={{ fontVariationSettings: '"FILL" 1' }}
-              >
-                pets
-              </span>
-              All4Animal
-            </button>
-          </div>
-          <div className="hidden md:flex items-center space-x-8">
-            <button
-              className="text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300"
-              onClick={onNavigateHome}
-            >
-              홈
-            </button>
-            <span className="text-[#8e4e14] font-bold border-b-2 border-[#8e4e14] pb-1 cursor-default">
-              동물 목록
-            </span>
-            <button
-              className="text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300"
-              onClick={onNavigateReviews}
-            >
-              입양 후기
-            </button>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="material-symbols-outlined text-[#534439] cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all">
-              notifications
-            </span>
-            <button
-              className="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full hover:scale-95 transition-all"
-              onClick={onNavigateProfile}
-            >
-              <span className="material-symbols-outlined text-[#8e4e14]">account_circle</span>
-              <span className="text-sm font-semibold">프로필</span>
-            </button>
-          </div>
-        </nav>
-      </header>
+      <Navbar
+        activePage="animal-list"
+        isCurrentPage
+        onNavigateHome={onNavigateHome}
+        onNavigateReviews={onNavigateReviews}
+        onNavigateProfile={onNavigateProfile}
+      />
 
       <main className="pt-24 min-h-screen">
 
@@ -247,34 +151,9 @@ function AnimalListPage({
           )}
         </section>
 
-
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#091d2e] text-[#f4a261] mt-20 p-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 max-w-screen-2xl mx-auto">
-          <div className="space-y-4">
-            <div className="text-[#f7f9ff] font-bold text-3xl font-headline">All4Animal</div>
-            <p className="text-slate-400 text-sm max-w-xs">
-              반려동물 입양을 혁신하는 All4Animal과 함께 새로운 가족을 만나보세요. 우리의 AI 매칭 시스템이 당신과 완벽한 반려동물을 연결해드립니다.
-            </p>
-          </div>
-          {/* <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-3">
-              <span className="text-white text-sm font-bold uppercase tracking-widest mb-2">Company</span>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Terms of Service</a>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Privacy Policy</a>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Contact Us</a>
-            </div>
-            <div className="flex flex-col space-y-3">
-              <span className="text-white text-sm font-bold uppercase tracking-widest mb-2">Community</span>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Instagram</a>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Community Forum</a>
-              <a className="text-slate-400 text-xs hover:text-[#f4a261] transition-colors" href="#">Stories</a>
-            </div>
-          </div> */}
-        </div>
-      </footer>
+      <AppFooter />
 
     </div>
   );
