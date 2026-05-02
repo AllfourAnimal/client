@@ -1,61 +1,5 @@
-import { useState } from 'react';
-
-const ALL_ANIMALS = [
-  {
-    name: '모치',
-    status: '공고중',
-    tags: ['1살', '골든리트리버', '암컷'],
-    description: '에너지가 넘치고 사람을 정말 좋아하는 명랑한 친구예요. 마당이 있는 집이라면 더 행복할 거예요.',
-    src: 'https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/6P0U/image/1OWftaQcOlM1040OyU83hKxBmgs',
-    initialFav: true,
-  },
-  {
-    name: '똘똘',
-    status: '보호중',
-    tags: ['2살', '비글', '암컷'],
-    description: '산책을 정말 좋아하는 건강한 친구예요. 호기심이 많아서 매일 새로운 모험을 꿈꾼답니다.',
-    src: 'https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/722/2d9606f443d27267e4d45b15e624e9ed_res.jpeg',
-    initialFav: true,
-  },
-  {
-    name: '메롱',
-    status: '공고중',
-    tags: ['4살', '말티즈', '암컷'],
-    description: '기다림에 익숙한 차분한 성격의 친구예요. 다른 강아지들과도 아주 잘 지내는 사회성 좋은 아이예요.',
-    src: 'https://mblogthumb-phinf.pstatic.net/MjAyMjExMDRfNTQg/MDAxNjY3NTM1MjUwMTM5.UbGKNsQspu-mN4M3husNKIkqrjxTZVqDz495I1sOHxYg.mQRYtPom0sUssuJaI2SpRBwyTgMMxm-267qxjZq4jGQg.JPEG.babion_1/4.jpg?type=w800',
-    initialFav: true,
-  },
-  {
-    name: '윙크',
-    status: '임시보호',
-    tags: ['5개월', '사모예드', '암컷'],
-    description: '작은 발로 아장아장 걷는 모습이 사랑스러운 아기 강아지예요. 함께할 가족을 찾습니다.',
-    src: 'https://img1.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202105/25/holapet/20210525051114398gyiz.jpg',
-    initialFav: true,
-  },
-  {
-    name: '공주',
-    status: '보호중',
-    tags: ['1살', '보더콜리', '암컷'],
-    description: '매우 영리하고 학습 능력이 뛰어나요. 야외 달리기나 공놀이를 즐기는 활동적인 가족에게 어울립니다.',
-    src: 'https://storage.enuri.info/pic_upload/knowbox2/202402/03494830920240229230d567a-153b-4806-8cc9-defc73434507.jpg',
-    initialFav: false,
-  },
-  {
-    name: '미르',
-    status: '보호중',
-    tags: ['3살', '시베리안허스키', '암컷'],
-    description: '듬직한 외모와 달리 겁이 조금 있는 어른이에요. 인내심을 갖고 미르의 친구가 되어주실 분을 찾습니다.',
-    src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUiKpi2_VVeW92mGASbdYA3igF2sL8j8V0bw&s',
-    initialFav: false,
-  },
-];
-
-const STATS = [
-  { label: '오늘의 구조', value: 12, sub: '따뜻한 보호소에서 시작한 친구들' },
-  { label: '이달의 입양', value: 45, sub: '새로운 가족을 만난 기적' },
-  { label: '기다리는 친구들', value: 128, sub: '당신의 따뜻한 손길을 기다립니다' },
-];
+import { useState, useEffect } from 'react';
+import { fetchAnimals } from '../api/animals';
 
 function HeartButton({ isFavorited, onToggle }) {
   return (
@@ -124,14 +68,30 @@ function AnimalListPage({
   onNavigateReviews,
   onNavigateProfile,
 }) {
-  const [favorites, setFavorites] = useState(
-    () => Object.fromEntries(ALL_ANIMALS.map((a) => [a.name, a.initialFav]))
-  );
+  const [animals, setAnimals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [favorites, setFavorites] = useState({});
+
+  useEffect(() => {
+    const loadAnimals = async () => {
+      try {
+        const data = await fetchAnimals();
+        setAnimals(data);
+        setFavorites(Object.fromEntries(data.map((a) => [a.name, false])));
+      } catch (err) {
+        setError('동물 목록을 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadAnimals();
+  }, []);
 
   const toggleFavorite = (name) =>
     setFavorites((prev) => ({ ...prev, [name]: !prev[name] }));
 
-  const likedAnimals = ALL_ANIMALS.filter((a) => favorites[a.name]);
+  const likedAnimals = animals.filter((a) => favorites[a.name]);
 
   return (
     <div className="bg-background text-on-background font-body">
@@ -237,17 +197,23 @@ function AnimalListPage({
               <span className="material-symbols-outlined text-base">chevron_right</span>
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {ALL_ANIMALS.map((animal) => (
-              <AnimalCard
-                key={animal.name}
-                animal={animal}
-                isFavorited={favorites[animal.name]}
-                onToggleFavorite={toggleFavorite}
-                onNavigateAnimalDetails={onNavigateAnimalDetails}
-              />
-            ))}
-          </div>
+          {loading ? (
+            <p className="text-center text-on-surface-variant py-16">불러오는 중...</p>
+          ) : error ? (
+            <p className="text-center text-error py-16">{error}</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {animals.map((animal) => (
+                <AnimalCard
+                  key={animal.name}
+                  animal={animal}
+                  isFavorited={favorites[animal.name]}
+                  onToggleFavorite={toggleFavorite}
+                  onNavigateAnimalDetails={onNavigateAnimalDetails}
+                />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* 찜한 동물 목록 */}
@@ -281,21 +247,6 @@ function AnimalListPage({
           )}
         </section>
 
-        {/* Stats */}
-        <section className="max-w-7xl mx-auto px-8 mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {STATS.map((stat) => (
-              <div
-                key={stat.label}
-                className="bg-surface-container-high p-8 rounded-3xl transition-transform hover:-translate-y-1 border border-outline-variant/10"
-              >
-                <span className="text-tertiary font-bold text-sm mb-2 block">{stat.label}</span>
-                <h4 className="text-4xl font-extrabold text-on-surface">{stat.value}</h4>
-                <p className="text-on-surface-variant text-sm mt-2">{stat.sub}</p>
-              </div>
-            ))}
-          </div>
-        </section>
 
       </main>
 
