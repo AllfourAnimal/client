@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { signupUser } from '../api/auth';
+import { checkId } from '../api/auth';
 
 function SignupPage({ onNavigateLogin }) {
   const [form, setForm] = useState({
@@ -8,26 +10,36 @@ function SignupPage({ onNavigateLogin }) {
     passwordConfirm: '',
     phone: '',
     birthYear: '',
-    address: '',
+    location: '',
+    isExperience: true,
     housingType: '',
-    emptyHours: '',
-    isExperience: 'yes',
+    emptyTime: 0
   });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
 
+  // 폼 입력 핸들러
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (form.password !== form.passwordConfirm) {
-      setError('비밀번호가 일치하지 않습니다.');
-      return;
+    setFieldErrors({});
+
+    try {
+      // Todo: 아이디 중복 검사
+      await signupUser(form);
+      onNavigateLogin();
+    } catch (err) {
+      const errors = err.response?.data?.errors;
+      if (errors)
+        setFieldErrors(errors);
+      setError((err.response.data.code === 'BAD_REQUEST' || err.response.data.code === 'VALIDATION_ERROR') ? '회원가입에 실패했습니다. 입력한 정보를 확인해주세요.' : err.response?.data?.message);
     }
-    // TODO: 회원가입 API 연동
   };
 
   const birthYears = Array.from({ length: 60 }, (_, i) => new Date().getFullYear() - 15 - i);
@@ -37,7 +49,7 @@ function SignupPage({ onNavigateLogin }) {
 
       {/* 본문 */}
       <main className="flex-grow flex items-center justify-center py-10 px-4">
-        <div className="max-w-2xl w-full">
+        <div className="max-w-3xl w-full">
           <div className="bg-surface-container-lowest p-8 md:p-12 rounded-[2rem] shadow-2xl shadow-on-surface/5 border border-outline-variant/10">
 
             <div className="mb-10 text-center">
@@ -49,7 +61,10 @@ function SignupPage({ onNavigateLogin }) {
               {/* 아이디 / 이름 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-on-surface-variant ml-1">아이디</label>
+                  <div className="flex items-center gap-2 ml-1">
+                    <label className="text-sm font-bold text-on-surface-variant">아이디</label>
+                    {fieldErrors.loginId && <span className="text-xs text-error">{fieldErrors.loginId}</span>}
+                  </div>
                   <input
                     name="loginId"
                     type="text"
@@ -60,7 +75,10 @@ function SignupPage({ onNavigateLogin }) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-on-surface-variant ml-1">이름</label>
+                  <div className="flex items-center gap-2 ml-1">
+                    <label className="text-sm font-bold text-on-surface-variant">이름</label>
+                    {fieldErrors.name && <span className="text-xs text-error">{fieldErrors.name}</span>}
+                  </div>
                   <input
                     name="name"
                     type="text"
@@ -75,7 +93,10 @@ function SignupPage({ onNavigateLogin }) {
               {/* 비밀번호 / 비밀번호 확인 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-on-surface-variant ml-1">비밀번호</label>
+                  <div className="flex items-center gap-2 ml-1">
+                    <label className="text-sm font-bold text-on-surface-variant">비밀번호</label>
+                    {fieldErrors.password && <span className="text-xs text-error">{fieldErrors.password}</span>}
+                  </div>
                   <input
                     name="password"
                     type="password"
@@ -86,7 +107,10 @@ function SignupPage({ onNavigateLogin }) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-on-surface-variant ml-1">비밀번호 확인</label>
+                  <div className="flex items-center gap-2 ml-1">
+                    <label className="text-sm font-bold text-on-surface-variant">비밀번호 확인</label>
+                    {fieldErrors.passwordConfirm && <span className="text-xs text-error">{fieldErrors.passwordConfirm}</span>}
+                  </div>
                   <input
                     name="passwordConfirm"
                     type="password"
@@ -101,7 +125,10 @@ function SignupPage({ onNavigateLogin }) {
               {/* 전화번호 / 출생 연도 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-on-surface-variant ml-1">전화번호</label>
+                  <div className="flex items-center gap-2 ml-1">
+                    <label className="text-sm font-bold text-on-surface-variant">전화번호</label>
+                    {fieldErrors.phone && <span className="text-xs text-error">{fieldErrors.phone}</span>}
+                  </div>
                   <input
                     name="phone"
                     type="tel"
@@ -112,7 +139,10 @@ function SignupPage({ onNavigateLogin }) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-on-surface-variant ml-1">출생 연도</label>
+                  <div className="flex items-center gap-2 ml-1">
+                    <label className="text-sm font-bold text-on-surface-variant">출생 연도</label>
+                    {fieldErrors.birthYear && <span className="text-xs text-error">{fieldErrors.birthYear}</span>}
+                  </div>
                   <select
                     name="birthYear"
                     value={form.birthYear}
@@ -129,13 +159,16 @@ function SignupPage({ onNavigateLogin }) {
 
               {/* 주소지 */}
               <div className="space-y-2">
-                <label className="text-sm font-bold text-on-surface-variant ml-1">주소지</label>
+                <div className="flex items-center gap-2 ml-1">
+                  <label className="text-sm font-bold text-on-surface-variant">주소지</label>
+                  {fieldErrors.location && <span className="text-xs text-error">{fieldErrors.location}</span>}
+                </div>
                 <div className="relative">
                   <input
-                    name="address"
+                    name="location"
                     type="text"
                     placeholder="OO도 OO시 OO구 OO동"
-                    value={form.address}
+                    value={form.location}
                     onChange={handleChange}
                     className="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all"
                   />
@@ -145,7 +178,10 @@ function SignupPage({ onNavigateLogin }) {
               {/* 주거 형태 / 하루 외출 시간 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-on-surface-variant ml-1">주거 형태</label>
+                  <div className="flex items-center gap-2 ml-1">
+                    <label className="text-sm font-bold text-on-surface-variant">주거 형태</label>
+                    {fieldErrors.housingType && <span className="text-xs text-error">{fieldErrors.housingType}</span>}
+                  </div>
                   <select
                     name="housingType"
                     value={form.housingType}
@@ -159,14 +195,17 @@ function SignupPage({ onNavigateLogin }) {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-on-surface-variant ml-1">하루 평균 집을 비우는 시간</label>
+                  <div className="flex items-center gap-2 ml-1">
+                    <label className="text-sm font-bold text-on-surface-variant">평균 외출 시간</label>
+                    {fieldErrors.emptyTime && <span className="text-xs text-error">{fieldErrors.emptyTime}</span>}
+                  </div>
                   <div className="relative">
                     <input
-                      name="emptyHours"
+                      name="emptyTime"
                       type="number"
                       min="0"
                       placeholder="0"
-                      value={form.emptyHours}
+                      value={form.emptyTime}
                       onChange={handleChange}
                       className="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all pr-12"
                     />
@@ -181,14 +220,14 @@ function SignupPage({ onNavigateLogin }) {
               <div className="space-y-3">
                 <label className="text-sm font-bold text-on-surface-variant ml-1">반려동물 사육 경험 여부</label>
                 <div className="flex p-1 bg-surface-container-low rounded-xl gap-1">
-                  {[{ value: 'yes', label: '네, 있습니다' }, { value: 'no', label: '아니오, 없습니다' }].map(({ value, label }) => (
-                    <label key={value} className="flex-1 cursor-pointer">
+                  {[{ value: true, label: '네, 있습니다' }, { value: false, label: '아니오, 없습니다' }].map(({ value, label }) => (
+                    <label key={String(value)} className="flex-1 cursor-pointer">
                       <input
                         type="radio"
                         name="isExperience"
-                        value={value}
+                        value={String(value)}
                         checked={form.isExperience === value}
-                        onChange={handleChange}
+                        onChange={() => setForm((prev) => ({ ...prev, isExperience: value }))}
                         className="peer hidden"
                       />
                       <div className="w-full text-center py-3 rounded-lg font-bold text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary transition-all duration-300">

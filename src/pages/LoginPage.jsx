@@ -3,7 +3,7 @@ import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 
 function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) {
-  const [id, setId] = useState('');
+  const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
@@ -12,9 +12,9 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
     e.preventDefault();
     setError('');
     try {
-      const data = await loginUser({ loginId: id, password });
+      const data = await loginUser({ loginId, password });
       login(data.accessToken);  // 로그인 성공 시 context에 토큰 저장
-      if (onNavigatePreferences) onNavigatePreferences(); 
+      if (onNavigatePreferences) onNavigatePreferences();
     } catch (err) {
       setError(err.response.data.message);
     }
@@ -68,10 +68,10 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
                   아이디
                 </label>
                 <input
-                  type="id"
+                  type="text"
                   placeholder="all4animal"
-                  value={id}
-                  onChange={(e) => setId(e.target.value)}
+                  value={loginId}
+                  onChange={(e) => setLoginId(e.target.value)}
                   className="w-full rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright h-14 px-5 text-on-surface placeholder:text-outline transition-all duration-300"
                 />
               </div>
