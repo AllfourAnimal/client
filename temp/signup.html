@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline": "#867468",
+                      "inverse-surface": "#203243",
+                      "surface-dim": "#c9dcf3",
+                      "surface-bright": "#f7f9ff",
+                      "on-tertiary-fixed": "#001f25",
+                      "on-error-container": "#93000a",
+                      "on-surface": "#091d2e",
+                      "surface-container-high": "#d9eaff",
+                      "secondary-fixed": "#ffdcc4",
+                      "secondary": "#7a573d",
+                      "on-background": "#091d2e",
+                      "secondary-fixed-dim": "#ebbd9d",
+                      "on-primary-fixed": "#2f1400",
+                      "tertiary": "#006878",
+                      "surface-container-low": "#edf4ff",
+                      "tertiary-fixed-dim": "#72d4ea",
+                      "tertiary-container": "#5fc2d8",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#ffdcc4",
+                      "error-container": "#ffdad6",
+                      "surface": "#f7f9ff",
+                      "on-secondary-container": "#79563c",
+                      "primary-fixed-dim": "#ffb780",
+                      "outline-variant": "#d8c2b5",
+                      "inverse-primary": "#ffb780",
+                      "surface-container-highest": "#d1e4fb",
+                      "on-surface-variant": "#534439",
+                      "surface-variant": "#d1e4fb",
+                      "surface-tint": "#8e4e14",
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#6f3800",
+                      "primary": "#8e4e14",
+                      "on-secondary-fixed-variant": "#5f4027",
+                      "surface-container": "#e3efff",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#f7f9ff",
+                      "on-tertiary-fixed-variant": "#004e5b",
+                      "tertiary-fixed": "#a8edff",
+                      "inverse-on-surface": "#e8f2ff",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "primary-container": "#f4a261",
+                      "secondary-container": "#fdcead",
+                      "on-secondary-fixed": "#2d1603",
+                      "on-tertiary-container": "#004e5b",
+                      "on-primary-fixed-variant": "#6f3800"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Plus Jakarta Sans"],
+                      "display": ["Plus Jakarta Sans"],
+                      "body": ["Manrope"],
+                      "label": ["Manrope"]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-image: radial-gradient(at 0% 0%, rgba(244, 162, 97, 0.05) 0px, transparent 50%), 
+                              radial-gradient(at 100% 100%, rgba(142, 78, 20, 0.05) 0px, transparent 50%);
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface flex flex-col min-h-screen">
+    
+<!-- TopNavBar -->
+<header class="bg-[#f7f9ff] dark:bg-slate-950 fixed top-0 w-full z-50">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold text-[#091d2e] dark:text-white flex items-center gap-2" style="">
+<a class="flex items-center gap-2" href="home.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="font-variation-settings: &quot;FILL&quot; 1;">pets</span>
+                All4Animal
+            </a>
+            </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-[#8e4e14] dark:text-[#f4a261] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300" href="home.html" style="">홈</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="animal-list.html" style="">동물 목록</a>
+<a class="text-[#534439] dark:text-slate-400 font-medium hover:text-[#8e4e14] transition-colors duration-300" href="review-list.html" style="">입양 후기</a>
+
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#534439] dark:text-slate-400 cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all" style="">notifications</span>
+</div>
+<a class="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full cursor-pointer hover:scale-95 transition-all" href="profile.html">
+<span class="material-symbols-outlined text-[#8e4e14]" style="">account_circle</span>
+<span class="text-sm font-semibold" style="">프로필</span>
+</a>
+</div>
+</nav>
+</header>
+
+<!-- Main Content: Signup Canvas -->
+<main class="flex-grow flex items-center justify-center py-16 px-4">
+<div class="max-w-2xl w-full">
+<!-- Signup Card -->
+<div class="bg-surface-container-lowest p-8 md:p-12 rounded-[2rem] shadow-2xl shadow-on-surface/5 border border-outline-variant/10">
+<div class="mb-10 text-center">
+<h2 class="text-3xl font-bold font-display text-on-surface mb-2">새로운 여정 시작하기</h2>
+<p class="text-on-surface-variant">All4Animal의 회원이 되어 소중한 생명을 구하는 일에 동참하세요.</p>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Login ID -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">아이디</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all" placeholder="아이디를 입력하세요" type="text"/>
+</div>
+<!-- Name -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">이름</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all" placeholder="성함을 입력하세요" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Password -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all" placeholder="••••••••" type="password"/>
+</div>
+<!-- Password Confirm -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호 확인</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Phone -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">전화번호</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all" placeholder="010-0000-0000" type="tel"/>
+</div>
+<!-- Birth Year -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">생년</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all appearance-none">
+<option value="">출생 연도 선택</option>
+<option value="2000">2000년</option>
+<option value="1999">1999년</option>
+<option value="1998">1998년</option>
+<option value="1997">1997년</option>
+<option value="1996">1996년</option>
+</select>
+</div>
+</div>
+<!-- Location -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">주소지</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all" placeholder="도로명 주소 또는 지번 주소" type="text"/>
+<button class="absolute right-3 top-2 px-3 py-1.5 bg-secondary-container text-on-secondary-container rounded-lg text-xs font-bold hover:bg-secondary-fixed transition-colors" type="button">주소 검색</button>
+</div>
+</div>
+<!-- Housing Type and Empty Time (New Fields) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Housing Type -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">주거 형태</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all appearance-none">
+<option value="">주거 형태 선택</option>
+<option value="apartment">아파트/빌라</option>
+<option value="house">단독주택</option>
+<option value="yard">마당이 있는 집</option>
+</select>
+</div>
+<!-- Empty Time -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">평균적으로 집을 비우는 시간</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all pr-12" min="0" placeholder="0" type="number"/>
+<span class="absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">시간</span>
+</div>
+</div>
+</div>
+<!-- Experience Toggle -->
+<div class="space-y-3">
+<label class="text-sm font-bold text-on-surface-variant ml-1">반려동물 양육 경험 여부</label>
+<div class="flex p-1 bg-surface-container-low rounded-xl gap-1">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer hidden" name="isExperience" type="radio" value="yes"/>
+<div class="w-full text-center py-3 rounded-lg font-bold text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary transition-all duration-300">네, 있습니다</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer hidden" name="isExperience" type="radio" value="no"/>
+<div class="w-full text-center py-3 rounded-lg font-bold text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary transition-all duration-300">아니요, 없습니다</div>
+</label>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-primary text-on-primary py-5 rounded-full text-xl font-bold font-display shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all mt-4" type="submit">
+                        회원가입
+                    </button>
+<!-- Secondary Action -->
+<div class="text-center mt-6">
+<p class="text-on-surface-variant text-sm">
+                            이미 계정이 있으신가요? 
+                            <a class="text-primary font-bold hover:underline ml-2" href="#">로그인하기</a>
+</p>
+</div>
+</form>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-[#edf4ff] dark:bg-[#0f243a] w-full mt-auto py-12 px-8 border-t border-[#091d2e]/5">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto items-center">
+<div class="flex flex-col gap-4">
+<div class="font-['Plus_Jakarta_Sans'] font-bold text-lg text-[#091d2e] dark:text-white">All4Animal</div>
+<p class="font-['Manrope'] text-sm tracking-wide text-[#534439] dark:text-slate-400 max-w-md">
+                    © 2024 All4Animal. Every pet has a story worth telling.
+                </p>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-4 md:justify-end">
+<a class="text-[#534439] dark:text-slate-400 hover:text-[#8e4e14] dark:hover:text-[#f4a261] transition-all text-sm font-['Manrope']" href="#">Terms of Service</a>
+<a class="text-[#534439] dark:text-slate-400 hover:text-[#8e4e14] dark:hover:text-[#f4a261] transition-all text-sm font-['Manrope']" href="#">Privacy Policy</a>
+<a class="text-[#534439] dark:text-slate-400 hover:text-[#8e4e14] dark:hover:text-[#f4a261] transition-all text-sm font-['Manrope']" href="#">Customer Support</a>
+<a class="text-[#534439] dark:text-slate-400 hover:text-[#8e4e14] dark:hover:text-[#f4a261] transition-all text-sm font-['Manrope']" href="#">Safety Center</a>
+</div>
+</div>
+</footer>
+</body></html>

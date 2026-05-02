@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://port-0-server-mnpq6pmy055ea378.sel3.cloudtype.app/api';
+const BASE_URL = 'http://all4animal.site:8080/api';
 
 // 로그인 API 호출 함수
 export async function loginUser({ loginId, password }) {

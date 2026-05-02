@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 import { useAuth } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import AnimalListPage from './pages/AnimalListPage';
@@ -25,6 +26,10 @@ function App() {
     setSelectedReview(id ?? null);
     setCurrentPage('review-details');
   };
+
+  if (currentPage === 'signup') {
+    return <SignupPage onNavigateLogin={() => navigate('login')} />;
+  }
 
   if (currentPage === 'login' || !isLoggedIn()) {
     return (

@@ -6,7 +6,6 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   // 액세스 토큰을 메모리에만 보관하여 보안 강화
   const [accessToken, setAccessToken] = useState(null);
-
   const login = (token) => setAccessToken(token);
   const logout = () => setAccessToken(null);
   const isLoggedIn = () => accessToken !== null;
