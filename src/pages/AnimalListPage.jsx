@@ -67,17 +67,16 @@ function AnimalListPage({
       <main className="pt-24 min-h-screen">
 
         {/* Hero */}
-        <header className="max-w-7xl mx-auto px-8 py-16 text-center">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter text-on-surface mb-6 font-headline">
+        <header className="max-w-7xl mx-auto px-8 py-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-6 font-headline">
             새로운 가족을 기다리는 친구들
           </h1>
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-            수천 마리의 마음이 사랑으로 채워줄 따뜻한 가족을 찾습니다.<br />
             모든 생명의 각자의 이야기를 담고 당신의 손길을 기다리고 있습니다.
           </p>
         </header>
 
-        {/* Search & Filter */}
+        {/* Search & Filter
         <section className="max-w-7xl mx-auto px-8 mb-12">
           <div className="bg-surface-container-lowest rounded-3xl p-4 shadow-[0_8px_32px_rgba(9,29,46,0.04)] border border-outline-variant/10 flex flex-col md:flex-row gap-4 items-center">
             <div className="flex-1 w-full relative">
@@ -107,7 +106,7 @@ function AnimalListPage({
               </button>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* 전체 동물 목록 */}
         <section className="max-w-7xl mx-auto px-8 pb-12">
