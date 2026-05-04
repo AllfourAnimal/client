@@ -21,12 +21,12 @@ export async function signupUser(
     housingType,
     emptyTime }
   ) {
-  const response = await axios.post(`${BASE_URL}/auth/signup`, { loginId, password, passwordConfirm, name, phone, birthYear, location, isExperience, housingType, emptyTime });
+  const response = await axios.post(`${BASE_URL}/signup`, { loginId, password, passwordConfirm, name, phone, birthYear, location, isExperience, housingType, emptyTime });
   return response.data;
 }
 
 // 아이디 중복 검사 API 호출 함수
 export async function checkId(loginId) {
-  const response = await axios.get(`${BASE_URL}/auth/check-id`, { params: { loginId } });
+  const response = await axios.get(`${BASE_URL}/check-id`, { params: { loginId } });
   return response.data;
 }

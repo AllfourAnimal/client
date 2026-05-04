@@ -10,6 +10,7 @@ function AnimalListPage({
   onNavigateAnimalDetails,
   onNavigateReviews,
   onNavigateProfile,
+  onNavigateAnimalListAll,
 }) {
   const [animals, setAnimals] = useState([]);
   const [animalImages, setAnimalImages] = useState({});
@@ -100,7 +101,6 @@ function AnimalListPage({
                 <option>지역 전체</option>
                 <option>서울</option>
                 <option>경기</option>
-                <option>부산</option>
               </select>
               <button className="bg-primary text-white px-8 py-3 rounded-2xl font-bold whitespace-nowrap hover:bg-primary-container transition-colors shadow-lg shadow-primary/20">
                 검색하기
@@ -113,7 +113,10 @@ function AnimalListPage({
         <section className="max-w-7xl mx-auto px-8 pb-12">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-on-surface font-headline">전체 동물 목록</h2>
-            <button className="text-primary font-bold flex items-center gap-1 hover:underline">
+            <button
+              onClick={() => onNavigateAnimalListAll(animals)}
+              className="text-primary font-bold flex items-center gap-1 hover:underline"
+            >
               전체 보기
               <span className="material-symbols-outlined text-base">chevron_right</span>
             </button>
