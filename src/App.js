@@ -14,7 +14,6 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [selectedAnimal, setSelectedAnimal] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [animalListData, setAnimalListData] = useState([]);
   const { isLoggedIn } = useAuth();
 
   const navigate = (page) => setCurrentPage(page);
@@ -62,7 +61,7 @@ function App() {
         onNavigateAnimalDetails={navigateToAnimal}
         onNavigateReviews={() => navigate('review-list')}
         onNavigateProfile={() => navigate('profile')}
-        onNavigateAnimalListAll={(animals) => { setAnimalListData(animals); navigate('animal-list-all'); }}
+        onNavigateAnimalListAll={() => navigate('animal-list-all')}
       />
     );
   }
@@ -70,7 +69,6 @@ function App() {
   if (currentPage === 'animal-list-all') {
     return (
       <AnimalListAllPage
-        animals={animalListData}
         onNavigateHome={() => navigate('home')}
         onNavigateAnimalDetails={navigateToAnimal}
         onNavigateReviews={() => navigate('review-list')}

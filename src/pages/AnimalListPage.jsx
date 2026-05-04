@@ -22,16 +22,15 @@ function AnimalListPage({
   useEffect(() => {
     const loadAnimals = async () => {
       try {
-        const data = await fetchAnimals(accessToken);
+        const data = await fetchAnimals(accessToken, 0, 6);
         setAnimals(data);
-        setFavorites(Object.fromEntries(data.map((a) => [a.animalId, false]))); // 배열을 객체로 변환 후 초기 찜 상태 설정
+        setFavorites(Object.fromEntries(data.map((a) => [a.animalId, false])));
 
-        const displayed = data.slice(0, 6); // 상위 6개 동물만 이미지 로드
         const imageResults = await Promise.allSettled(
-          displayed.map((a) => fetchAnimalImages(a.animalId, accessToken))
+          data.map((a) => fetchAnimalImages(a.animalId, accessToken))
         );
         const imageMap = Object.fromEntries(
-          displayed.map((a, i) => {
+          data.map((a, i) => {
             const result = imageResults[i];
             const firstUrl = result.status === 'fulfilled' ? result.value?.[0] : null;
             return [a.animalId, firstUrl ?? null];
@@ -67,54 +66,21 @@ function AnimalListPage({
       <main className="pt-24 min-h-screen">
 
         {/* Hero */}
-        <header className="max-w-7xl mx-auto px-8 py-16 text-center">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter text-on-surface mb-6 font-headline">
+        <header className="max-w-7xl mx-auto px-8 py-4 text-center">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter text-on-surface mb-6 font-headline">
             새로운 가족을 기다리는 친구들
           </h1>
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-            수천 마리의 마음이 사랑으로 채워줄 따뜻한 가족을 찾습니다.<br />
             모든 생명의 각자의 이야기를 담고 당신의 손길을 기다리고 있습니다.
           </p>
         </header>
-
-        {/* Search & Filter */}
-        <section className="max-w-7xl mx-auto px-8 mb-12">
-          <div className="bg-surface-container-lowest rounded-3xl p-4 shadow-[0_8px_32px_rgba(9,29,46,0.04)] border border-outline-variant/10 flex flex-col md:flex-row gap-4 items-center">
-            <div className="flex-1 w-full relative">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
-                search
-              </span>
-              <input
-                className="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-2xl focus:ring-2 focus:ring-primary-fixed transition-all text-on-surface"
-                placeholder="동물 종류, 나이, 지역으로 검색해보세요"
-                type="text"
-              />
-            </div>
-            <div className="flex gap-3 w-full md:w-auto overflow-x-auto">
-              <select className="bg-surface-container-low border-none rounded-2xl px-6 py-3 text-sm font-semibold text-on-secondary-container focus:ring-2 focus:ring-primary-fixed transition-all">
-                <option>모든 동물</option>
-                <option>강아지</option>
-                <option>고양이</option>
-                <option>기타</option>
-              </select>
-              <select className="bg-surface-container-low border-none rounded-2xl px-6 py-3 text-sm font-semibold text-on-secondary-container focus:ring-2 focus:ring-primary-fixed transition-all">
-                <option>지역 전체</option>
-                <option>서울</option>
-                <option>경기</option>
-              </select>
-              <button className="bg-primary text-white px-8 py-3 rounded-2xl font-bold whitespace-nowrap hover:bg-primary-container transition-colors shadow-lg shadow-primary/20">
-                검색하기
-              </button>
-            </div>
-          </div>
-        </section>
 
         {/* 전체 동물 목록 */}
         <section className="max-w-7xl mx-auto px-8 pb-12">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-on-surface font-headline">전체 동물 목록</h2>
             <button
-              onClick={() => onNavigateAnimalListAll(animals)}
+              onClick={() => onNavigateAnimalListAll()}
               className="text-primary font-bold flex items-center gap-1 hover:underline"
             >
               전체 보기
@@ -127,7 +93,7 @@ function AnimalListPage({
             <p className="text-center text-error py-16">{error}</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {animals.slice(0, 6).map((animal) => (
+              {animals.map((animal) => (
                 <AnimalCard
                   key={animal.animalId}
                   animal={animal}

@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
-import { fetchAnimalImages } from '../api/animals';
+import { fetchAnimals, fetchAnimalImages } from '../api/animals';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
@@ -8,7 +8,6 @@ import AnimalCard from '../components/animals/AnimalCard';
 const PAGE_SIZE = 6;
 
 function AnimalListAllPage({
-  animals = [],
   onNavigateHome,
   onNavigateAnimalDetails,
   onNavigateReviews,
@@ -16,28 +15,64 @@ function AnimalListAllPage({
   onNavigateAnimalList,
 }) {
   const { accessToken } = useAuth();
+  const [animals, setAnimals] = useState([]);
   const [animalImages, setAnimalImages] = useState({});
   const [favorites, setFavorites] = useState({});
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    if (animals.length === 0) return;
-    setFavorites(Object.fromEntries(animals.map((a) => [a.animalId, false])));
-  }, [animals]);
+    const loadPage = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchAnimals(accessToken, 0, PAGE_SIZE);
+        setAnimals(data);
+        setFavorites(Object.fromEntries(data.map((a) => [a.animalId, false])));
+        setHasMore(data.length === PAGE_SIZE);
+        setPage(1);
+        loadImages(data);
+      } catch {
+        setError('동물 목록을 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPage();
+  }, [accessToken]);
 
-  useEffect(() => {
-    const toLoad = animals.slice(0, visibleCount).filter((a) => !(a.animalId in animalImages));
+  const loadImages = async (newAnimals) => {
+    const toLoad = newAnimals.filter((a) => !(a.animalId in animalImages));
     if (toLoad.length === 0) return;
+    const results = await Promise.allSettled(toLoad.map((a) => fetchAnimalImages(a.animalId, accessToken)));
+    setAnimalImages((prev) => ({
+      ...prev,
+      ...Object.fromEntries(
+        toLoad.map((a, i) => [a.animalId, results[i].status === 'fulfilled' ? results[i].value?.[0] ?? null : null])
+      ),
+    }));
+  };
 
-    Promise.allSettled(toLoad.map((a) => fetchAnimalImages(a.animalId, accessToken))).then((results) => {
-      setAnimalImages((prev) => ({
+  const loadMore = async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    try {
+      const data = await fetchAnimals(accessToken, page, PAGE_SIZE);
+      setAnimals((prev) => [...prev, ...data]);
+      setFavorites((prev) => ({
         ...prev,
-        ...Object.fromEntries(
-          toLoad.map((a, i) => [a.animalId, results[i].status === 'fulfilled' ? results[i].value?.[0] ?? null : null])
-        ),
+        ...Object.fromEntries(data.map((a) => [a.animalId, false])),
       }));
-    });
-  }, [visibleCount, animals, accessToken]);
+      setHasMore(data.length === PAGE_SIZE);
+      setPage((prev) => prev + 1);
+      loadImages(data);
+    } catch {
+      setError('추가 데이터를 불러오지 못했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleFavorite = (id) => setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
 
@@ -90,11 +125,20 @@ function AnimalListAllPage({
         <section className="max-w-7xl mx-auto px-8 pb-20">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-on-surface font-headline">전체 동물 목록</h2>
-            <span className="text-on-surface-variant text-sm">{animals.length}마리</span>
+            <button
+              onClick={() => onNavigateAnimalList()}
+              className="text-primary font-bold flex items-center gap-1 hover:underline"
+            >
+              <span className="material-symbols-outlined text-base">chevron_left</span>
+              목록 요약
+            </button>
+            {/* <span className="text-on-surface-variant text-sm">{animals.length}마리</span> */}
           </div>
 
+          {error && <p className="text-center text-error py-8">{error}</p>}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {animals.slice(0, visibleCount).map((animal) => (
+            {animals.map((animal) => (
               <AnimalCard
                 key={animal.animalId}
                 animal={animal}
@@ -106,13 +150,14 @@ function AnimalListAllPage({
             ))}
           </div>
 
-          {visibleCount < animals.length && (
+          {hasMore && (
             <div className="flex justify-center mt-12">
               <button
-                onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
-                className="bg-surface-container-low text-primary font-bold px-12 py-3 rounded-2xl hover:bg-primary hover:text-white transition-colors border border-outline-variant/20"
+                onClick={loadMore}
+                disabled={loading}
+                className="bg-surface-container-low text-primary font-bold px-12 py-3 rounded-2xl hover:bg-primary hover:text-white transition-colors border border-outline-variant/20 disabled:opacity-50"
               >
-                더보기
+                {loading ? '불러오는 중...' : '더보기'}
               </button>
             </div>
           )}

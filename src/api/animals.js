@@ -3,9 +3,10 @@
 const BASE_URL = '/api/animals';
 
 // 동물 정보 API 호출 함수
-export async function fetchAnimals(token) {
+export async function fetchAnimals(token, page = 0, size = 10) {
   const response = await axios.get(`${BASE_URL}`, {
     headers: { Authorization: `Bearer ${token}` },
+    params: { page, size },
   });
   return response.data;
 }
