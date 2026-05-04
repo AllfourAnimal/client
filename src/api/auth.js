@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://all4animal.site/api/auth';
+const BASE_URL = '/api/auth';
 
 // 로그인 API 호출 함수
 export async function loginUser({ loginId, password }) {

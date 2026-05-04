@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchAnimals } from '../api/animals';
+import { syncAnimals } from '../api/animals';
+import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import AnimalCard from '../components/animals/AnimalCard';
@@ -14,13 +16,14 @@ function AnimalListPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [favorites, setFavorites] = useState({});
+  const { accessToken } = useAuth();
 
   useEffect(() => {
     const loadAnimals = async () => {
       try {
-        const data = await fetchAnimals();
+        const data = await fetchAnimals(accessToken);
         setAnimals(data);
-        setFavorites(Object.fromEntries(data.map((a) => [a.name, false])));
+        setFavorites(Object.fromEntries(data.map((a) => [a.animalId, false])));
       } catch (err) {
         setError('동물 목록을 불러오지 못했습니다.');
       } finally {
@@ -28,12 +31,12 @@ function AnimalListPage({
       }
     };
     loadAnimals();
-  }, []);
+  }, [accessToken]);
 
   const toggleFavorite = (name) =>
     setFavorites((prev) => ({ ...prev, [name]: !prev[name] }));
 
-  const likedAnimals = animals.filter((a) => favorites[a.name]);
+  const likedAnimals = animals.filter((a) => favorites[a.animalId]);
 
   return (
     <div className="bg-background text-on-background font-body">
@@ -107,11 +110,11 @@ function AnimalListPage({
             <p className="text-center text-error py-16">{error}</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {animals.map((animal) => (
+              {animals.slice(0, 6).map((animal) => (
                 <AnimalCard
-                  key={animal.name}
+                  key={animal.animalId}
                   animal={animal}
-                  isFavorited={favorites[animal.name]}
+                  isFavorited={favorites[animal.animalId]}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}
                 />
@@ -133,9 +136,9 @@ function AnimalListPage({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {likedAnimals.map((animal) => (
                 <AnimalCard
-                  key={animal.name}
+                  key={animal.animalId}
                   animal={animal}
-                  isFavorited={favorites[animal.name]}
+                  isFavorited={favorites[animal.animalId]}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}
                   compact

@@ -1,28 +1,42 @@
 import HeartButton from './HeartButton';
 
+const CURRENT_YEAR = new Date().getFullYear();
+
+function getAgeLabel(birthYear) {
+  const age = CURRENT_YEAR - birthYear;
+  return age >= 1 ? `${age}살` : '1살 미만';
+}
+
+function getSexLabel(sex) {
+  if (!sex) return '';
+  return sex.toUpperCase() === 'MALE' ? '수컷' : '암컷';
+}
+
 function AnimalCard({ animal, isFavorited, onToggleFavorite, onNavigateAnimalDetails, compact = false }) {
+  const tags = [
+    getAgeLabel(animal.animal_age),
+    animal.species,
+    getSexLabel(animal.animal_sex),
+  ].filter(Boolean);
+
   return (
     <div
       className="bg-surface-container-lowest rounded-3xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 border border-outline-variant/10 hover:shadow-2xl hover:shadow-primary/10 cursor-pointer"
-      onClick={() => onNavigateAnimalDetails(animal.name)}
+      onClick={() => onNavigateAnimalDetails(animal.animalId)}
     >
-      <div className={`relative ${compact ? 'h-60' : 'h-72'} overflow-hidden`}>
-        <img
-          alt={`강아지 ${animal.name}`}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src={animal.src}
-        />
+      <div className={`relative ${compact ? 'h-60' : 'h-72'} overflow-hidden bg-surface-container-low flex items-center justify-center`}>
+        <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20">pets</span>
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-primary shadow-sm">
-          {animal.status}
+          {animal.isAdopted ? '입양완료' : '보호중'}
         </div>
-        <HeartButton isFavorited={isFavorited} onToggle={() => onToggleFavorite(animal.name)} />
+        <HeartButton isFavorited={isFavorited} onToggle={() => onToggleFavorite(animal.animalId)} />
       </div>
       <div className="p-6">
         <h3 className={`font-bold text-on-surface mb-2 ${compact ? 'text-xl' : 'text-2xl'}`}>
-          {animal.name}
+          {animal.animalId}
         </h3>
         <div className="flex flex-wrap gap-2 mb-4">
-          {animal.tags.map((tag) => (
+          {tags.map((tag) => (
             <span
               key={tag}
               className={`bg-surface-container-low text-on-secondary-container text-xs font-semibold rounded-full ${
@@ -34,7 +48,7 @@ function AnimalCard({ animal, isFavorited, onToggleFavorite, onNavigateAnimalDet
           ))}
         </div>
         {!compact && (
-          <p className="text-on-surface-variant text-sm leading-relaxed">{animal.description}</p>
+          <p className="text-on-surface-variant text-sm leading-relaxed">설명란</p>
         )}
       </div>
     </div>
