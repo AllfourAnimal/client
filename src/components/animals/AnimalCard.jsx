@@ -35,7 +35,7 @@ function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, onNavigat
           <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20">pets</span>
         )}
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-primary shadow-sm">
-          {animal.isAdopted ? '입양완료' : '보호중'}
+          {animal.adopted ? '입양완료' : '보호중'}
         </div>
         <HeartButton isFavorited={isFavorited} onToggle={() => onToggleFavorite(animal.animalId)} />
       </div>
