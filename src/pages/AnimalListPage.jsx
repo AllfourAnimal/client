@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-import { fetchAnimals } from '../api/animals';
-import { syncAnimals } from '../api/animals';
+﻿import { useState, useEffect } from 'react';
+import { fetchAnimals, fetchAnimalImages } from '../api/animals';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
@@ -13,6 +12,7 @@ function AnimalListPage({
   onNavigateProfile,
 }) {
   const [animals, setAnimals] = useState([]);
+  const [animalImages, setAnimalImages] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [favorites, setFavorites] = useState({});
@@ -23,7 +23,21 @@ function AnimalListPage({
       try {
         const data = await fetchAnimals(accessToken);
         setAnimals(data);
-        setFavorites(Object.fromEntries(data.map((a) => [a.animalId, false])));
+        setFavorites(Object.fromEntries(data.map((a) => [a.animalId, false]))); // 배열을 객체로 변환 후 초기 찜 상태 설정
+
+        const displayed = data.slice(0, 6); // 상위 6개 동물만 이미지 로드
+        const imageResults = await Promise.allSettled(
+          displayed.map((a) => fetchAnimalImages(a.animalId, accessToken))
+        );
+        const imageMap = Object.fromEntries(
+          displayed.map((a, i) => {
+            const result = imageResults[i];
+            const firstUrl = result.status === 'fulfilled' ? result.value?.[0] : null;
+            return [a.animalId, firstUrl ?? null];
+          })
+        );
+        setAnimalImages(imageMap);
+
       } catch (err) {
         setError('동물 목록을 불러오지 못했습니다.');
       } finally {
@@ -33,8 +47,8 @@ function AnimalListPage({
     loadAnimals();
   }, [accessToken]);
 
-  const toggleFavorite = (name) =>
-    setFavorites((prev) => ({ ...prev, [name]: !prev[name] }));
+  const toggleFavorite = (id) =>
+    setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const likedAnimals = animals.filter((a) => favorites[a.animalId]);
 
@@ -114,6 +128,7 @@ function AnimalListPage({
                 <AnimalCard
                   key={animal.animalId}
                   animal={animal}
+                  imageSrc={animalImages[animal.animalId]}
                   isFavorited={favorites[animal.animalId]}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}
@@ -138,6 +153,7 @@ function AnimalListPage({
                 <AnimalCard
                   key={animal.animalId}
                   animal={animal}
+                  imageSrc={animalImages[animal.animalId]}
                   isFavorited={favorites[animal.animalId]}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}

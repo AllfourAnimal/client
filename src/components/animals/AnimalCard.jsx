@@ -12,7 +12,7 @@ function getSexLabel(sex) {
   return sex.toUpperCase() === 'MALE' ? '수컷' : '암컷';
 }
 
-function AnimalCard({ animal, isFavorited, onToggleFavorite, onNavigateAnimalDetails, compact = false }) {
+function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, onNavigateAnimalDetails, compact = false }) {
   const tags = [
     getAgeLabel(animal.animal_age),
     animal.species,
@@ -25,7 +25,15 @@ function AnimalCard({ animal, isFavorited, onToggleFavorite, onNavigateAnimalDet
       onClick={() => onNavigateAnimalDetails(animal.animalId)}
     >
       <div className={`relative ${compact ? 'h-60' : 'h-72'} overflow-hidden bg-surface-container-low flex items-center justify-center`}>
-        <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20">pets</span>
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt={`${animal.species} ${animal.animalId}`}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20">pets</span>
+        )}
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-primary shadow-sm">
           {animal.isAdopted ? '입양완료' : '보호중'}
         </div>
