@@ -9,6 +9,7 @@ import AnimalDetailsPage from './pages/AnimalDetailsPage';
 import ReviewListPage from './pages/ReviewListPage';
 import ReviewDetailsPage from './pages/ReviewDetailsPage';
 import ReviewPostPage from './pages/ReviewPostPage';
+import FavoritesAllPage from './pages/FavoritesAllPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
@@ -62,6 +63,19 @@ function App() {
         onNavigateReviews={() => navigate('review-list')}
         onNavigateProfile={() => navigate('profile')}
         onNavigateAnimalListAll={() => navigate('animal-list-all')}
+        onNavigateFavoritesAll={() => navigate('favorites-all')}
+      />
+    );
+  }
+
+  if (currentPage === 'favorites-all') {
+    return (
+      <FavoritesAllPage
+        onNavigateHome={() => navigate('home')}
+        onNavigateAnimalDetails={navigateToAnimal}
+        onNavigateReviews={() => navigate('review-list')}
+        onNavigateProfile={() => navigate('profile')}
+        onNavigateAnimalList={() => navigate('animal-list')}
       />
     );
   }

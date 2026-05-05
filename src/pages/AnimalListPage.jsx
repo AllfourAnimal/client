@@ -12,6 +12,7 @@ function AnimalListPage({
   onNavigateReviews,
   onNavigateProfile,
   onNavigateAnimalListAll,
+  onNavigateFavoritesAll,
 }) {
   const [animals, setAnimals] = useState([]);
   const [animalImages, setAnimalImages] = useState({});
@@ -107,7 +108,10 @@ function AnimalListPage({
         <section className="max-w-7xl mx-auto px-8 pb-20">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-on-surface font-headline">찜한 동물 목록</h2>
-            <button className="text-primary font-bold flex items-center gap-1 hover:underline">
+            <button
+              onClick={() => onNavigateFavoritesAll()}
+              className="text-primary font-bold flex items-center gap-1 hover:underline"
+            >
               전체 보기
               <span className="material-symbols-outlined text-base">chevron_right</span>
             </button>
