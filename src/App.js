@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import { useAuth } from './context/AuthContext';
 import HomePage from './pages/HomePage';
+import PreferencesPage from './pages/PreferencesPage';
 import AnimalListPage from './pages/AnimalListPage';
 import AnimalListAllPage from './pages/AnimalListAllPage';
 import AnimalDetailsPage from './pages/AnimalDetailsPage';
@@ -15,7 +16,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [selectedAnimal, setSelectedAnimal] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, hasCompletedSurvey } = useAuth();
 
   const navigate = (page) => setCurrentPage(page);
 
@@ -37,10 +38,14 @@ function App() {
     return (
       <LoginPage
         onNavigateHome={() => navigate('home')}
-        onNavigatePreferences={() => navigate('home')}
+        onNavigatePreferences={() => navigate(hasCompletedSurvey ? 'home' : 'preferences')}
         onNavigateSignup={() => navigate('signup')}
       />
     );
+  }
+
+  if (currentPage === 'preferences') {
+    return <PreferencesPage onNavigateHome={() => navigate('home')} />;
   }
 
   if (currentPage === 'home') {

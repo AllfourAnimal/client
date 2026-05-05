@@ -6,12 +6,24 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   // 액세스 토큰을 메모리에만 보관하여 보안 강화
   const [accessToken, setAccessToken] = useState(null);
+  const [hasCompletedSurvey, setHasCompletedSurvey] = useState(
+    () => localStorage.getItem('survey_completed') === 'true'
+  );
+
   const login = (token) => setAccessToken(token);
-  const logout = () => setAccessToken(null);
+  const logout = () => {
+    setAccessToken(null);
+    setHasCompletedSurvey(false);
+    localStorage.removeItem('survey_completed');
+  };
   const isLoggedIn = () => accessToken !== null;
+  const markSurveyComplete = () => {
+    setHasCompletedSurvey(true);
+    localStorage.setItem('survey_completed', 'true');
+  };
 
   return (
-    <AuthContext.Provider value={{ accessToken, login, logout, isLoggedIn }}>
+    <AuthContext.Provider value={{ accessToken, login, logout, isLoggedIn, hasCompletedSurvey, markSurveyComplete }}>
       {children}
     </AuthContext.Provider>
   );
