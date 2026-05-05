@@ -18,3 +18,12 @@ export async function fetchAnimalImages(animalId, token) {
   });
   return response.data;
 }
+
+// 동물 검색 필터링 API 호출 함수
+export async function searchAnimals(token, filters) {
+  const response = await axios.get(`${BASE_URL}/search`, {
+    headers: { Authorization: `Bearer ${token}` },
+    params: filters,
+  });
+  return response.data;
+}
