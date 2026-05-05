@@ -425,7 +425,7 @@ function HomePage({
               </button>
             </header>
 
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-surface-container-low px-5 py-5">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain bg-surface-container-low px-5 py-5">
               {chatMessages.map((message) => (
                 <div
                   key={message.id}
