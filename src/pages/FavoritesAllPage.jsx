@@ -78,6 +78,7 @@ function FavoritesAllPage({
         activePage="animal-list"
         isCurrentPage
         onNavigateHome={onNavigateHome}
+        onNavigateAnimalList={onNavigateAnimalList}
         onNavigateReviews={onNavigateReviews}
         onNavigateProfile={onNavigateProfile}
       />

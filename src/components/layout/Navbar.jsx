@@ -1,49 +1,32 @@
 function Navbar({
   activePage,
-  isCurrentPage = false,
   onNavigateHome,
   onNavigateAnimalList,
   onNavigateReviews,
   onNavigateProfile,
 }) {
-  const activeStaticClass = 'text-[#8e4e14] font-bold border-b-2 border-[#8e4e14] pb-1 cursor-default';
   const activeButtonClass = 'text-[#8e4e14] font-bold border-b-2 border-[#8e4e14] pb-1 transition-colors duration-300';
   const inactiveClass = 'text-[#534439] font-medium hover:text-[#8e4e14] transition-colors duration-300';
 
-  const renderNavLink = (page, label, onClick) => {
-    if (activePage === page) {
-      return isCurrentPage
-        ? <span className={activeStaticClass}>{label}</span>
-        : <button className={activeButtonClass} onClick={onClick}>{label}</button>;
-    }
-    return <button className={inactiveClass} onClick={onClick}>{label}</button>;
-  };
+  const renderNavLink = (page, label, onClick) => (
+    <button className={activePage === page ? activeButtonClass : inactiveClass} onClick={onClick}>
+      {label}
+    </button>
+  );
 
   return (
     <header className="bg-[#f7f9ff] fixed top-0 w-full z-50">
       <nav className="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
         <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2">
-          {activePage === 'home' && isCurrentPage ? (
-            <span className="flex items-center gap-2">
-              <span
-                className="material-symbols-outlined text-[#8e4e14]"
-                style={{ fontVariationSettings: '"FILL" 1' }}
-              >
-                pets
-              </span>
-              All4Animal
+          <button className="flex items-center gap-2" onClick={onNavigateHome}>
+            <span
+              className="material-symbols-outlined text-[#8e4e14]"
+              style={{ fontVariationSettings: '"FILL" 1' }}
+            >
+              pets
             </span>
-          ) : (
-            <button className="flex items-center gap-2" onClick={onNavigateHome}>
-              <span
-                className="material-symbols-outlined text-[#8e4e14]"
-                style={{ fontVariationSettings: '"FILL" 1' }}
-              >
-                pets
-              </span>
-              All4Animal
-            </button>
-          )}
+            All4Animal
+          </button>
         </div>
 
         <div className="hidden md:flex items-center space-x-8">
