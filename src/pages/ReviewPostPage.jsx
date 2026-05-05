@@ -68,6 +68,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
   const [adoptions, setAdoptions] = useState([]);
   const [adoptionsLoading, setAdoptionsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [copiedAnimalId, setCopiedAnimalId] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -95,6 +96,20 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
 
     if (selectedAnimalId && onNavigateAnimalDetails) {
       onNavigateAnimalDetails(String(selectedAnimalId));
+    }
+  };
+
+  const handleCopyAnimalId = async (e, animalId) => {
+    e.stopPropagation();
+    if (!animalId) return;
+
+    const text = String(animalId);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedAnimalId(text);
+      setTimeout(() => setCopiedAnimalId(''), 1500);
+    } catch (err) {
+      setError('동물 고유번호를 복사하지 못했습니다.');
     }
   };
 
@@ -167,30 +182,60 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
                   const selectedAnimalId = getAnimalId(adoption);
                   const selectedPetName = getPetName(adoption) || '이름 정보 없음';
                   const address = getAdoptionAddress(adoption);
+                  const reviewWritten = Boolean(adoption.reviewWritten);
 
                   return (
-                    <button
+                    <div
                       key={adoption.adoptionId || adoption.applicationId || adoption.id || `${selectedAnimalId}-${index}`}
-                      className="text-left rounded-xl border border-outline-variant/20 bg-surface-container-low p-5 transition-all hover:border-primary/40 hover:bg-primary-container/10 active:scale-[0.99]"
-                      type="button"
+                      className="cursor-pointer text-left rounded-xl border border-outline-variant/20 bg-surface-container-low p-5 transition-all hover:border-primary/40 hover:bg-primary-container/10 active:scale-[0.99]"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => handleSelectAdoption(adoption)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleSelectAdoption(adoption);
+                        }
+                      }}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <span className="inline-flex rounded-full bg-primary-container/20 px-3 py-1 text-xs font-bold text-primary">
                             {statusLabel}
                           </span>
+                          <span className={`ml-2 inline-flex rounded-full px-3 py-1 text-xs font-bold ${
+                            reviewWritten
+                              ? 'bg-surface-container-high text-on-surface-variant'
+                              : 'bg-tertiary-fixed/40 text-tertiary'
+                          }`}>
+                            {reviewWritten ? '리뷰 작성 완료' : '리뷰 작성 가능'}
+                          </span>
                           <h3 className="mt-3 text-lg font-extrabold text-on-surface">{selectedPetName}</h3>
-                          <p className="mt-1 text-sm text-on-surface-variant">
-                            동물 고유번호 {selectedAnimalId || '-'}
-                          </p>
+                          <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-on-surface-variant">
+                            <span>동물 고유번호 {selectedAnimalId || '-'}</span>
+                            {selectedAnimalId && (
+                              <button
+                                className="inline-flex size-7 items-center justify-center rounded-full text-primary transition-all hover:bg-primary-container/20"
+                                title="동물 고유번호 복사"
+                                type="button"
+                                onClick={(e) => handleCopyAnimalId(e, selectedAnimalId)}
+                              >
+                                <span className="material-symbols-outlined text-base">
+                                  {copiedAnimalId === String(selectedAnimalId) ? 'check' : 'content_copy'}
+                                </span>
+                              </button>
+                            )}
+                            {copiedAnimalId === String(selectedAnimalId) && (
+                              <span className="text-xs font-bold text-primary">복사됨</span>
+                            )}
+                          </div>
                           <p className="mt-2 flex items-start gap-1 text-sm text-on-surface-variant">
                             <span className="material-symbols-outlined text-base text-tertiary">location_on</span>
                             <span>{address || '주소 정보 없음'}</span>
                           </p>
                         </div>
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
