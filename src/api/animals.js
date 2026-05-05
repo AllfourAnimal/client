@@ -27,3 +27,11 @@ export async function searchAnimals(token, filters) {
   });
   return response.data;
 }
+
+// 동물 스토리 조회 API 호출 함수
+export async function getAnimalStory(animalId, token) {
+  const response = await axios.get(`https://all4animal.site/api/stories/${animalId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+}
