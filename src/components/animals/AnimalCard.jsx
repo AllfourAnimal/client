@@ -9,7 +9,10 @@ function getAgeLabel(birthYear) {
 
 function getSexLabel(sex) {
   if (!sex) return '';
-  return sex.toUpperCase() === 'MALE' ? '수컷' : '암컷';
+  const s = sex.toUpperCase();
+  if (s === 'MALE' || s === 'M') return '수컷';
+  if (s === 'FEMALE' || s === 'F') return '암컷';
+  return '중성';
 }
 
 function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, onNavigateAnimalDetails, compact = false }) {
@@ -37,7 +40,7 @@ function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, onNavigat
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-primary shadow-sm">
           {animal.adopted ? '입양완료' : '보호중'}
         </div>
-        <HeartButton isFavorited={isFavorited} onToggle={() => onToggleFavorite(animal.animalId)} />
+        <HeartButton isFavorited={isFavorited} onToggle={() => onToggleFavorite(animal.animalId, animal, isFavorited)} />
       </div>
       <div className="p-6">
         <h3 className={`font-bold text-on-surface mb-2 ${compact ? 'text-xl' : 'text-2xl'}`}>

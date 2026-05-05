@@ -4,20 +4,38 @@ import { useAuth } from './AuthContext';
 
 const FavoritesContext = createContext(null);
 
+// sex/gender 관련 키를 동적으로 탐색
+function extractSex(item) {
+  // || 사용: 빈 문자열("")도 건너뜀. 확인된 필드명 animal_sex 우선
+  return item.animal_sex || item.animlSex || item.animalSex|| null;
+}
+
+function toAnimalShape(item) {
+  return {
+    animalId: Number(item.animalId ?? item.animal_id ?? item.id),
+    species: item.species ?? item.speices ?? '',
+    animal_age: item.animalAge ?? item.animal_age ?? null,
+    animal_sex: extractSex(item),
+    adopted: item.adopted ?? false,
+    thumbnailImageUrl: item.thumbnailImageUrl ?? null,
+  };
+}
+
 export function FavoritesProvider({ children }) {
   const { accessToken } = useAuth();
   const [favoriteIds, setFavoriteIds] = useState(new Set());
+  const [favoriteAnimals, setFavoriteAnimals] = useState([]);
 
   const loadFavorites = useCallback(async () => {
     if (!accessToken) {
       setFavoriteIds(new Set());
+      setFavoriteAnimals([]);
       return;
     }
     try {
       const data = await fetchFavorites(accessToken);
       console.log('[Favorites] raw response:', data);
 
-      // 배열 또는 Spring Page({ content: [...] }) 등 다양한 응답 구조 처리
       let items = [];
       if (Array.isArray(data)) {
         items = data;
@@ -27,16 +45,27 @@ export function FavoritesProvider({ children }) {
         items = data.data;
       }
 
-      // animalId / animal_id / id 등 다양한 필드명 처리
       const ids = items
         .map((item) => Number(item.animalId ?? item.animal_id ?? item.id))
         .filter((id) => !isNaN(id));
 
       console.log('[Favorites] parsed ids:', ids);
       setFavoriteIds(new Set(ids));
+      // 함수형 업데이트로 기존 상태 참조 — 서버 응답에 animal_sex가 없을 때 낙관적 업데이트 값 보존
+      setFavoriteAnimals((prev) =>
+        items.map((item) => {
+          const shaped = toAnimalShape(item);
+          if (!shaped.animal_sex) {
+            const cached = prev.find((a) => a.animalId === shaped.animalId);
+            if (cached?.animal_sex) shaped.animal_sex = cached.animal_sex;
+          }
+          return shaped;
+        })
+      );
     } catch (err) {
       console.error('[Favorites] loadFavorites error:', err);
       setFavoriteIds(new Set());
+      setFavoriteAnimals([]);
     }
   }, [accessToken]);
 
@@ -44,16 +73,28 @@ export function FavoritesProvider({ children }) {
     loadFavorites();
   }, [loadFavorites]);
 
-  const toggleFavorite = useCallback(async (animalId) => {
+  // animalId, animalData(animal 객체), isCurrentlyFavorited(현재 찜 여부)를 받아 낙관적 업데이트 수행
+  const toggleFavorite = useCallback(async (animalId, animalData, isCurrentlyFavorited) => {
     if (!accessToken) return;
     const id = Number(animalId);
+    const isRemoving = !!isCurrentlyFavorited;
 
-    // 낙관적 업데이트
+    // favoriteIds 낙관적 업데이트
     setFavoriteIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
+      if (isRemoving) next.delete(id);
       else next.add(id);
       return next;
+    });
+
+    // favoriteAnimals 낙관적 업데이트 — 카드 즉시 추가/제거
+    setFavoriteAnimals((prev) => {
+      if (isRemoving) {
+        return prev.filter((a) => a.animalId !== id);
+      }
+      // 이미 목록에 있으면 중복 추가 방지
+      if (prev.some((a) => a.animalId === id)) return prev;
+      return [...prev, toAnimalShape(animalData ?? { animalId: id })];
     });
 
     try {
@@ -61,12 +102,13 @@ export function FavoritesProvider({ children }) {
     } catch (err) {
       console.error('[Favorites] toggleFavorite error:', err);
     } finally {
+      // 서버 데이터(thumbnailImageUrl 등)로 최종 보정
       await loadFavorites();
     }
   }, [accessToken, loadFavorites]);
 
   return (
-    <FavoritesContext.Provider value={{ favoriteIds, toggleFavorite }}>
+    <FavoritesContext.Provider value={{ favoriteIds, favoriteAnimals, toggleFavorite }}>
       {children}
     </FavoritesContext.Provider>
   );

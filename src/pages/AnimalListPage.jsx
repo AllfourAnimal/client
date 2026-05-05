@@ -18,7 +18,7 @@ function AnimalListPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { accessToken } = useAuth();
-  const { favoriteIds, toggleFavorite } = useFavorites();
+  const { favoriteIds, favoriteAnimals, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     const loadAnimals = async () => {
@@ -47,7 +47,6 @@ function AnimalListPage({
     loadAnimals();
   }, [accessToken]);
 
-  const likedAnimals = animals.filter((a) => favoriteIds.has(Number(a.animalId)));
 
   return (
     <div className="bg-background text-on-background font-body">
@@ -113,14 +112,14 @@ function AnimalListPage({
               <span className="material-symbols-outlined text-base">chevron_right</span>
             </button>
           </div>
-          {likedAnimals.length > 0 ? (
+          {favoriteAnimals.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {likedAnimals.map((animal) => (
+              {favoriteAnimals.slice(0, 4).map((animal) => (
                 <AnimalCard
                   key={animal.animalId}
                   animal={animal}
-                  imageSrc={animalImages[animal.animalId]}
-                  isFavorited={favoriteIds.has(Number(animal.animalId))}
+                  imageSrc={animal.thumbnailImageUrl}
+                  isFavorited={favoriteIds.has(animal.animalId)}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}
                   compact
