@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import { fetchAnimals, fetchAnimalImages } from '../api/animals';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import AnimalCard from '../components/animals/AnimalCard';
@@ -15,9 +16,9 @@ function AnimalListAllPage({
   onNavigateAnimalList,
 }) {
   const { accessToken } = useAuth();
+  const { favoriteIds, toggleFavorite } = useFavorites();
   const [animals, setAnimals] = useState([]);
   const [animalImages, setAnimalImages] = useState({});
-  const [favorites, setFavorites] = useState({});
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,6 @@ function AnimalListAllPage({
       try {
         const data = await fetchAnimals(accessToken, 0, PAGE_SIZE);
         setAnimals(data);
-        setFavorites(Object.fromEntries(data.map((a) => [a.animalId, false])));
         setHasMore(data.length === PAGE_SIZE);
         setPage(1);
         loadImages(data);
@@ -60,10 +60,6 @@ function AnimalListAllPage({
     try {
       const data = await fetchAnimals(accessToken, page, PAGE_SIZE);
       setAnimals((prev) => [...prev, ...data]);
-      setFavorites((prev) => ({
-        ...prev,
-        ...Object.fromEntries(data.map((a) => [a.animalId, false])),
-      }));
       setHasMore(data.length === PAGE_SIZE);
       setPage((prev) => prev + 1);
       loadImages(data);
@@ -73,8 +69,6 @@ function AnimalListAllPage({
       setLoading(false);
     }
   };
-
-  const toggleFavorite = (id) => setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
 
   return (
     <div className="bg-background text-on-background font-body">
@@ -143,7 +137,7 @@ function AnimalListAllPage({
                 key={animal.animalId}
                 animal={animal}
                 imageSrc={animalImages[animal.animalId]}
-                isFavorited={favorites[animal.animalId]}
+                isFavorited={favoriteIds.has(Number(animal.animalId))}
                 onToggleFavorite={toggleFavorite}
                 onNavigateAnimalDetails={onNavigateAnimalDetails}
               />
