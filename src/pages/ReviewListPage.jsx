@@ -51,7 +51,7 @@ function normalizeReview(review) {
     date: formatDateOnly(review.createdAt || review.date || review.createdDate),
     excerpt: content.length > 90 ? `${content.slice(0, 90)}...` : content,
     category: review.category || review.animalType || review.petType || '',
-    certified: Boolean(review.certified ?? review.adoptionCertified ?? review.isCertified),
+    certified: Boolean(review.certified ?? review.adoptionCertified ?? review.isCertified ?? review.adopted),
     image,
     alt: review.title || '입양 후기 사진',
   };
