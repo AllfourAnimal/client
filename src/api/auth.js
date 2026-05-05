@@ -27,6 +27,6 @@ export async function signupUser(
 
 // 아이디 중복 검사 API 호출 함수
 export async function checkId(loginId) {
-  const response = await axios.get(`${BASE_URL}/check-id`, { params: { loginId } });
+  const response = await axios.get(`${BASE_URL}/checkId`, { params: { loginId } });
   return response.data;
 }

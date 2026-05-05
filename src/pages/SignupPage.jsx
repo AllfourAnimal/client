@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { signupUser } from '../api/auth';
-import { checkId } from '../api/auth';
+import { checkId, signupUser } from '../api/auth';
 import AppFooter from '../components/layout/AppFooter';
 
 function SignupPage({ onNavigateLogin }) {
@@ -18,11 +17,58 @@ function SignupPage({ onNavigateLogin }) {
   });
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
+  const [idCheck, setIdCheck] = useState({
+    checkedId: '',
+    isAvailable: false,
+    message: ''
+  });
+  const [isCheckingId, setIsCheckingId] = useState(false);
 
   // 폼 입력 핸들러
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === 'loginId') {
+      setIdCheck({
+        checkedId: '',
+        isAvailable: false,
+        message: ''
+      });
+    }
+  };
+
+  const handleCheckId = async () => {
+    const loginId = form.loginId.trim();
+    setError('');
+    setFieldErrors((prev) => ({ ...prev, loginId: undefined }));
+
+    if (!loginId) {
+      setIdCheck({
+        checkedId: '',
+        isAvailable: false,
+        message: '아이디를 입력해주세요.'
+      });
+      return;
+    }
+
+    setIsCheckingId(true);
+    try {
+      const data = await checkId(loginId);
+
+      setIdCheck({
+        checkedId: loginId,
+        isAvailable: data.available,
+        message: data.available ? '사용 가능한 아이디입니다.' : '이미 사용 중인 아이디입니다.'
+      });
+    } catch (err) {
+      setIdCheck({
+        checkedId: loginId,
+        isAvailable: false,
+        message: err.response?.data?.message || '아이디 중복 확인에 실패했습니다.'
+      });
+    } finally {
+      setIsCheckingId(false);
+    }
   };
 
   // 폼 제출 핸들러
@@ -31,15 +77,22 @@ function SignupPage({ onNavigateLogin }) {
     setError('');
     setFieldErrors({});
 
+    if (!idCheck.isAvailable || idCheck.checkedId !== form.loginId.trim()) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        loginId: '아이디 중복 확인을 해주세요.'
+      }));
+      return;
+    }
+
     try {
-      // Todo: 아이디 중복 검사
-      await signupUser(form);
+      await signupUser({ ...form, loginId: form.loginId.trim() });
       onNavigateLogin();
     } catch (err) {
       const errors = err.response?.data?.errors;
       if (errors)
         setFieldErrors(errors);
-      setError((err.response.data.code === 'BAD_REQUEST' || err.response.data.code === 'VALIDATION_ERROR') ? '회원가입에 실패했습니다. 입력한 정보를 확인해주세요.' : err.response?.data?.message);
+      setError((err.response?.data?.code === 'BAD_REQUEST' || err.response?.data?.code === 'VALIDATION_ERROR') ? '회원가입에 실패했습니다. 입력한 정보를 확인해주세요.' : err.response?.data?.message);
     }
   };
 
@@ -66,14 +119,29 @@ function SignupPage({ onNavigateLogin }) {
                     <label className="text-sm font-bold text-on-surface-variant">아이디</label>
                     {fieldErrors.loginId && <span className="text-xs text-error">{fieldErrors.loginId}</span>}
                   </div>
-                  <input
-                    name="loginId"
-                    type="text"
-                    placeholder="아이디를 입력하세요"
-                    value={form.loginId}
-                    onChange={handleChange}
-                    className="w-full bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      name="loginId"
+                      type="text"
+                      placeholder="아이디를 입력하세요"
+                      value={form.loginId}
+                      onChange={handleChange}
+                      className="min-w-0 flex-1 bg-surface-container-low border-none rounded-xl px-5 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary-fixed focus:bg-surface-bright transition-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleCheckId}
+                      disabled={isCheckingId}
+                      className="shrink-0 rounded-xl bg-primary-fixed px-4 py-3 text-sm font-bold text-on-primary-fixed transition-all hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isCheckingId ? '확인 중' : '중복확인'}
+                    </button>
+                  </div>
+                  {idCheck.message && (
+                    <p className={`text-xs ml-1 ${idCheck.isAvailable ? 'text-primary' : 'text-error'}`}>
+                      {idCheck.message}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 ml-1">

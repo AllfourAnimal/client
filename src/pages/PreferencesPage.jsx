@@ -3,8 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { patchPreferences } from '../api/preferences';
 import { FaDog, FaCat, FaPaw, FaBaby } from 'react-icons/fa';
 import {
-  MdMale, MdFemale, MdBalance,
-  MdChildCare, MdPets, MdElderly, MdMan,
+  MdMale, MdFemale,
+  MdChildCare, MdElderly, MdMan,
   MdCheck, MdArrowForward
 } from 'react-icons/md';
 
