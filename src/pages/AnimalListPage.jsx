@@ -1,6 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
-import { fetchAnimals, fetchAnimalImages } from '../api/animals';
-import { useAuth } from '../context/AuthContext';
+import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
@@ -15,30 +14,18 @@ function AnimalListPage({
   onNavigateFavoritesAll,
 }) {
   const [animals, setAnimals] = useState([]);
-  const [animalImages, setAnimalImages] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { accessToken } = useAuth();
   const { favoriteIds, favoriteAnimals, toggleFavorite } = useFavorites();
+  const { imagesByAnimalId, loadAnimalsPage } = useAnimals();
 
   useEffect(() => {
     const loadAnimals = async () => {
+      setLoading(true);
+      setError('');
       try {
-        const data = await fetchAnimals(accessToken, 0, 6);
+        const data = await loadAnimalsPage(0, 6, { replace: true });
         setAnimals(data);
-
-        const imageResults = await Promise.allSettled(
-          data.map((a) => fetchAnimalImages(a.animalId, accessToken))
-        );
-        const imageMap = Object.fromEntries(
-          data.map((a, i) => {
-            const result = imageResults[i];
-            const firstUrl = result.status === 'fulfilled' ? result.value?.[0] : null;
-            return [a.animalId, firstUrl ?? null];
-          })
-        );
-        setAnimalImages(imageMap);
-
       } catch (err) {
         setError('동물 목록을 불러오지 못했습니다.');
       } finally {
@@ -46,7 +33,7 @@ function AnimalListPage({
       }
     };
     loadAnimals();
-  }, [accessToken]);
+  }, [loadAnimalsPage]);
 
 
   return (
@@ -94,7 +81,7 @@ function AnimalListPage({
                 <AnimalCard
                   key={animal.animalId}
                   animal={animal}
-                  imageSrc={animalImages[animal.animalId]}
+                  imageSrc={imagesByAnimalId[animal.animalId]}
                   isFavorited={favoriteIds.has(Number(animal.animalId))}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}

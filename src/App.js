@@ -14,14 +14,14 @@ import FavoritesAllPage from './pages/FavoritesAllPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
-  const [selectedAnimal, setSelectedAnimal] = useState(null);
+  const [selectedAnimalId, setSelectedAnimalId] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
   const { isLoggedIn, hasCompletedSurvey } = useAuth();
 
   const navigate = (page) => setCurrentPage(page);
 
-  const navigateToAnimal = (name) => {
-    setSelectedAnimal(typeof name === 'string' ? name : null);
+  const navigateToAnimal = (animalId) => {
+    setSelectedAnimalId(animalId ?? null);
     setCurrentPage('animal-details');
   };
 
@@ -135,7 +135,7 @@ function App() {
   if (currentPage === 'animal-details') {
     return (
       <AnimalDetailsPage
-        animalName={selectedAnimal}
+        animalId={selectedAnimalId}
         onNavigateHome={() => navigate('home')}
         onNavigateAnimalList={() => navigate('animal-list')}
         onNavigateReviews={() => navigate('review-list')}

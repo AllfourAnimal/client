@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchAnimals, fetchAnimalImages, searchAnimals } from '../api/animals';
-import { useAuth } from '../context/AuthContext';
+import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
@@ -15,10 +14,14 @@ function AnimalListAllPage({
   onNavigateProfile,
   onNavigateAnimalList,
 }) {
-  const { accessToken } = useAuth();
   const { favoriteIds, toggleFavorite } = useFavorites();
+  const {
+    imagesByAnimalId,
+    loadAnimalImages,
+    loadAnimalsPage,
+    searchAnimals,
+  } = useAnimals();
   const [animals, setAnimals] = useState([]);
-  const [animalImages, setAnimalImages] = useState({});
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -34,11 +37,10 @@ function AnimalListAllPage({
     const loadPage = async () => {
       setLoading(true);
       try {
-        const data = await fetchAnimals(accessToken, 0, PAGE_SIZE);
+        const data = await loadAnimalsPage(0, PAGE_SIZE, { replace: true });
         setAnimals(data);
         setHasMore(data.length === PAGE_SIZE);
         setPage(1);
-        loadImages(data);
       } catch {
         setError('동물 목록을 불러오지 못했습니다.');
       } finally {
@@ -46,29 +48,16 @@ function AnimalListAllPage({
       }
     };
     loadPage();
-  }, [accessToken]);
-
-  const loadImages = async (newAnimals) => {
-    const toLoad = newAnimals.filter((a) => !(a.animalId in animalImages));
-    if (toLoad.length === 0) return;
-    const results = await Promise.allSettled(toLoad.map((a) => fetchAnimalImages(a.animalId, accessToken)));
-    setAnimalImages((prev) => ({
-      ...prev,
-      ...Object.fromEntries(
-        toLoad.map((a, i) => [a.animalId, results[i].status === 'fulfilled' ? results[i].value?.[0] ?? null : null])
-      ),
-    }));
-  };
+  }, [loadAnimalsPage]);
 
   const loadMore = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     try {
-      const data = await fetchAnimals(accessToken, page, PAGE_SIZE);
+      const data = await loadAnimalsPage(page, PAGE_SIZE);
       setAnimals((prev) => [...prev, ...data]);
       setHasMore(data.length === PAGE_SIZE);
       setPage((prev) => prev + 1);
-      loadImages(data);
     } catch {
       setError('추가 데이터를 불러오지 못했습니다.');
     } finally {
@@ -85,11 +74,11 @@ function AnimalListAllPage({
       if (animalType) filters.animalType = animalType;
       if (careAddr) filters.careAddr = careAddr;
 
-      const data = await searchAnimals(accessToken, filters);
+      const data = await searchAnimals(filters);
       setAnimals(data);
       setIsSearchMode(true);
       setHasMore(false);
-      loadImages(data);
+      loadAnimalImages(data);
     } catch {
       setError('검색 결과를 불러오지 못했습니다.');
     } finally {
@@ -104,12 +93,11 @@ function AnimalListAllPage({
     setError('');
     setLoading(true);
     try {
-      const data = await fetchAnimals(accessToken, 0, PAGE_SIZE);
+      const data = await loadAnimalsPage(0, PAGE_SIZE, { replace: true });
       setAnimals(data);
       setIsSearchMode(false);
       setHasMore(data.length === PAGE_SIZE);
       setPage(1);
-      loadImages(data);
     } catch {
       setError('동물 목록을 불러오지 못했습니다.');
     } finally {
@@ -220,7 +208,7 @@ function AnimalListAllPage({
                 <AnimalCard
                   key={animal.animalId}
                   animal={animal}
-                  imageSrc={animalImages[animal.animalId]}
+                  imageSrc={imagesByAnimalId[animal.animalId]}
                   isFavorited={favoriteIds.has(Number(animal.animalId))}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}

@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { searchAnimals } from '../api/animals';
-import { useAuth } from '../context/AuthContext';
+import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
@@ -13,8 +12,8 @@ function FavoritesAllPage({
   onNavigateProfile,
   onNavigateAnimalList,
 }) {
-  const { accessToken } = useAuth();
   const { favoriteIds, favoriteAnimals, toggleFavorite } = useFavorites();
+  const { imagesByAnimalId, searchAnimals } = useAnimals();
 
   const [keyword, setKeyword] = useState('');
   const [animalType, setAnimalType] = useState('');
@@ -36,7 +35,7 @@ function FavoritesAllPage({
       if (animalType) filters.animalType = animalType;
       if (careAddr) filters.careAddr = careAddr;
 
-      const data = await searchAnimals(accessToken, filters);
+      const data = await searchAnimals(filters);
 
       // 검색 결과 중 찜한 동물만 추출, favoriteAnimals의 thumbnailImageUrl 등으로 보완
       const filtered = data
@@ -49,7 +48,7 @@ function FavoritesAllPage({
             animal_age: a.animalAge ?? a.animal_age ?? cached?.animal_age ?? null,
             animal_sex: a.animal_sex ?? cached?.animal_sex ?? null,
             adopted: a.adopted ?? cached?.adopted ?? false,
-            thumbnailImageUrl: cached?.thumbnailImageUrl ?? null,
+            thumbnailImageUrl: imagesByAnimalId[a.animalId] ?? cached?.thumbnailImageUrl ?? null,
           };
         });
 
@@ -179,7 +178,7 @@ function FavoritesAllPage({
                 <AnimalCard
                   key={animal.animalId}
                   animal={animal}
-                  imageSrc={animal.thumbnailImageUrl}
+                  imageSrc={imagesByAnimalId[animal.animalId] ?? animal.thumbnailImageUrl}
                   isFavorited={favoriteIds.has(animal.animalId)}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}
