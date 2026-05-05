@@ -1,6 +1,6 @@
 ﻿import axios from 'axios';
 
-const BASE_URL = '/api/animals';
+const BASE_URL = 'https://all4animal.site/api/animals';
 
 // 동물 정보 API 호출 함수
 export async function fetchAnimals(token, page = 0, size = 10) {

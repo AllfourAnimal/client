@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('survey_completed');
   };
   const isLoggedIn = () => accessToken !== null;
-  const markSurveyComplete = () => {
+  const markSurveyComplete = () => {  // 설문 완료 상태를 업데이트하고 로컬 스토리지에 저장
     setHasCompletedSurvey(true);
     localStorage.setItem('survey_completed', 'true');
   };

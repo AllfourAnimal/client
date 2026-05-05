@@ -122,27 +122,6 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
             </form>
           </div>
 
-          {/* 푸터 */}
-          {/* <div className="flex justify-center items-center gap-6 text-outline">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
-              © 2024 All4Animal
-            </span>
-            <div className="size-1 rounded-full bg-outline-variant/50" />
-            <a
-              href="#"
-              className="text-[10px] font-bold uppercase tracking-[0.2em] hover:text-on-surface transition-colors"
-            >
-              Privacy
-            </a>
-            <div className="size-1 rounded-full bg-outline-variant/50" />
-            <a
-              href="#"
-              className="text-[10px] font-bold uppercase tracking-[0.2em] hover:text-on-surface transition-colors"
-            >
-              Support
-            </a>
-          </div> */}
-
         </div>
       </div>
     </div>

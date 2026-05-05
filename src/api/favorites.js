@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = '/api/favorites';
+const BASE_URL = 'https://all4animal.site/api/favorites';
 
 // 찜 목록 추가/삭제 API 호출 함수
 export async function toggleFavorite(token, animalId) {
