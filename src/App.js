@@ -20,7 +20,7 @@ function App() {
   const navigate = (page) => setCurrentPage(page);
 
   const navigateToAnimal = (name) => {
-    setSelectedAnimal(typeof name === 'string' ? name : null);
+    setSelectedAnimal(name == null ? null : String(name));
     setCurrentPage('animal-details');
   };
 
@@ -109,6 +109,7 @@ function App() {
       <ReviewPostPage
         onNavigateHome={() => navigate('home')}
         onNavigateAnimalList={() => navigate('animal-list')}
+        onNavigateAnimalDetails={navigateToAnimal}
         onNavigateReviewList={() => navigate('review-list')}
         onNavigateProfile={() => navigate('profile')}
       />

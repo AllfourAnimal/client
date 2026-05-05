@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = '/api/auth';
+const BASE_URL = 'http://localhost:8080/api/auth';
 
 // 로그인 API 호출 함수
 export async function loginUser({ loginId, password }) {
@@ -20,7 +20,7 @@ export async function signupUser(
     isExperience,
     housingType,
     emptyTime }
-  ) {
+) {
   const response = await axios.post(`${BASE_URL}/signup`, { loginId, password, passwordConfirm, name, phone, birthYear, location, isExperience, housingType, emptyTime });
   return response.data;
 }

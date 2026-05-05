@@ -3,7 +3,7 @@ function ReviewCard({ review, onNavigateReviewDetails }) {
     <article className="bg-surface-container-lowest rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:shadow-xl group border border-surface-container">
       <div className="relative h-64 overflow-hidden">
         <img
-          alt={review.alt}
+          alt={review.alt || review.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           src={review.image}
         />

@@ -16,7 +16,7 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
       login(data.accessToken);  // 로그인 성공 시 context에 토큰 저장
       if (onNavigatePreferences) onNavigatePreferences();
     } catch (err) {
-      setError(err.response.data.message);
+      setError(err.response?.data?.message || '로그인에 실패했습니다. 서버 상태와 입력 정보를 확인해주세요.');
     }
   };
 

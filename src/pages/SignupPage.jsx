@@ -39,7 +39,8 @@ function SignupPage({ onNavigateLogin }) {
       const errors = err.response?.data?.errors;
       if (errors)
         setFieldErrors(errors);
-      setError((err.response.data.code === 'BAD_REQUEST' || err.response.data.code === 'VALIDATION_ERROR') ? '회원가입에 실패했습니다. 입력한 정보를 확인해주세요.' : err.response?.data?.message);
+      const code = err.response?.data?.code;
+      setError((code === 'BAD_REQUEST' || code === 'VALIDATION_ERROR') ? '회원가입에 실패했습니다. 입력한 정보를 확인해주세요.' : err.response?.data?.message || '회원가입에 실패했습니다. 서버 상태와 입력 정보를 확인해주세요.');
     }
   };
 
