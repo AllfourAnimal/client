@@ -4,15 +4,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './context/AuthContext';
+import { AnimalProvider } from './context/AnimalContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <FavoritesProvider>
-        <App />
-      </FavoritesProvider>
+      <AnimalProvider>
+        <FavoritesProvider>
+          <App />
+        </FavoritesProvider>
+      </AnimalProvider>
     </AuthProvider>
   </React.StrictMode>
 );

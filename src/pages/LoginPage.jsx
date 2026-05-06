@@ -12,9 +12,10 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
     e.preventDefault();
     setError('');
     try {
-      const data = await loginUser({ loginId, password });
-      login(data.accessToken);  // 로그인 성공 시 context에 토큰 저장
-      if (onNavigatePreferences) onNavigatePreferences();
+      const submittedLoginId = loginId.trim(); // 로그인 아이디는 공백 제거
+      const data = await loginUser({ loginId: submittedLoginId, password });
+      const completedSurvey = login(data.accessToken, submittedLoginId, data.username);
+      if (onNavigatePreferences) onNavigatePreferences(completedSurvey);
     } catch (err) {
       setError(err.response?.data?.message || '로그인에 실패했습니다. 서버 상태와 입력 정보를 확인해주세요.');
     }
@@ -121,27 +122,6 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
               </div>
             </form>
           </div>
-
-          {/* 푸터 */}
-          {/* <div className="flex justify-center items-center gap-6 text-outline">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
-              © 2024 All4Animal
-            </span>
-            <div className="size-1 rounded-full bg-outline-variant/50" />
-            <a
-              href="#"
-              className="text-[10px] font-bold uppercase tracking-[0.2em] hover:text-on-surface transition-colors"
-            >
-              Privacy
-            </a>
-            <div className="size-1 rounded-full bg-outline-variant/50" />
-            <a
-              href="#"
-              className="text-[10px] font-bold uppercase tracking-[0.2em] hover:text-on-surface transition-colors"
-            >
-              Support
-            </a>
-          </div> */}
 
         </div>
       </div>

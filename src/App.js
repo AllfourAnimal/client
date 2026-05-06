@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import { useAuth } from './context/AuthContext';
 import HomePage from './pages/HomePage';
+import PreferencesPage from './pages/PreferencesPage';
 import AnimalListPage from './pages/AnimalListPage';
 import AnimalListAllPage from './pages/AnimalListAllPage';
 import AnimalDetailsPage from './pages/AnimalDetailsPage';
@@ -12,15 +13,15 @@ import ReviewPostPage from './pages/ReviewPostPage';
 import FavoritesAllPage from './pages/FavoritesAllPage';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('login');
-  const [selectedAnimal, setSelectedAnimal] = useState(null);
-  const [selectedReview, setSelectedReview] = useState(null);
   const { isLoggedIn } = useAuth();
+  const [currentPage, setCurrentPage] = useState(() => (isLoggedIn() ? 'home' : 'login'));
+  const [selectedAnimalId, setSelectedAnimalId] = useState(null);
+  const [selectedReview, setSelectedReview] = useState(null);
 
   const navigate = (page) => setCurrentPage(page);
 
-  const navigateToAnimal = (name) => {
-    setSelectedAnimal(name == null ? null : String(name));
+  const navigateToAnimal = (animalId) => {
+    setSelectedAnimalId(animalId ?? null);
     setCurrentPage('animal-details');
   };
 
@@ -37,10 +38,14 @@ function App() {
     return (
       <LoginPage
         onNavigateHome={() => navigate('home')}
-        onNavigatePreferences={() => navigate('home')}
+        onNavigatePreferences={(completedSurvey) => navigate(completedSurvey ? 'home' : 'preferences')}
         onNavigateSignup={() => navigate('signup')}
       />
     );
+  }
+
+  if (currentPage === 'preferences') {
+    return <PreferencesPage onNavigateHome={() => navigate('home')} />;
   }
 
   if (currentPage === 'home') {
@@ -131,7 +136,7 @@ function App() {
   if (currentPage === 'animal-details') {
     return (
       <AnimalDetailsPage
-        animalName={selectedAnimal}
+        animalId={selectedAnimalId}
         onNavigateHome={() => navigate('home')}
         onNavigateAnimalList={() => navigate('animal-list')}
         onNavigateReviews={() => navigate('review-list')}

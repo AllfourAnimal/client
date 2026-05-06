@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { fetchFavorites, toggleFavorite as toggleFavoriteApi } from '../api/favorites';
+import { useAnimals } from './AnimalContext';
 import { useAuth } from './AuthContext';
 
 const FavoritesContext = createContext(null);
@@ -23,6 +24,7 @@ function toAnimalShape(item) {
 
 export function FavoritesProvider({ children }) {
   const { accessToken } = useAuth();
+  const { cacheAnimals } = useAnimals();
   const [favoriteIds, setFavoriteIds] = useState(new Set());
   const [favoriteAnimals, setFavoriteAnimals] = useState([]);
 
@@ -51,10 +53,11 @@ export function FavoritesProvider({ children }) {
 
       console.log('[Favorites] parsed ids:', ids);
       setFavoriteIds(new Set(ids));
+      const shapedItems = items.map(toAnimalShape);
+      cacheAnimals(shapedItems);
       // 함수형 업데이트로 기존 상태 참조 — 서버 응답에 animal_sex가 없을 때 낙관적 업데이트 값 보존
       setFavoriteAnimals((prev) =>
-        items.map((item) => {
-          const shaped = toAnimalShape(item);
+        shapedItems.map((shaped) => {
           if (!shaped.animal_sex) {
             const cached = prev.find((a) => a.animalId === shaped.animalId);
             if (cached?.animal_sex) shaped.animal_sex = cached.animal_sex;
@@ -67,7 +70,7 @@ export function FavoritesProvider({ children }) {
       setFavoriteIds(new Set());
       setFavoriteAnimals([]);
     }
-  }, [accessToken]);
+  }, [accessToken, cacheAnimals]);
 
   useEffect(() => {
     loadFavorites();
@@ -96,6 +99,7 @@ export function FavoritesProvider({ children }) {
       if (prev.some((a) => a.animalId === id)) return prev;
       return [...prev, toAnimalShape(animalData ?? { animalId: id })];
     });
+    if (animalData) cacheAnimals([animalData]);
 
     try {
       await toggleFavoriteApi(accessToken, animalId);
@@ -105,7 +109,7 @@ export function FavoritesProvider({ children }) {
       // 서버 데이터(thumbnailImageUrl 등)로 최종 보정
       await loadFavorites();
     }
-  }, [accessToken, loadFavorites]);
+  }, [accessToken, cacheAnimals, loadFavorites]);
 
   return (
     <FavoritesContext.Provider value={{ favoriteIds, favoriteAnimals, toggleFavorite }}>
