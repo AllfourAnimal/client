@@ -12,8 +12,7 @@ const ANIMAL_TYPE_FILTERS = {
   '기타 축종': 'OTHER',
 };
 const PAGE_SIZE = 9;
-const DEFAULT_REVIEW_IMAGE =
-  'https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=900&q=80';
+const DEFAULT_REVIEW_IMAGE = '/all4animal-paw.svg';
 
 function readReviewList(data) {
   if (Array.isArray(data)) return data;
@@ -61,7 +60,6 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
   const { accessToken } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [activeFilter, setActiveFilter] = useState('전체');
-  const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -100,16 +98,6 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
     setActiveFilter(filter);
     loadReviews(0, false, filter);
   };
-
-  const filtered = reviews.filter((r) => {
-    const q = searchQuery.toLowerCase();
-    const matchesSearch =
-      !q ||
-      r.title.toLowerCase().includes(q) ||
-      r.author.toLowerCase().includes(q) ||
-      r.excerpt.toLowerCase().includes(q);
-    return matchesSearch;
-  });
 
   return (
     <div className="bg-background font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
@@ -155,35 +143,21 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
           </div>
         </section>
 
-        {/* Filter + Search */}
+        {/* Filter */}
         <section className="mb-12 space-y-6">
-          <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-            <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 md:pb-0">
-              {FILTERS.map((f) => (
-                <button
-                  key={f}
-                  onClick={() => handleFilterClick(f)}
-                  className={`px-6 py-2.5 rounded-full font-medium transition-all ${activeFilter === f
-                    ? 'bg-primary text-white font-bold shadow-md'
-                    : 'bg-surface-container-lowest text-on-surface-variant hover:bg-primary-container/20 hover:text-primary'
-                    }`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-            <div className="relative w-full md:w-96">
-              <input
-                className="w-full bg-surface-container-lowest border-none rounded-full py-3.5 pl-6 pr-12 text-on-surface shadow-sm focus:ring-2 focus:ring-primary/30 transition-shadow"
-                placeholder="품종이나 키워드로 검색하세요..."
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button className="absolute right-4 top-1/2 -translate-y-1/2 text-primary">
-                <span className="material-symbols-outlined">search</span>
+          <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
+            {FILTERS.map((f) => (
+              <button
+                key={f}
+                onClick={() => handleFilterClick(f)}
+                className={`px-6 py-2.5 rounded-full font-medium transition-all ${activeFilter === f
+                  ? 'bg-primary text-white font-bold shadow-md'
+                  : 'bg-surface-container-lowest text-on-surface-variant hover:bg-primary-container/20 hover:text-primary'
+                  }`}
+              >
+                {f}
               </button>
-            </div>
+            ))}
           </div>
           <div className="flex items-center gap-4">
             <h2 className="font-headline text-2xl font-bold text-on-surface shrink-0">최근 업로드 된 이야기</h2>
@@ -205,9 +179,9 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
               다시 불러오기
             </button>
           </div>
-        ) : filtered.length > 0 ? (
+        ) : reviews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filtered.map((review) => (
+            {reviews.map((review) => (
               <ReviewCard
                 key={review.id}
                 review={review}
@@ -218,11 +192,11 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
         ) : (
           <div className="flex flex-col items-center justify-center py-24 text-on-surface-variant">
             <span className="material-symbols-outlined text-6xl mb-4 opacity-30">search_off</span>
-            <p className="text-lg font-semibold">검색 결과가 없습니다.</p>
+            <p className="text-lg font-semibold">리뷰가 없습니다.</p>
           </div>
         )}
 
-        {!loading && !error && activeFilter === '전체' && !searchQuery && hasMore && (
+        {!loading && !error && activeFilter === '전체' && hasMore && (
           <div className="mt-16 flex justify-center">
             <button
               className="bg-surface-container-high text-primary font-bold px-12 py-3.5 rounded-full hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-50"

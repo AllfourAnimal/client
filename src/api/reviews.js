@@ -40,6 +40,37 @@ export async function createReview(token, reviewData) {
   return response.data;
 }
 
+// 리뷰 수정 API 호출 함수
+export async function updateReview(reviewId, token, reviewData) {
+  const { title, petName, content, imageUrls = [], imageFiles = [] } = reviewData;
+  const formData = new FormData();
+  imageFiles.forEach((file) => {
+    formData.append('image', file);
+  });
+
+  const response = await axios.patch(`${BASE_URL}/${reviewId}`, formData, {
+    headers: authHeader(token),
+    params: {
+      title,
+      petName,
+      content,
+      imageUrls,
+    },
+    paramsSerializer: (params) => {
+      const searchParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((item) => searchParams.append(key, item));
+        } else if (value !== undefined && value !== null) {
+          searchParams.append(key, value);
+        }
+      });
+      return searchParams.toString();
+    },
+  });
+  return response.data;
+}
+
 // 리뷰 삭제 API 호출 함수
 export async function deleteReview(reviewId, token) {
   const response = await axios.delete(`${BASE_URL}/${reviewId}`, {

@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import { fetchMe } from '../api/auth';
-import { deleteReview, fetchReviewDetail } from '../api/reviews';
+import { deleteReview, fetchReviewDetail, updateReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
 
-const DEFAULT_REVIEW_IMAGE =
-  'https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=1200&q=80';
+const DEFAULT_REVIEW_IMAGE = '/all4animal-paw.svg';
+const MAX_REVIEW_IMAGES = 3;
 
 function getUserId(user) {
   return user?.userId ?? user?.id ?? user?.memberId ?? user?.data?.userId ?? user?.data?.id ?? null;
@@ -26,13 +26,32 @@ function formatDateOnly(value) {
   });
 }
 
+function getReviewImages(review) {
+  const images = review?.images || review?.imageUrls || review?.imageUrlList || review?.photoUrls || review?.image_url_list || [];
+  const list = Array.isArray(images) ? images : [images];
+  return list.filter(Boolean).slice(0, 3);
+}
+
+function fillGalleryImages(images) {
+  return Array.from({ length: 3 }, (_, index) => images[index] || DEFAULT_REVIEW_IMAGE);
+}
+
 function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onNavigateReviewList, onNavigateProfile }) {
   const { accessToken } = useAuth();
   const [review, setReview] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    petName: '',
+    content: '',
+  });
+  const [editExistingImages, setEditExistingImages] = useState([]);
+  const [editNewImageFiles, setEditNewImageFiles] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -70,6 +89,77 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
     setShowDeleteModal(true);
   };
 
+  const handleOpenEdit = () => {
+    if (!isMyReview || !review) return;
+    setEditForm({
+      title: review.title || '',
+      petName: review.petName || '',
+      content: review.content || '',
+    });
+    setEditExistingImages(getReviewImages(review));
+    setEditNewImageFiles([]);
+    setShowEditModal(true);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    const remainingSlots = MAX_REVIEW_IMAGES - editExistingImages.length - editNewImageFiles.length;
+    if (remainingSlots <= 0) {
+      setError(`사진은 최대 ${MAX_REVIEW_IMAGES}장까지만 등록할 수 있습니다.`);
+      return;
+    }
+
+    const filesToAdd = selectedFiles.slice(0, remainingSlots);
+    setEditNewImageFiles((prev) => [...prev, ...filesToAdd]);
+    setError(selectedFiles.length > remainingSlots ? `사진은 최대 ${MAX_REVIEW_IMAGES}장까지만 등록할 수 있습니다.` : '');
+    e.target.value = '';
+  };
+
+  const removeExistingEditImage = (indexToRemove) => {
+    setEditExistingImages((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
+  const removeNewEditImage = (indexToRemove) => {
+    setEditNewImageFiles((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const targetReviewId = review?.id || review?.reviewId || reviewId;
+    if (!isMyReview || !targetReviewId || updating) return;
+
+    if (!editForm.title.trim() || !editForm.petName.trim() || !editForm.content.trim()) {
+      setError('제목, 이름, 내용을 모두 입력해 주세요.');
+      return;
+    }
+
+    const payload = {
+      title: editForm.title.trim(),
+      petName: editForm.petName.trim(),
+      content: editForm.content.trim(),
+      imageUrls: editExistingImages,
+      imageFiles: editNewImageFiles,
+    };
+
+    setUpdating(true);
+    setError('');
+    try {
+      await updateReview(targetReviewId, accessToken, payload);
+      const updatedReview = await fetchReviewDetail(targetReviewId, accessToken);
+      setReview(updatedReview);
+      setShowEditModal(false);
+    } catch (err) {
+      setError('리뷰를 수정하지 못했습니다.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const confirmDelete = async () => {
     const targetReviewId = review?.id || review?.reviewId || reviewId;
     if (!targetReviewId || deleting) return;
@@ -87,8 +177,8 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
     }
   };
 
-  const mainImage = review?.images?.[0] || DEFAULT_REVIEW_IMAGE;
-  const sideImages = review?.images?.slice(1, 3) || [];
+  const reviewImages = getReviewImages(review);
+  const galleryImages = fillGalleryImages(reviewImages);
   const reviewAuthorId = getReviewAuthorId(review);
   const isMyReview = currentUserId != null && reviewAuthorId != null && String(currentUserId) === String(reviewAuthorId);
   const isAdoptedReview = Boolean(review?.is_adopted ?? review?.certified);
@@ -119,23 +209,27 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
           </div>
         ) : (
           <>
-            <section className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-12">
-              <div className="md:col-span-8 overflow-hidden rounded-2xl relative group">
-                <img
-                  className="w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
-                  alt={review.petName}
-                  src={mainImage}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            <section className="mb-12">
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <h2 className="font-headline text-2xl font-extrabold text-on-surface">사진</h2>
+                <span className="rounded-full bg-surface-container-low px-4 py-1.5 text-sm font-bold text-on-surface-variant">
+                  {reviewImages.length > 0 ? `${reviewImages.length}장` : '기본 이미지'}
+                </span>
               </div>
-              <div className="md:col-span-4 flex flex-col gap-4">
-                {[0, 1].map((index) => (
-                  <div key={index} className="h-1/2 overflow-hidden rounded-2xl bg-surface-container-low">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {galleryImages.map((image, index) => (
+                  <div
+                    key={`${image}-${index}`}
+                    className={`${index === 0 ? 'md:col-span-8 md:row-span-2' : 'md:col-span-4'} overflow-hidden rounded-2xl bg-surface-container-low relative group`}
+                  >
                     <img
-                      className="w-full h-full object-cover"
-                      alt={`${review.petName} 사진 ${index + 1}`}
-                      src={sideImages[index] || mainImage}
+                      className={`${index === 0 ? 'h-[520px]' : 'h-[252px]'} w-full object-cover transition-transform duration-500 group-hover:scale-105`}
+                      alt={`${review.petName || '리뷰'} 사진 ${index + 1}`}
+                      src={image}
                     />
+                    {index === 0 && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+                    )}
                   </div>
                 ))}
               </div>
@@ -159,7 +253,7 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
               </div>
               <div className="flex flex-col items-center text-center">
                 <span className="text-on-surface-variant text-sm font-medium mb-1 text-center">입양 날짜</span>
-                <span className="text-lg font-bold text-on-surface">{review.adoptedAt == null ? "-" : review.adoptedAt}</span>
+                <span className="text-lg font-bold text-on-surface">{review.adoptedAt == null ? "-" : formatDateOnly(review.adoptedAt)}</span>
               </div>
               {isAdoptedReview && (
                 <div className="bg-primary-container/20 text-on-primary-container px-6 py-3 rounded-full font-bold flex items-center gap-2">
@@ -239,14 +333,24 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
                     목록으로 돌아가기
                   </button>
                   {isMyReview && (
-                    <button
-                      className="w-full border-2 border-error text-error px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-error-container hover:text-on-error-container transition-all disabled:opacity-50"
-                      disabled={deleting}
-                      onClick={handleDelete}
-                    >
-                      <span className="material-symbols-outlined">delete</span>
-                      {deleting ? '삭제 중...' : '리뷰 삭제'}
-                    </button>
+                    <>
+                      <button
+                        className="w-full border-2 border-primary text-primary px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-primary-container/20 transition-all disabled:opacity-50"
+                        disabled={updating}
+                        onClick={handleOpenEdit}
+                      >
+                        <span className="material-symbols-outlined">edit</span>
+                        리뷰 수정
+                      </button>
+                      <button
+                        className="w-full border-2 border-error text-error px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-error-container hover:text-on-error-container transition-all disabled:opacity-50"
+                        disabled={deleting}
+                        onClick={handleDelete}
+                      >
+                        <span className="material-symbols-outlined">delete</span>
+                        {deleting ? '삭제 중...' : '리뷰 삭제'}
+                      </button>
+                    </>
                   )}
                 </aside>
               </div>
@@ -285,6 +389,182 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 py-8 backdrop-blur-sm">
+          <form
+            className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-surface-container-lowest p-8 shadow-2xl border border-outline-variant/20"
+            onSubmit={handleUpdate}
+          >
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary-container/20 px-4 py-1.5 text-sm font-extrabold text-primary">
+                  <span className="material-symbols-outlined text-lg">edit</span>
+                  리뷰 수정
+                </div>
+                <h2 className="text-2xl font-extrabold text-on-surface">후기 내용을 수정하세요</h2>
+              </div>
+              <button
+                className="rounded-full p-2 text-on-surface-variant transition-all hover:bg-surface-container-low"
+                disabled={updating}
+                type="button"
+                onClick={() => setShowEditModal(false)}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-primary" htmlFor="edit-title">제목</label>
+                <input
+                  className="w-full rounded-xl bg-surface-container-low border-none px-5 py-3.5 text-on-surface focus:ring-2 focus:ring-primary-fixed"
+                  id="edit-title"
+                  name="title"
+                  type="text"
+                  value={editForm.title}
+                  onChange={handleEditChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-primary" htmlFor="edit-pet-name">이름</label>
+                <input
+                  className="w-full rounded-xl bg-surface-container-low border-none px-5 py-3.5 text-on-surface focus:ring-2 focus:ring-primary-fixed"
+                  id="edit-pet-name"
+                  name="petName"
+                  type="text"
+                  value={editForm.petName}
+                  onChange={handleEditChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-primary" htmlFor="edit-content">내용</label>
+                <textarea
+                  className="w-full rounded-xl bg-surface-container-low border-none px-5 py-4 text-on-surface leading-relaxed focus:ring-2 focus:ring-primary-fixed resize-none"
+                  id="edit-content"
+                  name="content"
+                  rows="8"
+                  value={editForm.content}
+                  onChange={handleEditChange}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <label className="text-sm font-bold text-primary tracking-wide uppercase" htmlFor="edit-images">
+                  사진 파일
+                </label>
+
+                {editExistingImages.length + editNewImageFiles.length < MAX_REVIEW_IMAGES ? (
+                  <>
+                    <label
+                      className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-outline-variant/30 bg-surface-container-low p-8 text-center transition-all hover:border-primary/50 hover:bg-primary-container/10"
+                      htmlFor="edit-images"
+                    >
+                      <span className="material-symbols-outlined text-4xl text-primary">add_photo_alternate</span>
+                      <span className="font-bold text-on-surface">
+                        {editExistingImages.length + editNewImageFiles.length > 0
+                          ? `${editExistingImages.length + editNewImageFiles.length}장 선택됨`
+                          : '업로드할 사진을 선택하세요'}
+                      </span>
+                      <span className="text-sm text-on-surface-variant">
+                        JPG, PNG 등 이미지 파일을 최대 3장까지 첨부할 수 있습니다.
+                      </span>
+                    </label>
+                    <input
+                      accept="image/*"
+                      className="hidden"
+                      id="edit-images"
+                      multiple
+                      type="file"
+                      onChange={handleEditImageChange}
+                    />
+                  </>
+                ) : (
+                  <p className="rounded-xl bg-surface-container-low px-4 py-3 text-sm font-semibold text-on-surface-variant">
+                    사진이 3장입니다. 새 사진을 추가하려면 기존 사진을 삭제해 주세요.
+                  </p>
+                )}
+
+                {(editExistingImages.length > 0 || editNewImageFiles.length > 0) && (
+                  <div className="rounded-2xl bg-surface-container-lowest p-5 border border-outline-variant/10">
+                    <div className="mb-4 flex items-center justify-between gap-4">
+                      <p className="text-sm font-bold text-on-surface">선택한 사진</p>
+                      <span className="text-xs font-bold text-on-surface-variant">
+                        {editExistingImages.length + editNewImageFiles.length}/{MAX_REVIEW_IMAGES}
+                      </span>
+                    </div>
+
+                    {editExistingImages.length > 0 && (
+                      <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {editExistingImages.map((imageUrl, index) => (
+                          <div key={`${imageUrl}-${index}`} className="relative overflow-hidden rounded-xl bg-surface-container-low">
+                            <img
+                              className="h-28 w-full object-cover"
+                              alt={`현재 리뷰 사진 ${index + 1}`}
+                              src={imageUrl}
+                            />
+                            <button
+                              className="absolute right-2 top-2 inline-flex size-8 items-center justify-center rounded-full bg-black/55 text-white transition-all hover:bg-error"
+                              title="현재 사진 삭제"
+                              type="button"
+                              onClick={() => removeExistingEditImage(index)}
+                            >
+                              <span className="material-symbols-outlined text-base">close</span>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {editNewImageFiles.length > 0 && (
+                      <ul className="space-y-2">
+                        {editNewImageFiles.map((file, index) => (
+                          <li key={`${file.name}-${index}`} className="flex items-center justify-between gap-3 rounded-xl bg-surface-container-low px-4 py-3 text-sm">
+                            <span className="truncate text-on-surface-variant">{file.name}</span>
+                            <div className="flex shrink-0 items-center gap-2">
+                              <span className="font-bold text-primary">
+                                {editExistingImages.length + index + 1}/{MAX_REVIEW_IMAGES}
+                              </span>
+                              <button
+                                className="inline-flex size-7 items-center justify-center rounded-full text-error transition-all hover:bg-error-container"
+                                title="새 사진 삭제"
+                                type="button"
+                                onClick={() => removeNewEditImage(index)}
+                              >
+                                <span className="material-symbols-outlined text-base">close</span>
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-8 flex flex-col sm:flex-row justify-end gap-3">
+              <button
+                className="rounded-full bg-secondary-container px-7 py-3 font-bold text-on-secondary-container transition-all hover:bg-secondary-container/80 disabled:opacity-50"
+                disabled={updating}
+                type="button"
+                onClick={() => setShowEditModal(false)}
+              >
+                취소
+              </button>
+              <button
+                className="rounded-full bg-primary px-8 py-3 font-bold text-on-primary transition-all hover:bg-primary/90 disabled:opacity-50"
+                disabled={updating}
+                type="submit"
+              >
+                {updating ? '수정 중...' : '수정 저장'}
+              </button>
+            </div>
+          </form>
         </div>
       )}
 

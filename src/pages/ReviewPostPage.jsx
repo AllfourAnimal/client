@@ -28,6 +28,8 @@ const ADOPTION_STATUS_LABELS = {
   ADOPTION_APPLICATION: '입양신청',
 };
 
+const MAX_REVIEW_IMAGES = 3;
+
 function unwrapList(data) {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.data)) return data.data;
@@ -64,7 +66,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
   const [petName, setPetName] = useState('');
   const [desertionNo, setDesertionNo] = useState('');
   const [content, setContent] = useState('');
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
   const [adoptions, setAdoptions] = useState([]);
   const [adoptionsLoading, setAdoptionsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -113,6 +115,22 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
     }
   };
 
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    const nextFiles = selectedFiles.slice(0, MAX_REVIEW_IMAGES);
+    setImageFiles(nextFiles);
+
+    if (selectedFiles.length > MAX_REVIEW_IMAGES) {
+      setError(`사진은 최대 ${MAX_REVIEW_IMAGES}장까지만 업로드할 수 있습니다.`);
+    } else {
+      setError('');
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setImageFiles((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !petName.trim() || !desertionNo.trim() || !content.trim()) {
@@ -125,9 +143,9 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
     payload.append('petName', petName.trim());
     payload.append('desertion_no', desertionNo.trim());
     payload.append('content', content.trim());
-    if (imageFile) {
-      payload.append('image', imageFile);
-    }
+    imageFiles.forEach((file) => {
+      payload.append('images', file);
+    });
 
     setSubmitting(true);
     setError('');
@@ -308,25 +326,49 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
             >
               <span className="material-symbols-outlined text-4xl text-primary">add_photo_alternate</span>
               <span className="font-bold text-on-surface">
-                {imageFile ? imageFile.name : '업로드할 사진을 선택하세요'}
+                {imageFiles.length > 0 ? `${imageFiles.length}장 선택됨` : '업로드할 사진을 선택하세요'}
               </span>
-              <span className="text-sm text-on-surface-variant">JPG, PNG 등 이미지 파일을 첨부할 수 있습니다.</span>
+              <span className="text-sm text-on-surface-variant">JPG, PNG 등 이미지 파일을 최대 3장까지 첨부할 수 있습니다.</span>
             </label>
             <input
               accept="image/*"
               className="hidden"
               id="review-image"
+              multiple
               type="file"
-              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+              onChange={handleImageChange}
             />
-            {imageFile && (
-              <button
-                className="text-sm font-bold text-error hover:underline"
-                type="button"
-                onClick={() => setImageFile(null)}
-              >
-                선택한 사진 제거
-              </button>
+            {imageFiles.length > 0 && (
+              <div className="rounded-2xl bg-surface-container-lowest p-5">
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <p className="text-sm font-bold text-on-surface">선택한 사진</p>
+                  <button
+                    className="text-sm font-bold text-error hover:underline"
+                    type="button"
+                    onClick={() => setImageFiles([])}
+                  >
+                    전체 제거
+                  </button>
+                </div>
+                <ul className="space-y-2">
+                  {imageFiles.map((file, index) => (
+                    <li key={`${file.name}-${index}`} className="flex items-center justify-between gap-3 rounded-xl bg-surface-container-low px-4 py-3 text-sm">
+                      <span className="truncate text-on-surface-variant">{file.name}</span>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="font-bold text-primary">{index + 1}/{MAX_REVIEW_IMAGES}</span>
+                        <button
+                          className="inline-flex size-7 items-center justify-center rounded-full text-error transition-all hover:bg-error-container"
+                          title="선택한 사진 삭제"
+                          type="button"
+                          onClick={() => handleRemoveImage(index)}
+                        >
+                          <span className="material-symbols-outlined text-base">close</span>
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
 
