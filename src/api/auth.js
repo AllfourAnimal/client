@@ -8,6 +8,11 @@ export async function loginUser({ loginId, password }) {
   return response.data; // { accessToken, ... } 반환
 }
 
+function authHeader(token) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+
 // 회원가입 API 호출 함수
 export async function signupUser(
   { loginId,
