@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
@@ -129,7 +129,6 @@ function AnimalListPage({
       </main>
 
       <AppFooter />
-
     </div>
   );
 }

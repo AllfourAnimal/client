@@ -4,7 +4,7 @@ const BASE_URL = 'https://all4animal.site/api/favorites';
 
 // 찜 목록 추가/삭제 API 호출 함수
 export async function toggleFavorite(token, animalId) {
-  const response = await axios.post( `${BASE_URL}/${animalId}`, null,{
+  const response = await axios.post(`${BASE_URL}/${animalId}`, null, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;

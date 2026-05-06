@@ -8,6 +8,11 @@ export async function loginUser({ loginId, password }) {
   return response.data; // { accessToken, ... } 반환
 }
 
+function authHeader(token) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+
 // 회원가입 API 호출 함수
 export async function signupUser(
   { loginId,
@@ -20,7 +25,7 @@ export async function signupUser(
     isExperience,
     housingType,
     emptyTime }
-  ) {
+) {
   const response = await axios.post(`${BASE_URL}/signup`, { loginId, password, passwordConfirm, name, phone, birthYear, location, isExperience, housingType, emptyTime });
   return response.data;
 }
@@ -28,5 +33,13 @@ export async function signupUser(
 // 아이디 중복 검사 API 호출 함수
 export async function checkId(loginId) {
   const response = await axios.get(`${BASE_URL}/checkId`, { params: { loginId } });
+  return response.data;
+
+}
+// 내 정보 조회 API 호출 함수
+export async function fetchMe(token) {
+  const response = await axios.get(`${BASE_URL}/me`, {
+    headers: authHeader(token),
+  });
   return response.data;
 }

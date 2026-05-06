@@ -1,4 +1,4 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 
 const BASE_URL = 'https://all4animal.site/api/animals';
 
@@ -34,5 +34,6 @@ export async function getAnimalStory(animalId, token) {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
+
 }
 

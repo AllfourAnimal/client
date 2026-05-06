@@ -114,6 +114,7 @@ function App() {
       <ReviewPostPage
         onNavigateHome={() => navigate('home')}
         onNavigateAnimalList={() => navigate('animal-list')}
+        onNavigateAnimalDetails={navigateToAnimal}
         onNavigateReviewList={() => navigate('review-list')}
         onNavigateProfile={() => navigate('profile')}
       />
