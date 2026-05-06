@@ -2,28 +2,37 @@ import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
+const getSurveyCompletedKey = (loginId) => `survey_completed_${loginId}`;
+
 
 export function AuthProvider({ children }) {
   // 액세스 토큰을 메모리에만 보관하여 보안 강화
   const [accessToken, setAccessToken] = useState(null);
-  const [hasCompletedSurvey, setHasCompletedSurvey] = useState(
-    () => localStorage.getItem('survey_completed') === 'true'
-  );
+  const [currentLoginId, setCurrentLoginId] = useState(null);
+  const [completedSurvey, setCompletedSurvey] = useState(false);
 
-  const login = (token) => setAccessToken(token);
+  const login = (token, loginId) => {
+    const nextCompletedSurvey = localStorage.getItem(getSurveyCompletedKey(loginId)) === 'true';
+    setAccessToken(token);
+    setCurrentLoginId(loginId);
+    setCompletedSurvey(nextCompletedSurvey);
+    return nextCompletedSurvey;
+  };
   const logout = () => {
     setAccessToken(null);
-    setHasCompletedSurvey(false);
-    localStorage.removeItem('survey_completed');
+    setCurrentLoginId(null);
+    setCompletedSurvey(false);
   };
   const isLoggedIn = () => accessToken !== null;
   const markSurveyComplete = () => {  // 설문 완료 상태를 업데이트하고 로컬 스토리지에 저장
-    setHasCompletedSurvey(true);
-    localStorage.setItem('survey_completed', 'true');
+    setCompletedSurvey(true);
+    if (currentLoginId) {
+      localStorage.setItem(getSurveyCompletedKey(currentLoginId), 'true');
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ accessToken, login, logout, isLoggedIn, hasCompletedSurvey, markSurveyComplete }}>
+    <AuthContext.Provider value={{ accessToken, login, logout, isLoggedIn, completedSurvey, hasCompletedSurvey: completedSurvey, markSurveyComplete }}>
       {children}
     </AuthContext.Provider>
   );

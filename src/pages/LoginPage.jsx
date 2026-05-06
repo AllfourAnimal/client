@@ -13,8 +13,8 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
     setError('');
     try {
       const data = await loginUser({ loginId, password });
-      login(data.accessToken);  // 로그인 성공 시 context에 토큰 저장
-      if (onNavigatePreferences) onNavigatePreferences();
+      const completedSurvey = login(data.accessToken, loginId);
+      if (onNavigatePreferences) onNavigatePreferences(completedSurvey);
     } catch (err) {
       setError(err.response.data.message);
     }

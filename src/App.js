@@ -16,7 +16,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [selectedAnimalId, setSelectedAnimalId] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
-  const { isLoggedIn, hasCompletedSurvey } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const navigate = (page) => setCurrentPage(page);
 
@@ -38,7 +38,7 @@ function App() {
     return (
       <LoginPage
         onNavigateHome={() => navigate('home')}
-        onNavigatePreferences={() => navigate(hasCompletedSurvey ? 'home' : 'preferences')}
+        onNavigatePreferences={(completedSurvey) => navigate(completedSurvey ? 'home' : 'preferences')}
         onNavigateSignup={() => navigate('signup')}
       />
     );
