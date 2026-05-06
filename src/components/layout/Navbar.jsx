@@ -19,8 +19,8 @@ function Navbar({
 
   return (
     <header className="bg-[#f7f9ff] fixed top-0 w-full z-50">
-      <nav className="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
-        <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2">
+      <nav className="grid grid-cols-[1fr_auto_1fr] items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+        <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2 justify-self-start">
           <button className="flex items-center gap-2" onClick={onNavigateHome} type="button">
             <span
               className="material-symbols-outlined text-[#8e4e14]"
@@ -32,13 +32,13 @@ function Navbar({
           </button>
         </div>
 
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-8 justify-self-center">
           {renderNavLink('home', '\uD648', onNavigateHome)}
           {renderNavLink('animal-list', '\uB3D9\uBB3C \uBAA9\uB85D', onNavigateAnimalList)}
           {renderNavLink('review-list', '\uC785\uC591 \uD6C4\uAE30', onNavigateReviews)}
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 justify-self-end">
           <div className="relative group">
             <span className="material-symbols-outlined text-[#534439] cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all">
               notifications
