@@ -13,10 +13,10 @@ import ReviewPostPage from './pages/ReviewPostPage';
 import FavoritesAllPage from './pages/FavoritesAllPage';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('login');
+  const { isLoggedIn } = useAuth();
+  const [currentPage, setCurrentPage] = useState(() => (isLoggedIn() ? 'home' : 'login'));
   const [selectedAnimalId, setSelectedAnimalId] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
-  const { isLoggedIn } = useAuth();
 
   const navigate = (page) => setCurrentPage(page);
 

@@ -12,8 +12,9 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
     e.preventDefault();
     setError('');
     try {
-      const data = await loginUser({ loginId, password });
-      const completedSurvey = login(data.accessToken, loginId);
+      const submittedLoginId = loginId.trim(); // 로그인 아이디는 공백 제거
+      const data = await loginUser({ loginId: submittedLoginId, password });
+      const completedSurvey = login(data.accessToken, submittedLoginId, data.username);
       if (onNavigatePreferences) onNavigatePreferences(completedSurvey);
     } catch (err) {
       setError(err.response.data.message);

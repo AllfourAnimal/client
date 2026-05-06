@@ -2,45 +2,108 @@ import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
+const ACCESS_TOKEN_KEY = 'access_token';
+const LOGIN_ID_KEY = 'login_id';
+const USERNAME_KEY = 'username';
 const getSurveyCompletedKey = (loginId) => `survey_completed_${loginId}`;
 
+const getSessionValue = (key) => {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const setSessionValue = (key, value) => {
+  if (value == null) return;
+
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    // Session storage can be unavailable in restricted browser modes.
+  }
+};
+
+const removeSessionValue = (key) => {
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    // Session storage can be unavailable in restricted browser modes.
+  }
+};
 
 export function AuthProvider({ children }) {
-  // 액세스 토큰을 메모리에만 보관하여 보안 강화
-  const [accessToken, setAccessToken] = useState(null);
-  const [currentLoginId, setCurrentLoginId] = useState(null);
-  const [completedSurvey, setCompletedSurvey] = useState(false);
+  const [accessToken, setAccessToken] = useState(
+    () => getSessionValue(ACCESS_TOKEN_KEY)
+  );
+  const [currentLoginId, setCurrentLoginId] = useState(
+    () => getSessionValue(LOGIN_ID_KEY)
+  );
+  const [username, setUsername] = useState(
+    () => getSessionValue(USERNAME_KEY)
+  );
+  const [completedSurvey, setCompletedSurvey] = useState(() => {
+    const savedLoginId = getSessionValue(LOGIN_ID_KEY);
+    return savedLoginId
+      ? localStorage.getItem(getSurveyCompletedKey(savedLoginId)) === 'true'
+      : false;
+  });
 
-  const login = (token, loginId) => {
+  const login = (token, loginId, nextUsername) => {
     const nextCompletedSurvey = localStorage.getItem(getSurveyCompletedKey(loginId)) === 'true';
+
+    setSessionValue(ACCESS_TOKEN_KEY, token);
+    setSessionValue(LOGIN_ID_KEY, loginId);
+    setSessionValue(USERNAME_KEY, nextUsername);
     setAccessToken(token);
     setCurrentLoginId(loginId);
+    setUsername(nextUsername);
     setCompletedSurvey(nextCompletedSurvey);
+
     return nextCompletedSurvey;
   };
+
   const logout = () => {
+    removeSessionValue(ACCESS_TOKEN_KEY);
+    removeSessionValue(LOGIN_ID_KEY);
+    removeSessionValue(USERNAME_KEY);
     setAccessToken(null);
     setCurrentLoginId(null);
+    setUsername(null);
     setCompletedSurvey(false);
   };
-  const isLoggedIn = () => accessToken !== null;
-  const markSurveyComplete = () => {  // 설문 완료 상태를 업데이트하고 로컬 스토리지에 저장
+
+  const isLoggedIn = () => Boolean(accessToken);
+
+  const markSurveyComplete = () => {
     setCompletedSurvey(true);
     if (currentLoginId) {
       localStorage.setItem(getSurveyCompletedKey(currentLoginId), 'true');
     }
   };
 
-  return (
-    <AuthContext.Provider value={{ accessToken, login, logout, isLoggedIn, completedSurvey, hasCompletedSurvey: completedSurvey, markSurveyComplete }}>
+  
+  return (  // 로그인 상태와 관련된 값과 함수를 context로 제공
+    <AuthContext.Provider
+      value={{
+        accessToken,
+        login,
+        logout,
+        isLoggedIn,
+        username,
+        completedSurvey,
+        hasCompletedSurvey: completedSurvey,
+        markSurveyComplete,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
-// useContext(AuthContext) 를 안전하게 쓰기 위한 wrapper 함수
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx; // contex에 접근 가능한지 검사 후 context 객체 그대로 반환
+  return ctx;
 }
