@@ -35,3 +35,4 @@ export async function getAnimalStory(animalId, token) {
   });
   return response.data;
 }
+

@@ -1,8 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
+import { getAnimalStory } from '../api/animals';
+import { useAuth } from '../context/AuthContext';  // getAnimalStory 함수에서 토큰을 사용하기 위해 AuthContext에서 accessToken을 가져옵니다.
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -37,6 +39,12 @@ function toList(value) {
     .filter(Boolean);
 }
 
+function getStoryText(storyData) {
+  if (!storyData) return '';
+  if (typeof storyData === 'string') return storyData;
+  return getValue(storyData, ['story', 'description', 'animalStory']) || '';  // 다양한 API 응답 형태에 대응하기 위해 여러 키를 시도해서 스토리 텍스트를 추출하는 방식, 아마 없어도 될 듯.
+}
+
 function InfoPill({ icon, value }) {
   if (!value) return null;
   return (
@@ -64,10 +72,35 @@ function AnimalDetailsPage({
   onNavigateReviews,
   onNavigateProfile,
 }) {
+  const [animalStory, setAnimalStory] = useState(null);
+  const { accessToken } = useAuth();
+
+  useEffect(() => {
+    if (!animalId || !accessToken) {
+      setAnimalStory(null);
+      return;
+    }
+
+    const loadAnimalStory = async () => {
+      try {
+        const storyData = await getAnimalStory(animalId, accessToken);
+        setAnimalStory(getStoryText(storyData));
+      } catch (error) {
+        console.error('동물 스토리 불러오기 실패:', error);
+        setAnimalStory('');
+      }
+    };
+
+    loadAnimalStory();
+  }, [animalId, accessToken]);
+
   const { getAnimal, imagesByAnimalId } = useAnimals();
   const { favoriteIds, toggleFavorite } = useFavorites();
   const animal = getAnimal(animalId);
 
+  // animal 원본 데이터를 상세 페이지에서 사용하기 편한 형태로 가공
+  // 다양한 API 응답 형태에 대응하기 위해 여러 키를 시도해서 값을 추출하는 방식으로 구현
+  // useMemo을 사용해서 animal 또는 story가 변경될 때만 재계산하도록 최적화
   const details = useMemo(() => {
     if (!animal) return null;
 
@@ -79,7 +112,7 @@ function AnimalDetailsPage({
     const personality = getValue(animal, ['personality', 'character', 'temperament']);
     const adoptStatus = getValue(animal, ['adoptStatus', 'adopt_status', 'status']) || (animal.adopted ? '입양완료' : '보호중');
     const adoptType = getValue(animal, ['adoptType', 'adopt_type']);
-    const story = toList(getValue(animal, ['story', 'description', 'content', 'specialMark']));
+    const story = animalStory;
     const personalityTags = toList(getValue(animal, ['personalityTags', 'personality_tags', 'tags']));
     const healthNotes = toList(getValue(animal, ['healthNotes', 'health_notes', 'health', 'notice']));
 
@@ -99,7 +132,7 @@ function AnimalDetailsPage({
       vaccination: getValue(animal, ['vaccination', 'vaccinationStatus', 'vaccination_status']),
       tempFosterNote: getValue(animal, ['tempFosterNote', 'temp_foster_note']),
     };
-  }, [animal]);
+  }, [animal, animalStory]);
 
   const imageSrc = animal ? imagesByAnimalId[animal.animalId] ?? animal.thumbnailImageUrl : null;
   const isFavorited = animal ? favoriteIds.has(Number(animal.animalId)) : false;
@@ -179,9 +212,7 @@ function AnimalDetailsPage({
                     {details.name}의 이야기
                   </h2>
                   <div className="space-y-6 text-on-surface-variant text-lg leading-relaxed font-body">
-                    {details.story.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
+                    {details.story}
                   </div>
                 </section>
 
