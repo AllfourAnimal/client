@@ -9,11 +9,11 @@ const DEFAULT_REVIEW_IMAGE = '/all4animal-paw.svg';
 const MAX_REVIEW_IMAGES = 3;
 
 function getUserId(user) {
-  return user?.userId ?? user?.id ?? user?.memberId ?? user?.data?.userId ?? user?.data?.id ?? null;
+  return user?.userId ?? user?.id ?? user?.memberId ?? user?.member_id ?? user?.data?.userId ?? user?.data?.id ?? user?.data?.memberId ?? user?.data?.member_id ?? null;
 }
 
 function getReviewAuthorId(review) {
-  return review?.userId ?? review?.authorId ?? review?.writerId ?? review?.memberId ?? review?.user?.userId ?? review?.user?.id ?? review?.author?.userId ?? review?.author?.id ?? null;
+  return review?.userId ?? review?.user_id ?? review?.authorId ?? review?.author_id ?? review?.writerId ?? review?.writer_id ?? review?.memberId ?? review?.member_id ?? review?.user?.userId ?? review?.user?.id ?? review?.author?.userId ?? review?.author?.id ?? null;
 }
 
 function formatDateOnly(value) {
@@ -27,9 +27,25 @@ function formatDateOnly(value) {
 }
 
 function getReviewImages(review) {
-  const images = review?.images || review?.imageUrls || review?.imageUrlList || review?.photoUrls || review?.image_url_list || [];
+  const images =
+    review?.images ||
+    review?.imageUrls ||
+    review?.imageUrlList ||
+    review?.photoUrls ||
+    review?.image_url_list ||
+    review?.reviewImages ||
+    review?.files ||
+    review?.imageUrl ||
+    review?.image ||
+    [];
   const list = Array.isArray(images) ? images : [images];
-  return list.filter(Boolean).slice(0, 3);
+  return list
+    .map((image) => {
+      if (typeof image === 'string') return image;
+      return image?.imageUrl || image?.url || image?.fileUrl || image?.path || image?.src || '';
+    })
+    .filter(Boolean)
+    .slice(0, 3);
 }
 
 function fillGalleryImages(images) {
