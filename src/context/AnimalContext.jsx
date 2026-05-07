@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { fetchAnimalImages, fetchAnimals, searchAnimals } from '../api/animals';
+import { fetchAnimalImages, fetchAnimals, getAiImage, searchAnimals } from '../api/animals';
 import { useAuth } from './AuthContext';
 
 const AnimalContext = createContext(null);
@@ -78,7 +78,7 @@ export function AnimalProvider({ children }) {
         ...Object.fromEntries(
           ids.map((animalId, index) => {
             const result = results[index];
-            const imageUrl = result.status === 'fulfilled' ? result.value?.[0] ?? null : null;
+            const imageUrl = result.status === 'fulfilled' ? getAiImage(result.value) : null;
             return [animalId, imageUrl];
           })
         ),

@@ -109,7 +109,7 @@ function AnimalListPage({
                 <AnimalCard
                   key={animal.animalId}
                   animal={animal}
-                  imageSrc={animal.thumbnailImageUrl}
+                  imageSrc={imagesByAnimalId[animal.animalId] ?? animal.thumbnailImageUrl}
                   isFavorited={favoriteIds.has(animal.animalId)}
                   onToggleFavorite={toggleFavorite}
                   onNavigateAnimalDetails={onNavigateAnimalDetails}

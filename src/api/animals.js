@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// const BASE_URL = 'http://localhost:8080/api/animals';
 const BASE_URL = "https://all4animal.site/api/animals";
 
 // 동물 정보 API 호출 함수
@@ -18,6 +17,23 @@ export async function fetchAnimalImages(animalId, token) {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
+}
+
+export function getAiImage(images) {
+  const normalizedImages = images
+    .map((image) => {
+      return {
+        imageUrl: image?.imageUrl ?? image?.image_url ?? image?.url ?? null,
+        is_ai_image: image?.is_ai_image ?? image?.isAiImage ?? false,
+      };
+    })
+    .filter((image) => image.imageUrl);
+
+  return (
+    normalizedImages.find((image) => image.is_ai_image)?.imageUrl ??
+    normalizedImages[0]?.imageUrl ??
+    null
+  );
 }
 
 // 동물 검색 필터링 API 호출 함수
