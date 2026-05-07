@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = "https://all4animal.site/api/review";
-// const BASE_URL = 'https://all4animal.site/api/review';
+const BASE_URL = 'https://all4animal.site/api/review';
+
 
 function authHeader(token) {
   return token ? { Authorization: `Bearer ${token}` } : {};
