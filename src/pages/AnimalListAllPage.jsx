@@ -50,6 +50,7 @@ function AnimalListAllPage({
     loadPage();
   }, [loadAnimalsPage]);
 
+  // 더보기 버튼 클릭 시 다음 페이지를 불러오는 함수
   const loadMore = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
