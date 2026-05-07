@@ -1,8 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
+const BASE_URL = "https://all4animal.site/api/review";
 // const BASE_URL = 'https://all4animal.site/api/review';
-const BASE_URL = 'https://all4animal.site/api/review';
-
 
 function authHeader(token) {
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -32,7 +31,6 @@ export async function fetchReviewDetail(reviewId) {
   return response.data;
 }
 
-
 // 리뷰 작성 API 호출 함수
 export async function createReview(token, reviewData) {
   const response = await axios.post(BASE_URL, reviewData, {
@@ -43,10 +41,16 @@ export async function createReview(token, reviewData) {
 
 // 리뷰 수정 API 호출 함수
 export async function updateReview(reviewId, token, reviewData) {
-  const { title, petName, content, imageUrls = [], imageFiles = [] } = reviewData;
+  const {
+    title,
+    petName,
+    content,
+    imageUrls = [],
+    imageFiles = [],
+  } = reviewData;
   const formData = new FormData();
   imageFiles.forEach((file) => {
-    formData.append('image', file);
+    formData.append("image", file);
   });
 
   const response = await axios.patch(`${BASE_URL}/${reviewId}`, formData, {

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import AppFooter from "../components/layout/AppFooter";
 import { sendChatMessage } from "../api/chatbot";
+import { useAuth } from "../context/AuthContext";
 
 const MATCH_CARDS = [
   {
@@ -63,6 +64,7 @@ function HomePage({
   onNavigateProfile,
   onNavigateReviews,
 }) {
+  const { accessToken } = useAuth();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState(INITIAL_CHAT_MESSAGES);
   const [chatMessage, setChatMessage] = useState("");
@@ -141,6 +143,18 @@ function HomePage({
       return;
     }
 
+    if (!accessToken) {
+      setChatMessages((messages) => [
+        ...messages,
+        {
+          id: Date.now(),
+          sender: "bot",
+          text: "로그인 후 챗봇을 이용할 수 있습니다.",
+        },
+      ]);
+      return;
+    }
+
     const userMessage = {
       id: Date.now(),
       sender: "user",
@@ -152,7 +166,7 @@ function HomePage({
     setIsChatLoading(true);
 
     try {
-      const data = await sendChatMessage(trimmedMessage);
+      const data = await sendChatMessage(accessToken, trimmedMessage);
       const botReply = getBotReplyText(data);
 
       setChatMessages((messages) => [
