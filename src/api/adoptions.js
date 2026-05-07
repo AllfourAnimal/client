@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/api/adoptions';
+const BASE_URL = 'https://all4animal.site/api/adoptions';
 
 function authHeader(token) {
   return token ? { Authorization: `Bearer ${token}` } : {};
