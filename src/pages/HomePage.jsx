@@ -50,7 +50,7 @@ const INITIAL_CHAT_MESSAGES = [
   {
     id: 1,
     sender: "bot",
-    text: "안녕하세요! 입양 절차, 동물 추천, 보호소 방문 준비를 도와드릴게요.",
+    text: "안녕하세요! 입양 절차, 동물 추천, 보호소 방문 준비처럼 입양과 관련된 질문을 도와드릴게요.\n\n입양과 관련 없는 질문은 정확한 답변이 어려울 수 있고, 이전 대화를 기억해 이어서 답변하지는 못해요. 궁금한 내용을 한 문장에 같이 적어주세요.",
   },
 ];
 
@@ -397,7 +397,9 @@ function HomePage({
               onPointerDown={handleChatResizeStart}
               aria-label="채팅창 크기 조절"
             >
-              <span className="material-symbols-outlined text-lg rotate-90">open_in_full</span>
+              <span className="material-symbols-outlined text-lg rotate-90">
+                open_in_full
+              </span>
             </button>
 
             <header className="flex items-center justify-between bg-primary px-5 py-4 pl-12 text-on-primary">
@@ -425,7 +427,7 @@ function HomePage({
               </button>
             </header>
 
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain bg-surface-container-low px-5 py-5">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-surface-container-low px-5 py-5">
               {chatMessages.map((message) => (
                 <div
                   key={message.id}
