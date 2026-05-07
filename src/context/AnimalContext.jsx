@@ -39,6 +39,7 @@ export function AnimalProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // 동물 데이터를 병합하여 상태에 저장하는 함수
   const mergeAnimals = useCallback((animals, { replace = false } = {}) => {
     setAnimalsById((prev) => {
       const next = replace ? {} : { ...prev };
@@ -51,6 +52,7 @@ export function AnimalProvider({ children }) {
       return next;
     });
 
+    // animalIds는 중복 없이 순서대로 관리
     setAnimalIds((prev) => {
       const merged = replace ? [] : [...prev];
       animals.forEach((animal) => {
@@ -60,6 +62,7 @@ export function AnimalProvider({ children }) {
     });
   }, []);
 
+  // 동물 이미지 데이터를 불러와 상태에 저장하는 함수
   const loadAnimalImages = useCallback(async (animals) => {
     if (!accessToken) return;
     const ids = animals
@@ -72,6 +75,7 @@ export function AnimalProvider({ children }) {
       ids.map((animalId) => fetchAnimalImages(animalId, accessToken))
     );
 
+    // 결과를 imagesByAnimalId 상태에 병합하여 저장
     setImagesByAnimalId((prev) => {
       const next = {
         ...prev,
@@ -88,6 +92,7 @@ export function AnimalProvider({ children }) {
     });
   }, [accessToken]);
 
+  // 동물 목록 페이지를 불러오는 함수
   const loadAnimalsPage = useCallback(async (page = 0, size = 10, options = {}) => {
     if (!accessToken) return [];
     setLoading(true);
@@ -107,6 +112,7 @@ export function AnimalProvider({ children }) {
     }
   }, [accessToken, loadAnimalImages, mergeAnimals]);
 
+  // 동물 데이터를 캐싱하는 함수
   const cacheAnimals = useCallback((items) => {
     const animals = items.map(normalizeAnimal).filter(Boolean);
     mergeAnimals(animals);
