@@ -11,6 +11,7 @@ import ReviewListPage from './pages/ReviewListPage';
 import ReviewDetailsPage from './pages/ReviewDetailsPage';
 import ReviewPostPage from './pages/ReviewPostPage';
 import FavoritesAllPage from './pages/FavoritesAllPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -46,6 +47,18 @@ function App() {
 
   if (currentPage === 'preferences') {
     return <PreferencesPage onNavigateHome={() => navigate('home')} />;
+  }
+
+  if (currentPage === 'profile') {
+    return (
+      <ProfilePage
+        onNavigateHome={() => navigate('home')}
+        onNavigateAnimalList={() => navigate('animal-list')}
+        onNavigateReviews={() => navigate('review-list')}
+        onNavigatePreferences={() => navigate('preferences')}
+        onNavigateProfile={() => navigate('profile')}
+      />
+    );
   }
 
   if (currentPage === 'home') {

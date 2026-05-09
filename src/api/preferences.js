@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// const BASE_URL = 'http://localhost:8080/api/users/preferences';
 const BASE_URL = "https://all4animal.site/api/users/preferences";
 
 // 선호 정보 수정 API
