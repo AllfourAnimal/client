@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { patchPreferences } from '../api/preferences';
-import { FaDog, FaCat, FaPaw, FaBaby } from 'react-icons/fa';
+import { getPreferences, patchPreferences } from '../api/preferences';
+import { FaDog, FaCat, FaBaby } from 'react-icons/fa';
 import {
   MdMale, MdFemale,
-  MdChildCare, MdElderly, MdMan,
+  MdElderly, MdMan,
   MdCheck, MdArrowForward
 } from 'react-icons/md';
 
@@ -71,7 +71,58 @@ function PreferencesPage({ onNavigateHome }) {
   const [age, setAge] = useState('YOUNG');
   const [personalities, setPersonalities] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isLoadingPreference, setIsLoadingPreference] = useState(true);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    let ignore = false;
+
+    const loadPreferences = async () => {
+      setIsLoadingPreference(true);
+      setError('');
+
+      try {
+        const data = await getPreferences(accessToken);
+
+        if (ignore || !data) {
+          return;
+        }
+
+        if (data.animalType) setAnimalType(data.animalType);
+        if (data.size) setSize(data.size);
+        if (data.gender) setGender(data.gender);
+        if (data.age) setAge(data.age);
+
+        if (Array.isArray(data.personalities)) {
+          setPersonalities(data.personalities);
+        } else if (typeof data.personalities === 'string') {
+          setPersonalities(
+            data.personalities
+              .split(',')
+              .map((personality) => personality.trim())
+              .filter(Boolean)
+          );
+        }
+      } catch (requestError) {
+        const status = requestError.response?.status;
+        const hasNoSavedPreference = status === 400 || status === 404;
+
+        if (!ignore && !hasNoSavedPreference) {
+          setError('저장된 선호 정보를 불러오지 못했습니다.');
+        }
+      } finally {
+        if (!ignore) {
+          setIsLoadingPreference(false);
+        }
+      }
+    };
+
+    loadPreferences();
+
+    return () => {
+      ignore = true;
+    };
+  }, [accessToken]);
 
   const togglePersonality = (p) => {
     setPersonalities((prev) =>
@@ -121,6 +172,12 @@ function PreferencesPage({ onNavigateHome }) {
               </p>
             </div>
           </header>
+
+          {isLoadingPreference && (
+            <p className="mb-8 text-center text-sm font-bold text-on-surface-variant">
+              저장된 설문 정보를 불러오는 중입니다.
+            </p>
+          )}
 
           <form className="space-y-12" onSubmit={handleSubmit}>
 
@@ -197,11 +254,10 @@ function PreferencesPage({ onNavigateHome }) {
                     return (
                       <label
                         key={value}
-                        className={`inline-flex items-center px-5 py-2.5 rounded-full cursor-pointer transition-all border font-medium text-sm ${
-                          selected
+                        className={`inline-flex items-center px-5 py-2.5 rounded-full cursor-pointer transition-all border font-medium text-sm ${selected
                             ? 'bg-primary text-on-primary border-primary'
                             : 'bg-surface-container-lowest text-on-surface-variant border-outline-variant/20 hover:bg-primary-fixed hover:text-on-primary-fixed-variant'
-                        }`}
+                          }`}
                       >
                         <input className="sr-only" type="checkbox" checked={selected} onChange={() => togglePersonality(value)} />
                         {label}
