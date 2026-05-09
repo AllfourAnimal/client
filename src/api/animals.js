@@ -55,3 +55,11 @@ export async function getAnimalStory(animalId, token) {
   );
   return response.data;
 }
+
+// 추천 동물 조회 API 호출 함수
+export async function getRecommendedAnimals(token) {
+  const response = await axios.get("https://all4animal.site/api/users/recommendations", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+}

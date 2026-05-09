@@ -1,51 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import AppFooter from "../components/layout/AppFooter";
+import { getRecommendedAnimals } from "../api/animals";
 import { sendChatMessage } from "../api/chatbot";
+import {
+  fetchShelterCount,
+  fetchThisYearRescueCount,
+} from "../api/abandonmentStats";
 import { useAuth } from "../context/AuthContext";
-
-const MATCH_CARDS = [
-  {
-    name: "모승",
-    breed: "Beagle • 2 years",
-    match: 98,
-    src: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/6P0U/image/1OWftaQcOlM1040OyU83hKxBmgs",
-    offset: false,
-  },
-  {
-    name: "똘똘",
-    breed: "Corgi • 1 year",
-    match: 94,
-    src: "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/722/2d9606f443d27267e4d45b15e624e9ed_res.jpeg",
-    offset: true,
-  },
-  {
-    name: "공주",
-    breed: "Golden Retriever • 4 months",
-    match: 91,
-    src: "https://storage.enuri.info/pic_upload/knowbox2/202402/03494830920240229230d567a-153b-4806-8cc9-defc73434507.jpg",
-    offset: false,
-  },
-];
-
-const SAVED_ANIMALS = [
-  {
-    name: "모승",
-    src: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/6P0U/image/1OWftaQcOlM1040OyU83hKxBmgs",
-  },
-  {
-    name: "똘똘",
-    src: "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/722/2d9606f443d27267e4d45b15e624e9ed_res.jpeg",
-  },
-  {
-    name: "메롱",
-    src: "https://mblogthumb-phinf.pstatic.net/MjAyMjExMDRfNTQg/MDAxNjY3NTM1MjUwMTM5.UbGKNsQspu-mN4M3husNKIkqrjxTZVqDz495I1sOHxYg.mQRYtPom0sUssuJaI2SpRBwyTgMMxm-267qxjZq4jGQg.JPEG.babion_1/4.jpg?type=w800",
-  },
-  {
-    name: "윙크",
-    src: "https://img1.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202105/25/holapet/20210525051114398gyiz.jpg",
-  },
-];
+import { useAdoptions } from "../context/AdoptionContext";
+import { useAnimals } from "../context/AnimalContext";
 
 const INITIAL_CHAT_MESSAGES = [
   {
@@ -57,6 +21,89 @@ const INITIAL_CHAT_MESSAGES = [
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
+const formatStatNumber = (value) => (
+  typeof value === "number" ? value.toLocaleString("ko-KR") : "-"
+);
+
+function ConcentricLoader({ className = "" }) {
+  return (
+    <span
+      className={`relative inline-flex h-12 w-12 items-center justify-center ${className}`}
+      aria-label="데이터 로딩 중"
+      role="status"
+    >
+      <span className="absolute h-12 w-12 animate-spin rounded-full border-4 border-current/20 border-t-current" />
+    </span>
+  );
+}
+
+const getAdoptionAnimalId = (adoption) => {
+  const animalId = adoption?.animalId ?? adoption?.animal_id;
+  return animalId === undefined || animalId === null || animalId === ""
+    ? null
+    : Number(animalId);
+};
+
+const getAdoptionImageSrc = (adoption, cachedImageSrc) => (
+  cachedImageSrc ||
+  adoption?.thumbnailImageUrl ||
+  adoption?.thumbnail_image_url ||
+  adoption?.imageUrl ||
+  adoption?.image_url ||
+  adoption?.animalImageUrl ||
+  adoption?.animal_image_url ||
+  null
+);
+
+const getAnimalImageSrc = (animal) => (
+  animal?.imageUrls?.[0] ||
+  animal?.thumbnailImageUrl ||
+  animal?.thumbnail_image_url ||
+  animal?.imageUrl ||
+  animal?.image_url ||
+  null
+);
+
+const getAnimalAgeText = (animalAge) => {
+  const birthYear = Number(animalAge);
+
+  if (!birthYear || Number.isNaN(birthYear)) {
+    return "";
+  }
+
+  const age = new Date().getFullYear() - birthYear;
+  return age > 0 ? `${age}살` : "1살 미만";
+};
+
+const getAnimalSexText = (animalSex) => {
+  if (animalSex === "MALE") return "남아";
+  if (animalSex === "FEMALE") return "여아";
+  return "";
+};
+
+const getRecommendedAnimalsFromResponse = (data) => (
+  Array.isArray(data?.animals) ? data.animals : []
+);
+
+const toRecommendedAnimalCacheItem = (animal) => ({
+  ...animal,
+  thumbnailImageUrl: getAnimalImageSrc(animal),
+});
+
+const toRecommendedCard = (animal, index) => {
+  const ageText = getAnimalAgeText(animal.animalAge);
+  const sexText = getAnimalSexText(animal.animalSex);
+
+  return {
+    animalId: animal.animalId,
+    title: `${animal.species || "동물"} #${animal.animalId}`,
+    breed: [animal.animalType, ageText, sexText].filter(Boolean).join(" • "),
+    match: Math.max(91, 98 - index * 4),
+    src: getAnimalImageSrc(animal),
+    offset: index === 1,
+  };
+};
+
 function HomePage({
   onNavigateAnimalList,
   onNavigatePreferences,
@@ -65,13 +112,45 @@ function HomePage({
   onNavigateReviews,
 }) {
   const { accessToken } = useAuth();
+  const { adoptions, loading: adoptionsLoading, error: adoptionsError } = useAdoptions();
+  const { cacheAnimals, imagesByAnimalId } = useAnimals();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState(INITIAL_CHAT_MESSAGES);
   const [chatMessage, setChatMessage] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [chatSize, setChatSize] = useState({ width: 384, height: 448 });
+  const [recommendedAnimals, setRecommendedAnimals] = useState([]);
+  const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(false);
+  const [recommendationsError, setRecommendationsError] = useState("");
+  const [rescueCount, setRescueCount] = useState(null);
+  const [shelterCount, setShelterCount] = useState(null);
+  const [isRescueCountLoading, setIsRescueCountLoading] = useState(true);
+  const [isShelterCountLoading, setIsShelterCountLoading] = useState(true);
+  const overviewSectionRef = useRef(null);
+  const matchesSectionRef = useRef(null);
+  const adoptionSectionRef = useRef(null);
   const chatBottomRef = useRef(null);
   const chatResizeRef = useRef(null);
+
+  const adoptionCarouselAnimals = useMemo(() => (
+    adoptions
+      .map((adoption) => {
+        const animalId = getAdoptionAnimalId(adoption);
+        if (!animalId || Number.isNaN(animalId)) {
+          return null;
+        }
+
+        return {
+          animalId,
+          imageSrc: getAdoptionImageSrc(adoption, imagesByAnimalId[animalId]),
+        };
+      })
+      .filter(Boolean)
+  ), [adoptions, imagesByAnimalId]);
+
+  const recommendedCards = useMemo(() => (
+    recommendedAnimals.map(toRecommendedCard)
+  ), [recommendedAnimals]);
 
   useEffect(() => {
     if (!isChatOpen) {
@@ -80,6 +159,49 @@ function HomePage({
 
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages, isChatLoading, isChatOpen]);
+
+  useEffect(() => {
+    if (!accessToken) {
+      setRecommendedAnimals([]);
+      setRecommendationsError("");
+      setIsRecommendationsLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+
+    const loadRecommendations = async () => {
+      setIsRecommendationsLoading(true);
+      setRecommendationsError("");
+
+      try {
+        const data = await getRecommendedAnimals(accessToken);
+        const animals = getRecommendedAnimalsFromResponse(data);
+        const cacheItems = animals.map(toRecommendedAnimalCacheItem);
+
+        if (isMounted) {
+          setRecommendedAnimals(animals);
+          cacheAnimals(cacheItems);
+        }
+      } catch (error) {
+        console.error("[HomePage] getRecommendedAnimals error:", error);
+        if (isMounted) {
+          setRecommendedAnimals([]);
+          setRecommendationsError("추천 동물을 불러오지 못했습니다.");
+        }
+      } finally {
+        if (isMounted) {
+          setIsRecommendationsLoading(false);
+        }
+      }
+    };
+
+    loadRecommendations();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [accessToken, cacheAnimals]);
 
   useEffect(() => {
     const handlePointerMove = (event) => {
@@ -110,6 +232,47 @@ function HomePage({
     };
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadStats = async () => {
+      setIsRescueCountLoading(true);
+      setIsShelterCountLoading(true);
+
+      const [rescueResult, shelterResult] = await Promise.allSettled([
+        fetchThisYearRescueCount(),
+        fetchShelterCount(),
+      ]);
+
+      if (!isMounted) {
+        return;
+      }
+
+      if (rescueResult.status === "fulfilled") {
+        setRescueCount(rescueResult.value);
+      } else {
+        console.error("[HomePage] fetchThisYearRescueCount error:", rescueResult.reason);
+        setRescueCount(null);
+      }
+
+      if (shelterResult.status === "fulfilled") {
+        setShelterCount(shelterResult.value);
+      } else {
+        console.error("[HomePage] fetchShelterCount error:", shelterResult.reason);
+        setShelterCount(null);
+      }
+
+      setIsRescueCountLoading(false);
+      setIsShelterCountLoading(false);
+    };
+
+    loadStats();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const handleChatResizeStart = (event) => {
     event.preventDefault();
     chatResizeRef.current = {
@@ -118,6 +281,13 @@ function HomePage({
       startWidth: chatSize.width,
       startHeight: chatSize.height,
     };
+  };
+
+  const scrollToSection = (sectionRef) => {
+    sectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const getBotReplyText = (data) => {
@@ -205,40 +375,43 @@ function HomePage({
       />
 
       <div className="flex pt-20">
-        {/* SideNavBar */}
-        <aside className="hidden lg:flex flex-col h-[calc(100vh-80px)] w-64 bg-[#edf4ff] rounded-r-[1.5rem] py-8 pl-4 sticky top-20">
+        {/* 사이드NavBar */}
+        <aside className="hidden lg:sticky lg:top-20 lg:flex h-[calc(100vh-80px)] w-64 flex-shrink-0 flex-col self-start bg-[#edf4ff] rounded-r-[1.5rem] py-8 pl-4">
           <div className="px-4 mb-10">
             <h3 className="text-xl font-bold text-on-surface font-headline">
               메뉴
             </h3>
           </div>
           <nav className="flex-1 space-y-2">
-            <a
-              href="#"
-              className="flex items-center gap-3 py-3 px-6 bg-white text-[#8e4e14] rounded-l-full shadow-sm transition-transform duration-200"
+            <button
+              type="button"
+              className="flex w-full items-center gap-3 py-3 px-6 bg-white text-[#8e4e14] rounded-l-full shadow-sm transition-transform duration-200"
+              onClick={() => scrollToSection(overviewSectionRef)}
             >
               <span
                 className="material-symbols-outlined"
                 style={{ fontVariationSettings: '"FILL" 1' }}
               >
-                dashboard
+                space_dashboard
               </span>
               <span className="font-medium">개요</span>
-            </a>
-            <a
-              href="#"
-              className="flex items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
+            </button>
+            <button
+              type="button"
+              className="flex w-full items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
+              onClick={() => scrollToSection(matchesSectionRef)}
             >
-              <span className="material-symbols-outlined">favorite</span>
+              <span className="material-symbols-outlined">search</span>
               <span className="font-medium">나의 매칭 현황</span>
-            </a>
-            <a
-              href="#"
-              className="flex items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
+            </button>
+            <button
+              type="button"
+              className="flex w-full items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
+              onClick={() => scrollToSection(adoptionSectionRef)}
             >
-              <span className="material-symbols-outlined">bookmark</span>
-              <span className="font-medium">찜한 동물</span>
-            </a>
+              <span className="material-symbols-outlined">contact_support</span>
+              <span className="font-medium">입양 문의 중</span>
+            </button>
           </nav>
           <div className="px-4 mt-auto">
             <button
@@ -253,12 +426,12 @@ function HomePage({
         {/* Main Content */}
         <main className="flex-1 px-8 py-8 lg:px-12 max-w-7xl mx-auto overflow-hidden">
           {/* Hero */}
-          <section className="mb-12">
+          <section ref={overviewSectionRef} className="mb-12 scroll-mt-28">
             <h1 className="text-5xl font-extrabold text-on-background mb-2 tracking-tight font-headline">
               환영해요 예비 입양자님!
             </h1>
-            <p className="text-on-surface-variant text-lg">
-              캐치프레이즈 적으면 좋을 듯
+            <p className="pt-2 text-on-surface-variant text-lg">
+              모든 동물을 위해 All4Animal이 함께합니다.
             </p>
           </section>
 
@@ -271,7 +444,13 @@ function HomePage({
                   구조 현황
                 </h2>
                 <div className="flex items-end gap-2 text-primary">
-                  <span className="text-6xl font-black">12.4k</span>
+                  <span className="flex min-h-[4.5rem] min-w-28 items-center text-6xl font-black">
+                    {isRescueCountLoading ? (
+                      <ConcentricLoader />
+                    ) : (
+                      formatStatNumber(rescueCount)
+                    )}
+                  </span>
                   <span className="text-lg font-semibold mb-2">
                     올해 구조된 생명
                   </span>
@@ -307,12 +486,18 @@ function HomePage({
               </div>
               <div className="bg-primary rounded-[1.5rem] p-6 text-on-primary shadow-lg shadow-primary/20 flex flex-col justify-center">
                 <span className="text-on-primary/70 font-bold text-sm uppercase tracking-widest mb-1">
-                  봉사 활동 건수
+                  전국 보호소 수
                 </span>
                 <div className="flex items-center justify-between">
-                  <span className="text-4xl font-bold">42</span>
+                  <span className="flex min-h-12 min-w-20 items-center text-4xl font-bold">
+                    {isShelterCountLoading ? (
+                      <ConcentricLoader className="scale-75 text-on-primary" />
+                    ) : (
+                      formatStatNumber(shelterCount)
+                    )}
+                  </span>
                   <span className="material-symbols-outlined text-4xl opacity-50">
-                    volunteer_activism
+                    home_work
                   </span>
                 </div>
               </div>
@@ -320,80 +505,111 @@ function HomePage({
           </section>
 
           {/* Top Matches */}
-          <section className="mb-16">
+          <section ref={matchesSectionRef} className="mb-16 scroll-mt-28">
             <div className="flex justify-between items-end mb-8">
               <div>
                 <h2 className="text-3xl font-bold text-on-background font-headline">
-                  Top Matches for You
+                  당신과 찰떡인 아이들
                 </h2>
-                <p className="text-on-surface-variant">
-                  Personalized based on your lifestyle and preferences
+                <p className="pt-2 text-on-surface-variant">
+                  All4Animal만의 매칭 알고리즘으로 당신과 가장 잘 맞는 아이들을 소개해드립니다.
                 </p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {MATCH_CARDS.map((card) => (
+              {recommendedCards.map((card) => (
                 <button
-                  key={card.name}
+                  key={card.animalId}
                   className={`group cursor-pointer block text-left w-full${card.offset ? " md:-mt-6" : ""}`}
-                  onClick={() => onNavigateAnimalDetails(card.name)}
+                  onClick={() => onNavigateAnimalDetails(card.animalId)}
+                  aria-label={`동물 ${card.animalId} 상세페이지로 이동`}
                 >
                   <div className="relative mb-4 rounded-[1.5rem] overflow-hidden aspect-[4/5]">
-                    <img
-                      alt="pet photo"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      src={card.src}
-                    />
+                    {card.src ? (
+                      <img
+                        alt={`${card.title} 사진`}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        src={card.src}
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-surface-container-high text-primary">
+                        <span className="material-symbols-outlined text-6xl">
+                          pets
+                        </span>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-primary font-bold text-xs">
                       {card.match}% Match
                     </div>
                     <div className="absolute bottom-4 left-4 text-white">
-                      <h3 className="text-2xl font-bold">{card.name}</h3>
+                      <h3 className="text-2xl font-bold">{card.title}</h3>
                       <p className="text-sm opacity-90">{card.breed}</p>
                     </div>
                   </div>
                 </button>
               ))}
+              {isRecommendationsLoading && (
+                <div className="col-span-full flex min-h-64 items-center justify-center text-primary">
+                  <ConcentricLoader />
+                </div>
+              )}
+              {!isRecommendationsLoading && recommendedCards.length === 0 && (
+                <div className="col-span-full rounded-2xl bg-surface-container-low px-6 py-8 text-center text-on-surface-variant">
+                  {recommendationsError || "추천 동물이 아직 없습니다."}
+                </div>
+              )}
             </div>
           </section>
 
-          {/* 찜한 동물 Carousel */}
-          <section className="mb-20">
+          {/* 입양 문의 중 Carousel */}
+          <section ref={adoptionSectionRef} className="mb-40 scroll-mt-28">
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-4 flex-1">
                 <h2 className="text-2xl font-bold text-on-background font-headline">
-                  찜한 동물
+                  입양 문의 중
                 </h2>
                 <div className="h-[1px] flex-1 bg-outline-variant opacity-20" />
               </div>
-              <button
-                className="text-primary font-bold flex items-center gap-2 hover:underline ml-4"
-                onClick={onNavigateAnimalList}
-              >
-                전체 보기
-                <span className="material-symbols-outlined">arrow_forward</span>
-              </button>
             </div>
             <div className="flex gap-6 overflow-x-auto pb-6">
-              {SAVED_ANIMALS.map((animal) => (
+              {adoptionCarouselAnimals.map((animal) => (
                 <button
-                  key={animal.name}
-                  className="flex-shrink-0 w-48 group block"
-                  onClick={() => onNavigateAnimalDetails(animal.name)}
+                  key={animal.animalId}
+                  className="flex-shrink-0 w-48 group block text-center"
+                  onClick={() => onNavigateAnimalDetails(animal.animalId)}
+                  aria-label={`동물 ${animal.animalId} 상세페이지로 이동`}
                 >
-                  <div className="h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 transition-transform group-hover:scale-105">
-                    <img
-                      alt="animal"
-                      className="w-full h-full object-cover"
-                      src={animal.src}
-                    />
+                  <div className="h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 transition-transform group-hover:scale-105 bg-surface-container-high">
+                    {animal.imageSrc ? (
+                      <img
+                        alt={`동물 ${animal.animalId}`}
+                        className="w-full h-full object-cover"
+                        src={animal.imageSrc}
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-primary">
+                        <span className="material-symbols-outlined text-5xl">
+                          pets
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-center font-bold text-on-surface">
-                    {animal.name}
+                  <p className="font-bold text-on-surface">
+                    {animal.animalId}
                   </p>
                 </button>
               ))}
+              {adoptionsLoading && (
+                <div className="flex h-48 w-48 flex-shrink-0 items-center justify-center rounded-full bg-surface-container-high text-sm font-semibold text-on-surface-variant">
+                  불러오는 중...
+                </div>
+              )}
+              {!adoptionsLoading && adoptionCarouselAnimals.length === 0 && (
+                <div className="w-full rounded-2xl bg-surface-container-low px-6 py-8 text-center text-on-surface-variant">
+                  {adoptionsError || "아직 입양 문의 중인 동물이 없습니다."}
+                </div>
+              )}
             </div>
           </section>
         </main>
