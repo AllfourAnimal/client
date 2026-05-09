@@ -7,6 +7,18 @@ import { getAnimalStory } from '../api/animals';
 import { useAuth } from '../context/AuthContext';  // getAnimalStory 함수에서 토큰을 사용하기 위해 AuthContext에서 accessToken을 가져옵니다.
 
 const CURRENT_YEAR = new Date().getFullYear();
+const HIGH_PERSONALITY_VALUES = new Set(['HIGH', 'VERY_HIGH']);
+const PERSONALITY_FEATURES = [
+  { key: 'people_friendly', label: '사람을 좋아함' },
+  { key: 'active_playful', label: '밝고 활기참' },
+  { key: 'calm_quiet', label: '차분하고 편안함' },
+  { key: 'adaptable', label: '새로운 환경에 잘 적응' },
+  { key: 'outdoor_activity', label: '운동과 활동을 좋아함' },
+  { key: 'animal_friendly', label: '다른 동물과 잘 지냄' },
+  { key: 'beginner_possible', label: '초보 보호자도 함께 가능' },
+  { key: 'family_friendly', label: '가족과 함께 지내기 좋음' },
+  { key: 'slow_bonding_ok', label: '기다려주면 다가옴' },
+];
 
 function getValue(animal, keys) {
   return keys.map((key) => animal?.[key]).find((value) => value !== undefined && value !== null && value !== '');
@@ -39,6 +51,12 @@ function toList(value) {
     .filter(Boolean);
 }
 
+function getPersonalityTags(animal) {
+  return PERSONALITY_FEATURES
+    .filter(({ key }) => HIGH_PERSONALITY_VALUES.has(String(animal?.[key] || '').toUpperCase()))
+    .map(({ label }) => label);
+}
+
 function getStoryText(storyData) {
   if (!storyData) return '';
   if (typeof storyData === 'string') return storyData;
@@ -55,12 +73,12 @@ function InfoPill({ icon, value }) {
   );
 }
 
-function QuickInfo({ icon, label, value }) {
+function QuickInfo({ icon, label, value, className = '', valueClassName = '' }) {
   return (
-    <div className="p-4 rounded-xl bg-surface-container-low flex flex-col items-center justify-center text-center min-h-[120px]">
+    <div className={`p-4 rounded-xl bg-surface-container flex flex-col items-center justify-center text-center min-h-[120px] ${className}`}>
       <span className="material-symbols-outlined text-primary text-3xl mb-2">{icon}</span>
       <span className="text-on-surface-variant text-sm font-medium">{label}</span>
-      <span className="text-on-surface font-bold text-lg min-h-7">{value || ''}</span>
+      <span className={`text-on-surface font-bold text-lg min-h-7 ${valueClassName}`}>{value || ''}</span>
     </div>
   );
 }
@@ -109,11 +127,12 @@ function AnimalDetailsPage({
     const species = getValue(animal, ['species', 'speices']);
     const age = getAgeLabel(getValue(animal, ['animal_age', 'animalAge', 'age']));
     const sex = getSexLabel(getValue(animal, ['animal_sex', 'animalSex', 'animlSex', 'sex', 'gender']));
-    const personality = getValue(animal, ['personality', 'character', 'temperament']);
-    const adoptStatus = getValue(animal, ['adoptStatus', 'adopt_status', 'status']) || (animal.adopted ? '입양완료' : '보호중');
-    const adoptType = getValue(animal, ['adoptType', 'adopt_type']);
+    const adoptStatus = (animal.adopted ? '입양완료' : '보호중');
+    const isVaccinated = (animal.vaccinated ? '접종완료' : '미접종');
+    const happenedPlace = getValue(animal, ['happenedPlace', 'happendPlace', 'happenPlace', 'happened_place', 'happen_place', 'careAddr', 'careAddress', 'address']);
     const story = animalStory;
-    const personalityTags = toList(getValue(animal, ['personalityTags', 'personality_tags', 'tags']));
+    const personality = getValue(animal, ['personality', 'character', 'temperament']); 
+    const personalityTags = getPersonalityTags(animal);
     const healthNotes = toList(getValue(animal, ['healthNotes', 'health_notes', 'health', 'notice']));
 
     return {
@@ -124,13 +143,13 @@ function AnimalDetailsPage({
       sex,
       personality,
       adoptStatus,
-      adoptType,
+      isVaccinated,
+      happenedPlace,
       story,
       personalityTags,
       healthNotes,
-      weight: getValue(animal, ['weight', 'animalWeight', 'animal_weight']),
+      weight: `${animal.weight}kg`,
       vaccination: getValue(animal, ['vaccination', 'vaccinationStatus', 'vaccination_status']),
-      tempFosterNote: getValue(animal, ['tempFosterNote', 'temp_foster_note']),
     };
   }, [animal, animalStory]);
 
@@ -174,39 +193,49 @@ function AnimalDetailsPage({
                     <span className="material-symbols-outlined text-8xl text-on-surface-variant opacity-20">pets</span>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-on-background/60 to-transparent" />
-                  <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 text-white">
-                    <div className="inline-block px-5 py-2.5 rounded-full bg-white text-black font-extrabold text-lg mb-6 shadow-xl ring-4 ring-white/20">
-                      {details.adoptStatus}
+                  <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-full text-sm md:text-base font-bold text-primary shadow-md">
+                    {details.adoptStatus}
+                  </div>
+                  <div className="absolute bottom-0 left-0 w-full px-12 pt-8 pb-10 text-white">
+                    <div className="mb-6 flex flex-wrap items-end gap-6">
+                      <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight font-headline">
+                        {details.name}
+                      </h1>
+                      <div className="mb-2 inline-flex items-center px-5 py-2 rounded-full bg-white text-black font-bold text-lg shadow-xl ring-4 ring-white/20">
+                        99% 적합
+                      </div>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 font-headline">
-                      {details.name}
-                    </h1>
                     <div className="flex flex-col gap-6">
                       <div className="flex flex-wrap gap-4">
                         <InfoPill icon="pets" value={details.species} />
                         <InfoPill icon="cake" value={details.age} />
-                        <InfoPill icon="male" value={details.sex} />
+                        <InfoPill icon={details.sex === '수컷' ? 'male' : 'female'} value={details.sex} />
                         <InfoPill icon="auto_awesome" value={details.personality} />
                       </div>
-                      <div className="flex min-h-10">
+                      {/* <div className="flex min-h-10">
                         {details.adoptType && (
                           <div className="px-5 py-2 rounded-full bg-primary-container text-on-primary-container font-bold text-base shadow-lg">
                             {details.adoptType}
                           </div>
                         )}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </section>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <QuickInfo icon="calendar_today" label="나이" value={details.age} />
-                  <QuickInfo icon="female" label="성별" value={details.sex} />
-                  <QuickInfo icon="vaccines" label="접종 상태" value={details.vaccination} />
+                  <QuickInfo icon="vaccines" label="접종 상태" value={details.isVaccinated} />
                   <QuickInfo icon="monitor_weight" label="체중" value={details.weight} />
+                  <QuickInfo
+                    icon="location_on"
+                    label="발견 장소"
+                    value={details.happenedPlace}
+                    className="col-span-2"
+                    valueClassName="max-w-full whitespace-nowrap text-sm md:text-base lg:text-lg"
+                  />
                 </div>
 
-                <section className="bg-surface-container-lowest p-10 rounded-xl shadow-sm border border-outline-variant/10 min-h-[220px]">
+                <section className="bg-surface-container-lowest px-10 pt-8 rounded-xl shadow-sm border border-outline-variant/10 min-h-[220px]">
                   <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 font-headline">
                     <span className="w-1.5 h-8 bg-primary-container rounded-full" />
                     {details.name}의 이야기
@@ -217,8 +246,8 @@ function AnimalDetailsPage({
                 </section>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="p-8 bg-surface-container-high rounded-xl min-h-[190px]">
-                    <h3 className="text-xl font-bold mb-4 text-on-surface font-headline">성격 키워드</h3>
+                  <div className="px-6 pt-5 bg-surface-container-high rounded-xl min-h-[190px] md:col-span-2">
+                    <h3 className="text-xl font-bold mb-4 text-tertiary font-headline">성격 키워드</h3>
                     <div className="flex flex-wrap gap-3">
                       {details.personalityTags.map((tag) => (
                         <span
@@ -230,8 +259,8 @@ function AnimalDetailsPage({
                       ))}
                     </div>
                   </div>
-                  <div className="p-8 bg-tertiary-container/20 rounded-xl border border-tertiary-container/30 min-h-[190px]">
-                    <h3 className="text-xl font-bold mb-4 text-tertiary font-headline">건강 및 주의사항</h3>
+                  {/* <div className="px-6 pt-5 bg-tertiary-container/20 rounded-xl border border-tertiary-container/30 min-h-[190px]">
+                    <h3 className="text-xl font-bold mb-4 text-tertiary font-headline">특이사항</h3>
                     <ul className="space-y-3">
                       {details.healthNotes.map((note) => (
                         <li key={note} className="flex items-start gap-2">
@@ -240,18 +269,19 @@ function AnimalDetailsPage({
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
+              {/* 관심 등록 버튼과 입양 문의 버튼을 포함한 사이드바 영역 */}
               <div className="lg:col-span-4">
-                <div className="sticky top-40 space-y-6">
-                  <div className="bg-surface-container-lowest p-8 rounded-xl shadow-xl border border-outline-variant/10">
-                    <div className="mb-8 text-center">
-                      <div className="text-on-surface-variant text-sm mb-2 font-medium">입양 희망번호</div>
-                      <div className="text-4xl font-black text-primary">#{details.id}</div>
+                <div className="sticky top-20 space-y-6 lg:h-[440px]">
+                  <div className="h-full bg-surface-container-lowest p-8 rounded-xl shadow-xl border border-outline-variant/10 flex flex-col justify-center">
+                    <div className="mt-4 mb-16 text-center">
+                      <div className="text-on-surface-variant text-m mb-2 font-bold">공고 번호</div>
+                      <div className="text-4xl font-black text-primary">{animal.desertionNo}</div>
                     </div>
-                    <div className="space-y-4">
+                    <div className="mt-4 space-y-5">
                       <button
                         type="button"
                         onClick={() => toggleFavorite(animal.animalId, animal, isFavorited)}
@@ -272,23 +302,13 @@ function AnimalDetailsPage({
                         >
                           arrow_forward
                         </span>
-                        입양 진행
+                        입양 문의하기
                       </button>
                     </div>
-                    <p className="mt-6 text-xs text-center text-on-surface-variant leading-relaxed">
+                    <p className="mt-8 text-xs text-center text-on-surface-variant leading-relaxed">
                       입양 절차는 상담, 서류 검토, 대면 면담 순으로 진행됩니다.<br />
                       모든 반려동물은 신중한 결정이 필요합니다.
                     </p>
-                  </div>
-
-                  <div className="p-6 rounded-xl bg-[#fff5eb] border border-[#f4a261]/20 flex gap-4 min-h-[108px]">
-                    <div className="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-primary">volunteer_activism</span>
-                    </div>
-                    <div>
-                      <div className="font-bold text-on-surface text-sm">임시 보호 가능</div>
-                      <p className="text-xs text-on-surface-variant mt-1">{details.tempFosterNote || ''}</p>
-                    </div>
                   </div>
                 </div>
               </div>
