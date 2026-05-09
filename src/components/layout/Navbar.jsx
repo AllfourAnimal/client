@@ -19,8 +19,8 @@ function Navbar({
 
   return (
     <header className="bg-[#f7f9ff] fixed top-0 w-full z-50">
-      <nav className="grid grid-cols-[1fr_auto_1fr] items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
-        <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2 justify-self-start">
+      <nav className="grid grid-cols-[auto_1fr_auto] items-center w-full px-4 sm:px-8 py-4 max-w-screen-2xl mx-auto">
+        <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2 justify-self-start whitespace-nowrap">
           <button className="flex items-center gap-2" onClick={onNavigateHome} type="button">
             <span
               className="material-symbols-outlined text-[#8e4e14]"
@@ -38,27 +38,24 @@ function Navbar({
           {renderNavLink('review-list', '\uC785\uC591 \uD6C4\uAE30', onNavigateReviews)}
         </div>
 
-        <div className="flex items-center space-x-4 justify-self-end">
-          <div className="relative group">
-            <span className="material-symbols-outlined text-[#534439] cursor-pointer p-2 rounded-full hover:bg-surface-container transition-all">
-              notifications
-            </span>
-          </div>
+        <div className="flex items-center gap-2 lg:gap-4 justify-self-end">
           <button
-            className="flex items-center space-x-2 bg-surface-container-low px-4 py-2 rounded-full hover:scale-95 transition-all"
+            className="flex items-center gap-2 bg-surface-container-low px-3 py-2 lg:px-4 rounded-full hover:scale-95 transition-all"
             onClick={onNavigateProfile}
             type="button"
+            aria-label="프로필"
           >
             <span className="material-symbols-outlined text-[#8e4e14]">account_circle</span>
-            <span className="text-sm font-semibold">{username || '\uD504\uB85C\uD544'}</span>
+            <span className="hidden whitespace-nowrap text-sm font-semibold lg:inline">{username || '\uD504\uB85C\uD544'}</span>
           </button>
           <button
-            className="flex items-center space-x-2 bg-red-50 text-red-700 border border-red-200 px-4 py-2 rounded-full hover:bg-red-100 hover:text-red-800 hover:scale-95 transition-all"
+            className="flex items-center gap-2 bg-red-50 text-red-700 border border-red-200 px-3 py-2 lg:px-4 rounded-full hover:bg-red-100 hover:text-red-800 hover:scale-95 transition-all"
             onClick={logout}
             type="button"
+            aria-label="로그아웃"
           >
             <span className="material-symbols-outlined text-red-600">logout</span>
-            <span className="text-sm font-semibold">{'\uB85C\uADF8\uC544\uC6C3'}</span>
+            <span className="hidden whitespace-nowrap text-sm font-semibold lg:inline">{'\uB85C\uADF8\uC544\uC6C3'}</span>
           </button>
         </div>
       </nav>

@@ -21,7 +21,7 @@ function normalizeAnimal(item) {
     animal_age: item.animalAge ?? item.animal_age ?? null,
     animal_sex: item.animal_sex ?? item.animalSex ?? item.animlSex ?? null,
     adopted: item.adopted ?? false,
-    thumbnailImageUrl: item.thumbnailImageUrl ?? item.thumbnail_image_url ?? null,
+    thumbnailImageUrl: item.thumbnailImageUrl ?? item.thumbnail_image_url ?? item.imageUrls?.[0] ?? null,
   };
 }
 
