@@ -13,3 +13,23 @@ export async function fetchMyAdoptions(token) {
   });
   return response.data;
 }
+
+// 입양 문의 등록 API 호출 함수
+export async function adoptionInquiry(token, animalId) {
+  const response = await axios.post(
+    `${BASE_URL}/${animalId}/inquiry`,
+    null,
+    { headers: authHeader(token) },
+  );
+  return response.data;
+}
+
+// 입양 완료 사진 등록 API 호출 함수
+export async function submitAdoptionCertificate(token, adoptionId, image) {
+  const response = await axios.post(
+    `${BASE_URL}/${adoptionId}/proof-image`,
+    { image },
+    { headers: authHeader(token) },
+  );
+  return response.data;
+}

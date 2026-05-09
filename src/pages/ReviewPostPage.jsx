@@ -1,46 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Navbar from '../components/layout/Navbar';
-import { fetchMyAdoptions } from '../api/adoptions';
 import { createReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
+import { useAdoptions } from '../context/AdoptionContext';
 
 const REVIEW_DRAFT_STATUSES = new Set([
-  '입양 문의',
-  '입양문의',
-  '문의',
-  'ADOPTION_INQUIRY',
   'INQUIRY',
-  '입양 신청',
-  '입양신청',
-  '신청',
-  'ADOPTION_APPLICATION',
-  'APPLICATION',
-  'APPLYING',
-  'APPLIED',
+  'COMPLETED',
 ]);
 
 const ADOPTION_STATUS_LABELS = {
   INQUIRY: '입양문의',
-  ADOPTION_INQUIRY: '입양문의',
-  APPLIED: '입양신청',
-  APPLICATION: '입양신청',
-  APPLYING: '입양신청',
-  ADOPTION_APPLICATION: '입양신청',
+  COMPLETED: '입양완료',
 };
 
 const MAX_REVIEW_IMAGES = 3;
 
-function unwrapList(data) {
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.data)) return data.data;
-  if (Array.isArray(data?.content)) return data.content;
-  if (Array.isArray(data?.items)) return data.items;
-  if (Array.isArray(data?.result)) return data.result;
-  return [];
-}
-
 function getAdoptionStatus(adoption) {
-  return adoption.status || adoption.adoptionStatus || adoption.step || adoption.state || '';
+  return adoption.status || '';
 }
 
 function getAdoptionStatusLabel(adoption) {
@@ -49,49 +26,28 @@ function getAdoptionStatusLabel(adoption) {
 }
 
 function getAnimalId(adoption) {
-  return adoption.desertionNo || adoption.desertion_no || adoption.animalId || adoption.animal?.animalId || adoption.animal?.id || adoption.petId || adoption.id || '';
+  return adoption.animalId || '';
 }
 
 function getPetName(adoption) {
-  return adoption.animalSpecies || adoption.petName || adoption.animalName || adoption.animal?.name || adoption.animal?.species || adoption.name || '';
-}
-
-function getAdoptionAddress(adoption) {
-  return adoption.address || adoption.location || adoption.happenPlace || adoption.careAddr || adoption.careAddress || adoption.animal?.address || adoption.animal?.happenPlace || adoption.animal?.careAddr || '';
+  return adoption.animalSpecies || '';
 }
 
 function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimalDetails, onNavigateReviewList, onNavigateProfile }) {
   const { accessToken } = useAuth();
+  const { adoptions: myAdoptions, loading: adoptionsLoading } = useAdoptions();
   const [title, setTitle] = useState('');
   const [petName, setPetName] = useState('');
   const [desertionNo, setDesertionNo] = useState('');
   const [content, setContent] = useState('');
   const [imageFiles, setImageFiles] = useState([]);
-  const [adoptions, setAdoptions] = useState([]);
-  const [adoptionsLoading, setAdoptionsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [copiedAnimalId, setCopiedAnimalId] = useState('');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const loadAdoptions = async () => {
-      if (!accessToken) return;
-      setAdoptionsLoading(true);
-      try {
-        const data = await fetchMyAdoptions(accessToken);
-        const reviewDrafts = unwrapList(data).filter((adoption) =>
-          REVIEW_DRAFT_STATUSES.has(getAdoptionStatus(adoption))
-        );
-        setAdoptions(reviewDrafts);
-      } catch (err) {
-        setAdoptions([]);
-      } finally {
-        setAdoptionsLoading(false);
-      }
-    };
-
-    loadAdoptions();
-  }, [accessToken]);
+  const adoptions = useMemo(() => (
+    myAdoptions.filter((adoption) => REVIEW_DRAFT_STATUSES.has(getAdoptionStatus(adoption)))
+  ), [myAdoptions]);
 
   const handleSelectAdoption = (adoption) => {
     const selectedAnimalId = getAnimalId(adoption);
@@ -184,7 +140,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
             <div className="flex items-center justify-between gap-4 mb-5">
               <div>
                 <h2 className="text-xl font-extrabold text-on-surface font-headline">진행 중인 입양</h2>
-                <p className="text-sm text-on-surface-variant mt-1">입양 문의와 입양 신청 중인 동물을 선택하면 상세 페이지로 이동합니다.</p>
+                <p className="text-sm text-on-surface-variant mt-1">입양 문의 또는 입양 완료된 동물을 선택하면 상세 페이지로 이동합니다.</p>
               </div>
               <span className="material-symbols-outlined text-primary text-3xl">volunteer_activism</span>
             </div>
@@ -199,12 +155,11 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
                   const statusLabel = getAdoptionStatusLabel(adoption);
                   const selectedAnimalId = getAnimalId(adoption);
                   const selectedPetName = getPetName(adoption) || '이름 정보 없음';
-                  const address = getAdoptionAddress(adoption);
                   const reviewWritten = Boolean(adoption.reviewWritten);
 
                   return (
                     <div
-                      key={adoption.adoptionId || adoption.applicationId || adoption.id || `${selectedAnimalId}-${index}`}
+                      key={adoption.adoptionId || `${selectedAnimalId}-${index}`}
                       className="cursor-pointer text-left rounded-xl border border-outline-variant/20 bg-surface-container-low p-5 transition-all hover:border-primary/40 hover:bg-primary-container/10 active:scale-[0.99]"
                       role="button"
                       tabIndex={0}
@@ -247,10 +202,6 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
                               <span className="text-xs font-bold text-primary">복사됨</span>
                             )}
                           </div>
-                          <p className="mt-2 flex items-start gap-1 text-sm text-on-surface-variant">
-                            <span className="material-symbols-outlined text-base text-tertiary">location_on</span>
-                            <span>{address || '주소 정보 없음'}</span>
-                          </p>
                         </div>
                       </div>
                     </div>
