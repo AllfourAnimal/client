@@ -25,10 +25,13 @@ export async function adoptionInquiry(token, animalId) {
 }
 
 // 입양 완료 사진 등록 API 호출 함수
-export async function submitAdoptionCertificate(token, adoptionId, image) {
+export async function submitAdoptionCertificate(token, adoptionId, imageFile) {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+
   const response = await axios.post(
     `${BASE_URL}/${adoptionId}/proof-image`,
-    { image },
+    formData,
     { headers: authHeader(token) },
   );
   return response.data;

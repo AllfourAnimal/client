@@ -64,15 +64,6 @@ function getStoryText(storyData) {
   return getValue(storyData, ['story', 'description', 'animalStory']) || '';  // 다양한 API 응답 형태에 대응하기 위해 여러 키를 시도해서 스토리 텍스트를 추출하는 방식, 아마 없어도 될 듯.
 }
 
-function readFileAsString(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ''));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-}
-
 function getCertificateStatus(adoption) {
   if (!adoption) return 'idle';
 
@@ -225,8 +216,7 @@ function AnimalDetailsPage({
     setCertificateError('');
 
     try {
-      const image = await readFileAsString(certificateFile);
-      await submitCertificate(currentAdoption.adoptionId, image);
+      await submitCertificate(currentAdoption.adoptionId, certificateFile);
       setCertificateFile(null);
     } catch (error) {
       setCertificateError(error.response?.data?.message || '입양 인증 파일 제출에 실패했습니다.');
@@ -624,9 +614,11 @@ function AnimalDetailsPage({
                       ? '제출된 인증 파일이 있습니다'
                       : '입양 증명서 사진 첨부'}
                 </span>
-                <span className="text-sm text-on-surface-variant">
-                  인증에 사용할 이미지 파일을 선택해 주세요.
-                </span>
+                {!certificateSubmitted && (
+                  <span className="text-sm text-on-surface-variant">
+                    인증에 사용할 이미지 파일을 선택해 주세요.
+                  </span>
+                )}
                 <input
                   type="file"
                   className="sr-only"
@@ -641,7 +633,7 @@ function AnimalDetailsPage({
 
               {certificateSubmitted && (
                 <div className="mt-5 rounded-xl bg-primary-container/15 p-4 text-sm font-semibold text-on-primary-container border border-primary-container/30">
-                  제출이 접수되었습니다. 백엔드 승인 또는 반려 응답이 오기 전까지 파일 수정 및 재제출이 불가합니다.
+                  제출이 접수되었습니다. 관리자가 인증 서류를 검토할 예정입니다.
                 </div>
               )}
 
