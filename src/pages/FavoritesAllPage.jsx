@@ -46,7 +46,7 @@ function FavoritesAllPage({
             animalId: Number(a.animalId),
             species: a.species ?? cached?.species ?? '',
             animal_age: a.animalAge ?? a.animal_age ?? cached?.animal_age ?? null,
-            animal_sex: a.animal_sex ?? cached?.animal_sex ?? null,
+            animal_sex: a.animal_sex ?? a.animalSex ?? a.animlSex ?? cached?.animal_sex ?? null,
             adopted: a.adopted ?? cached?.adopted ?? false,
             thumbnailImageUrl: imagesByAnimalId[a.animalId] ?? cached?.thumbnailImageUrl ?? null,
           };

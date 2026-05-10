@@ -118,6 +118,7 @@ function HomePage({
   const [chatMessages, setChatMessages] = useState(INITIAL_CHAT_MESSAGES);
   const [chatMessage, setChatMessage] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [chatLoadingDotCount, setChatLoadingDotCount] = useState(0);
   const [chatSize, setChatSize] = useState({ width: 384, height: 448 });
   const [recommendedAnimals, setRecommendedAnimals] = useState([]);
   const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(false);
@@ -161,6 +162,21 @@ function HomePage({
 
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages, isChatLoading, isChatOpen]);
+
+  useEffect(() => {
+    if (!isChatLoading) {
+      setChatLoadingDotCount(0);
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setChatLoadingDotCount((count) => (count >= 3 ? 0 : count + 1));
+    }, 500);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [isChatLoading]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -719,7 +735,10 @@ function HomePage({
               ))}
               {isChatLoading && (
                 <div className="w-fit max-w-[82%] rounded-2xl rounded-tl-sm bg-white px-4 py-3 text-sm text-on-surface-variant shadow-sm">
-                  답변을 작성하는 중...
+                  답변을 작성하는 중
+                  <span className="inline-block w-4">
+                    {".".repeat(chatLoadingDotCount)}
+                  </span>
                 </div>
               )}
               <div ref={chatBottomRef} />

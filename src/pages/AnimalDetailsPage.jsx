@@ -6,6 +6,7 @@ import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import { getAnimalStory } from '../api/animals';
 import { useAuth } from '../context/AuthContext';  // getAnimalStory 함수에서 토큰을 사용하기 위해 AuthContext에서 accessToken을 가져옵니다.
+import { getAdoptionStatusLabel } from '../adoptionStatus';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const HIGH_PERSONALITY_VALUES = new Set(['HIGH', 'VERY_HIGH']);
@@ -161,12 +162,11 @@ function AnimalDetailsPage({
   const details = useMemo(() => {
     if (!animal) return null;
 
-    const id = animal.animalId;
-    const name = getValue(animal, ['name', 'animalName', 'animal_name']) || id;
     const species = getValue(animal, ['species', 'speices']);
+    const id = animal.animalId;
+    const name = getValue(animal, ['name', 'animalName', 'animal_name']) || species || id;
     const age = getAgeLabel(getValue(animal, ['animal_age', 'animalAge', 'age']));
     const sex = getSexLabel(getValue(animal, ['animal_sex', 'animalSex', 'animlSex', 'sex', 'gender']));
-    const adoptStatus = (animal.adopted ? '입양완료' : '보호중');
     const isVaccinated = (animal.vaccinated ? '접종완료' : '미접종');
     const happenedPlace = getValue(animal, ['happenedPlace', 'happendPlace', 'happenPlace', 'happened_place', 'happen_place', 'careAddr', 'careAddress', 'address']);
     const careNm = getValue(animal, ['careNm', 'careName', 'care_nm', 'shelterName']);
@@ -184,7 +184,6 @@ function AnimalDetailsPage({
       age,
       sex,
       personality,
-      adoptStatus,
       isVaccinated,
       happenedPlace,
       careNm,
@@ -204,6 +203,7 @@ function AnimalDetailsPage({
     ? hasAdoptionForAnimal(animal.animalId)
     : false;
   const currentAdoption = animal ? getAdoptionForAnimal(animal.animalId) : null;
+  const adoptionStatus = getAdoptionStatusLabel(animal, currentAdoption);
   const certificateStatus = getCertificateStatus(currentAdoption);
   const certificateSubmitted = certificateStatus !== 'idle';
   const certificateApproved = certificateStatus === 'approved';
@@ -280,20 +280,19 @@ function AnimalDetailsPage({
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-on-background/60 to-transparent" />
                   <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-full text-sm md:text-base font-bold text-primary shadow-md">
-                    {details.adoptStatus}
+                    {adoptionStatus}
                   </div>
                   <div className="absolute bottom-0 left-0 w-full px-12 pt-8 pb-10 text-white">
                     <div className="mb-6 flex flex-wrap items-end gap-6">
-                      <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight font-headline">
+                      <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight font-headline">
                         {details.name}
                       </h1>
-                      <div className="mb-2 inline-flex items-center px-5 py-2 rounded-full bg-white text-black font-bold text-lg shadow-xl ring-4 ring-white/20">
+                      <div className="inline-flex items-center px-5 py-2 rounded-full bg-white text-black font-bold text-lg shadow-xl ring-4 ring-white/20">
                         99% 적합
                       </div>
                     </div>
                     <div className="flex flex-col gap-6">
                       <div className="flex flex-wrap gap-4">
-                        <InfoPill icon="pets" value={details.species} />
                         <InfoPill icon="cake" value={details.age} />
                         <InfoPill icon={details.sex === '수컷' ? 'male' : 'female'} value={details.sex} />
                         <InfoPill icon="auto_awesome" value={details.personality} />
@@ -321,7 +320,7 @@ function AnimalDetailsPage({
                   />
                 </div>
 
-                <section className="bg-surface-container-lowest px-10 pt-8 rounded-xl shadow-sm border border-outline-variant/10 min-h-[220px]">
+                <section className="bg-surface-container-lowest px-10 pt-8 pb-8 rounded-xl shadow-sm border border-outline-variant/10 min-h-[220px]">
                   <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 font-headline">
                     <span className="w-1.5 h-8 bg-primary-container rounded-full" />
                     {details.name}의 이야기
@@ -335,7 +334,10 @@ function AnimalDetailsPage({
                   <div className="px-6 pt-5 bg-surface-container-high rounded-xl min-h-[190px] md:col-span-2">
                     <h3 className="text-xl font-bold mb-4 text-tertiary font-headline">성격 키워드</h3>
                     <div className="flex flex-wrap gap-3">
-                      {details.personalityTags.map((tag) => (
+                      {(details.personalityTags.length > 0
+                        ? details.personalityTags
+                        : ['아직 뚜렷한 성향은 없어요']
+                      ).map((tag) => (
                         <span
                           key={tag}
                           className="px-4 py-2 bg-surface-container-lowest rounded-full text-on-surface font-semibold shadow-sm"

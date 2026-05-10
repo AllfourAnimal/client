@@ -1,6 +1,8 @@
 function HeartButton({ isFavorited, onToggle }) {
   return (
     <button
+      type="button"
+      aria-label={isFavorited ? '찜 해제' : '찜하기'}
       className="absolute top-4 right-4 bg-white/90 backdrop-blur-md p-2 rounded-full shadow-sm flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
       onClick={(e) => { e.stopPropagation(); onToggle(); }}
     >

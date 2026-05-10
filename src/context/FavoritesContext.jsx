@@ -1,9 +1,16 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { fetchAnimals } from '../api/animals';
 import { fetchFavorites, toggleFavorite as toggleFavoriteApi } from '../api/favorites';
 import { useAnimals } from './AnimalContext';
 import { useAuth } from './AuthContext';
 
 const FavoritesContext = createContext(null);
+const ANIMAL_LOOKUP_PAGE_SIZE = 100;
+const ANIMAL_LOOKUP_MAX_PAGES = 30;
+
+function getAnimalPayload(item) {
+  return item?.data ?? item?.animal ?? item;
+}
 
 // sex/gender 관련 키를 동적으로 탐색
 function extractSex(item) {
@@ -12,21 +19,98 @@ function extractSex(item) {
 }
 
 function toAnimalShape(item) {
+  const source = getAnimalPayload(item);
+
   return {
-    animalId: Number(item.animalId ?? item.animal_id ?? item.id),
-    species: item.species ?? item.speices ?? '',
-    animal_age: item.animalAge ?? item.animal_age ?? null,
-    animal_sex: extractSex(item),
-    adopted: item.adopted ?? false,
-    thumbnailImageUrl: item.thumbnailImageUrl ?? null,
+    animalId: Number(source.animalId ?? source.animal_id ?? source.id),
+    desertionNo: source.desertionNo ?? source.desertion_no ?? '',
+    species: source.species ?? source.speices ?? '',
+    animal_age: source.animalAge ?? source.animal_age ?? null,
+    animal_sex: extractSex(source),
+    adopted: source.adopted ?? false,
+    thumbnailImageUrl: source.thumbnailImageUrl ?? source.thumbnail_image_url ?? source.imageUrls?.[0] ?? null,
   };
+}
+
+function getCollectionItems(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.content)) return data.content;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data?.items)) return data.items;
+  return [];
+}
+
+function hasMoreAnimalPages(data, items, page) {
+  if (typeof data?.last === 'boolean') return !data.last;
+  if (typeof data?.totalPages === 'number') return page + 1 < data.totalPages;
+  return items.length === ANIMAL_LOOKUP_PAGE_SIZE;
 }
 
 export function FavoritesProvider({ children }) {
   const { accessToken } = useAuth();
-  const { cacheAnimals } = useAnimals();
+  const { animalsById, cacheAnimals } = useAnimals();
   const [favoriteIds, setFavoriteIds] = useState(new Set());
   const [favoriteAnimals, setFavoriteAnimals] = useState([]);
+  const animalsByIdRef = useRef(animalsById);
+  const favoriteAnimalsRef = useRef(favoriteAnimals);
+
+  const mergeWithCachedAnimal = useCallback((shaped, cached) => ({
+    ...shaped,
+    desertionNo: shaped.desertionNo || cached?.desertionNo || cached?.desertion_no || '',
+    species: shaped.species || cached?.species || '',
+    animal_age: shaped.animal_age ?? cached?.animal_age ?? cached?.animalAge ?? null,
+    animal_sex: shaped.animal_sex || cached?.animal_sex || cached?.animalSex || cached?.animlSex || null,
+    adopted: shaped.adopted ?? cached?.adopted ?? false,
+    thumbnailImageUrl: shaped.thumbnailImageUrl || cached?.thumbnailImageUrl || null,
+  }), []);
+
+  const enrichFromAnimalList = useCallback(async (animals) => {
+    const missingIds = new Set(
+      animals
+        .filter((animal) => animal.animalId && !animal.desertionNo)
+        .map((animal) => animal.animalId)
+    );
+
+    if (missingIds.size === 0) {
+      return animals;
+    }
+
+    const foundById = new Map();
+    let page = 0;
+    let hasMore = true;
+
+    while (missingIds.size > 0 && hasMore && page < ANIMAL_LOOKUP_MAX_PAGES) {
+      const data = await fetchAnimals(accessToken, page, ANIMAL_LOOKUP_PAGE_SIZE);
+      const items = getCollectionItems(data);
+
+      items.forEach((item) => {
+        const shaped = toAnimalShape(item);
+        if (missingIds.has(shaped.animalId)) {
+          foundById.set(shaped.animalId, shaped);
+          missingIds.delete(shaped.animalId);
+        }
+      });
+
+      hasMore = hasMoreAnimalPages(data, items, page);
+      page += 1;
+    }
+
+    if (foundById.size === 0) {
+      return animals;
+    }
+
+    return animals.map((animal) => (
+      mergeWithCachedAnimal(animal, foundById.get(animal.animalId))
+    ));
+  }, [accessToken, mergeWithCachedAnimal]);
+
+  useEffect(() => {
+    animalsByIdRef.current = animalsById;
+  }, [animalsById]);
+
+  useEffect(() => {
+    favoriteAnimalsRef.current = favoriteAnimals;
+  }, [favoriteAnimals]);
 
   const loadFavorites = useCallback(async () => {
     if (!accessToken) {
@@ -36,7 +120,6 @@ export function FavoritesProvider({ children }) {
     }
     try {
       const data = await fetchFavorites(accessToken);
-      console.log('[Favorites] raw response:', data);
 
       let items = [];
       if (Array.isArray(data)) {
@@ -47,30 +130,25 @@ export function FavoritesProvider({ children }) {
         items = data.data;
       }
 
-      const ids = items
-        .map((item) => Number(item.animalId ?? item.animal_id ?? item.id))
-        .filter((id) => !isNaN(id));
-
-      console.log('[Favorites] parsed ids:', ids);
+      const shapedItems = items
+        .map(toAnimalShape)
+        .filter((animal) => !Number.isNaN(animal.animalId));
+      const ids = shapedItems.map((animal) => animal.animalId);
       setFavoriteIds(new Set(ids));
-      const shapedItems = items.map(toAnimalShape);
-      cacheAnimals(shapedItems);
-      // 함수형 업데이트로 기존 상태 참조 — 서버 응답에 animal_sex가 없을 때 낙관적 업데이트 값 보존
-      setFavoriteAnimals((prev) =>
-        shapedItems.map((shaped) => {
-          if (!shaped.animal_sex) {
-            const cached = prev.find((a) => a.animalId === shaped.animalId);
-            if (cached?.animal_sex) shaped.animal_sex = cached.animal_sex;
-          }
-          return shaped;
-        })
-      );
+      const mergedFavoriteAnimals = shapedItems.map((shaped) => {
+        const cachedAnimal = animalsByIdRef.current[shaped.animalId];
+        const cachedFavorite = favoriteAnimalsRef.current.find((a) => a.animalId === shaped.animalId);
+        return mergeWithCachedAnimal(mergeWithCachedAnimal(shaped, cachedAnimal), cachedFavorite);
+      });
+      const enrichedFavoriteAnimals = await enrichFromAnimalList(mergedFavoriteAnimals);
+      setFavoriteAnimals(enrichedFavoriteAnimals);
+      cacheAnimals(enrichedFavoriteAnimals);
     } catch (err) {
       console.error('[Favorites] loadFavorites error:', err);
       setFavoriteIds(new Set());
       setFavoriteAnimals([]);
     }
-  }, [accessToken, cacheAnimals]);
+  }, [accessToken, cacheAnimals, enrichFromAnimalList, mergeWithCachedAnimal]);
 
   useEffect(() => {
     loadFavorites();
@@ -97,7 +175,7 @@ export function FavoritesProvider({ children }) {
       }
       // 이미 목록에 있으면 중복 추가 방지
       if (prev.some((a) => a.animalId === id)) return prev;
-      return [...prev, toAnimalShape(animalData ?? { animalId: id })];
+      return [...prev, mergeWithCachedAnimal(toAnimalShape(animalData ?? { animalId: id }), animalsByIdRef.current[id])];
     });
     if (animalData) cacheAnimals([animalData]);
 
@@ -109,7 +187,7 @@ export function FavoritesProvider({ children }) {
       // 서버 데이터(thumbnailImageUrl 등)로 최종 보정
       await loadFavorites();
     }
-  }, [accessToken, cacheAnimals, loadFavorites]);
+  }, [accessToken, cacheAnimals, loadFavorites, mergeWithCachedAnimal]);
 
   return (
     <FavoritesContext.Provider value={{ favoriteIds, favoriteAnimals, toggleFavorite }}>
