@@ -133,6 +133,8 @@ function HomePage({
   const adoptionSectionRef = useRef(null);
   const chatBottomRef = useRef(null);
   const chatResizeRef = useRef(null);
+  const sidebarRef = useRef(null);
+  const footerRef = useRef(null);
 
   const adoptionCarouselAnimals = useMemo(() => (
     adoptions
@@ -291,6 +293,7 @@ function HomePage({
     };
   }, []);
 
+
   useEffect(() => {
     const sections = [
       { item: "overview", ref: overviewSectionRef },
@@ -326,6 +329,36 @@ function HomePage({
     return () => {
       window.removeEventListener("scroll", updateActiveSidebarItem);
       window.removeEventListener("resize", updateActiveSidebarItem);
+    };
+  }, []);
+
+  useEffect(() => {
+    const navbarHeight = 80;
+    const minSidebarHeight = 320;
+
+    const updateSidebarHeight = () => {
+      if (!sidebarRef.current) {
+        return;
+      }
+
+      const footerTop = footerRef.current?.getBoundingClientRect().top ?? window.innerHeight;
+      const viewportSidebarHeight = window.innerHeight - navbarHeight;
+      const availableHeight = footerTop - navbarHeight;
+      const nextHeight = Math.max(
+        minSidebarHeight,
+        Math.min(viewportSidebarHeight, availableHeight),
+      );
+
+      sidebarRef.current.style.height = `${nextHeight}px`;
+    };
+
+    updateSidebarHeight();
+    window.addEventListener("scroll", updateSidebarHeight, { passive: true });
+    window.addEventListener("resize", updateSidebarHeight);
+
+    return () => {
+      window.removeEventListener("scroll", updateSidebarHeight);
+      window.removeEventListener("resize", updateSidebarHeight);
     };
   }, []);
 
@@ -437,15 +470,19 @@ function HomePage({
         onNavigateProfile={onNavigateProfile}
       />
 
-      <div className="flex pt-20">
+      <div className="pt-20 grid grid-cols-1 lg:grid-cols-[256px_1fr]">
         {/* 사이드NavBar */}
-        <aside className="hidden lg:sticky lg:top-20 lg:flex h-[calc(100vh-80px)] w-64 flex-shrink-0 flex-col self-start bg-[#edf4ff] rounded-r-[1.5rem] py-8 pl-4">
+        <aside
+          ref={sidebarRef}
+          className="hidden lg:sticky lg:top-20 lg:flex flex-col py-8 pl-4 self-start overflow-hidden bg-[#edf4ff] rounded-r-[1.5rem]"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="px-4 mb-10">
             <h3 className="text-xl font-bold text-on-surface font-headline">
               메뉴
             </h3>
           </div>
-          <nav className="flex-1 space-y-2">
+          <nav className="space-y-2">
             <button
               type="button"
               className={getSidebarButtonClass("overview")}
@@ -487,7 +524,7 @@ function HomePage({
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 px-8 py-8 lg:px-12 max-w-7xl mx-auto overflow-hidden">
+        <main className="px-8 py-8 lg:px-12 max-w-7xl mx-auto overflow-hidden w-full">
           {/* Hero */}
           <section ref={overviewSectionRef} className="mb-12 scroll-mt-28">
             <h1 className="text-5xl font-extrabold text-on-background mb-2 tracking-tight font-headline">
@@ -676,6 +713,9 @@ function HomePage({
             </div>
           </section>
         </main>
+        <div ref={footerRef} className="col-span-full relative z-10">
+          <AppFooter />
+        </div>
       </div>
 
       <div className="fixed bottom-6 right-6 z-[60] flex flex-col items-end gap-4">
@@ -786,7 +826,6 @@ function HomePage({
         </button>
       </div>
 
-      <AppFooter />
     </div>
   );
 }
