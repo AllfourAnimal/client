@@ -33,8 +33,26 @@ export async function fetchReviewDetail(reviewId) {
 
 // 리뷰 작성 API 호출 함수
 export async function createReview(token, reviewData) {
-  const response = await axios.post(BASE_URL, reviewData, {
+  const {
+    title,
+    petName,
+    desertionNo,
+    content,
+    imageFiles = [],
+  } = reviewData;
+  const formData = new FormData();
+  imageFiles.forEach((file) => {
+    formData.append('image', file);
+  });
+
+  const response = await axios.post(BASE_URL, formData, {
     headers: authHeader(token),
+    params: {
+      title,
+      petName,
+      desertion_no: desertionNo,
+      content,
+    },
   });
   return response.data;
 }

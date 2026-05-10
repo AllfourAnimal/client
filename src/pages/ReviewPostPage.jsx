@@ -134,22 +134,24 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
       return;
     }
 
-    const payload = new FormData();
-    payload.append('title', title.trim());
-    payload.append('petName', petName.trim());
-    payload.append('desertion_no', desertionNo.trim());
-    payload.append('content', content.trim());
-    imageFiles.forEach((file) => {
-      payload.append('images', file);
-    });
+    const payload = {
+      title: title.trim(),
+      petName: petName.trim(),
+      desertionNo: desertionNo.trim(),
+      content: content.trim(),
+      imageFiles,
+    };
 
     setSubmitting(true);
     setError('');
     try {
       await createReview(accessToken, payload);
-      await loadAdoptions();
+      loadAdoptions().catch((err) => {
+        console.error('[ReviewPostPage] refresh adoptions after review create failed:', err);
+      });
       onNavigateReviewList();
     } catch (err) {
+      console.error('[ReviewPostPage] create review failed:', err);
       setError('리뷰를 작성하지 못했습니다.');
     } finally {
       setSubmitting(false);
