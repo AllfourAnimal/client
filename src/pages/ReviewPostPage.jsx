@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import { createReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
@@ -37,9 +37,41 @@ function getPetName(adoption) {
   return adoption.animalSpecies || '';
 }
 
+function readBoolean(value) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (['true', 'y', 'yes', '1', '완료'].includes(normalized)) return true;
+    if (['false', 'n', 'no', '0', '미완료'].includes(normalized)) return false;
+  }
+  return Boolean(value);
+}
+
+function getReviewWritten(adoption) {
+  const reviewWrittenValue =
+    adoption.reviewWritten ??
+    adoption.review_written ??
+    adoption.isReviewWritten ??
+    adoption.is_review_written ??
+    adoption.reviewed ??
+    adoption.isReviewed ??
+    adoption.is_reviewed ??
+    adoption.hasReview ??
+    adoption.has_review ??
+    adoption.wroteReview ??
+    adoption.wrote_review;
+
+  if (reviewWrittenValue !== undefined && reviewWrittenValue !== null) {
+    return readBoolean(reviewWrittenValue);
+  }
+
+  return Boolean(adoption.reviewId ?? adoption.review_id);
+}
+
 function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimalDetails, onNavigateReviewList, onNavigateProfile }) {
   const { accessToken } = useAuth();
-  const { adoptions: myAdoptions, loading: adoptionsLoading } = useAdoptions();
+  const { adoptions: myAdoptions, loading: adoptionsLoading, loadAdoptions } = useAdoptions();
   const [title, setTitle] = useState('');
   const [petName, setPetName] = useState('');
   const [desertionNo, setDesertionNo] = useState('');
@@ -52,6 +84,10 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
   const adoptions = useMemo(() => (
     myAdoptions.filter((adoption) => REVIEW_DRAFT_STATUSES.has(getAdoptionStatus(adoption)))
   ), [myAdoptions]);
+
+  useEffect(() => {
+    loadAdoptions();
+  }, [loadAdoptions]);
 
   const handleSelectAdoption = (adoption) => {
     const selectedAnimalId = getAnimalId(adoption);
@@ -111,6 +147,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
     setError('');
     try {
       await createReview(accessToken, payload);
+      await loadAdoptions();
       onNavigateReviewList();
     } catch (err) {
       setError('리뷰를 작성하지 못했습니다.');
@@ -160,7 +197,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
                   const selectedAnimalId = getAnimalId(adoption);
                   const selectedDesertionNo = getDesertionNo(adoption);
                   const selectedPetName = getPetName(adoption) || '이름 정보 없음';
-                  const reviewWritten = Boolean(adoption.reviewWritten);
+                  const reviewWritten = getReviewWritten(adoption);
 
                   return (
                     <div
