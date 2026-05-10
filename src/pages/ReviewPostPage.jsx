@@ -26,7 +26,11 @@ function getAdoptionStatusLabel(adoption) {
 }
 
 function getAnimalId(adoption) {
-  return adoption.animalId || '';
+  return adoption.animalId || adoption.animal_id || '';
+}
+
+function getDesertionNo(adoption) {
+  return adoption.desertionNo || adoption.desertion_no || '';
 }
 
 function getPetName(adoption) {
@@ -42,7 +46,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
   const [content, setContent] = useState('');
   const [imageFiles, setImageFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
-  const [copiedAnimalId, setCopiedAnimalId] = useState('');
+  const [copiedDesertionNo, setCopiedDesertionNo] = useState('');
   const [error, setError] = useState('');
 
   const adoptions = useMemo(() => (
@@ -57,15 +61,15 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
     }
   };
 
-  const handleCopyAnimalId = async (e, animalId) => {
+  const handleCopyDesertionNo = async (e, selectedDesertionNo) => {
     e.stopPropagation();
-    if (!animalId) return;
+    if (!selectedDesertionNo) return;
 
-    const text = String(animalId);
+    const text = String(selectedDesertionNo);
     try {
       await navigator.clipboard.writeText(text);
-      setCopiedAnimalId(text);
-      setTimeout(() => setCopiedAnimalId(''), 1500);
+      setCopiedDesertionNo(text);
+      setTimeout(() => setCopiedDesertionNo(''), 1500);
     } catch (err) {
       setError('동물 고유번호를 복사하지 못했습니다.');
     }
@@ -154,12 +158,13 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
                 {adoptions.map((adoption, index) => {
                   const statusLabel = getAdoptionStatusLabel(adoption);
                   const selectedAnimalId = getAnimalId(adoption);
+                  const selectedDesertionNo = getDesertionNo(adoption);
                   const selectedPetName = getPetName(adoption) || '이름 정보 없음';
                   const reviewWritten = Boolean(adoption.reviewWritten);
 
                   return (
                     <div
-                      key={adoption.adoptionId || `${selectedAnimalId}-${index}`}
+                      key={adoption.adoptionId || `${selectedDesertionNo || selectedAnimalId}-${index}`}
                       className="cursor-pointer text-left rounded-xl border border-outline-variant/20 bg-surface-container-low p-5 transition-all hover:border-primary/40 hover:bg-primary-container/10 active:scale-[0.99]"
                       role="button"
                       tabIndex={0}
@@ -185,20 +190,20 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
                           </span>
                           <h3 className="mt-3 text-lg font-extrabold text-on-surface">{selectedPetName}</h3>
                           <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-on-surface-variant">
-                            <span>동물 고유번호 {selectedAnimalId || '-'}</span>
-                            {selectedAnimalId && (
+                            <span>동물 고유번호 {selectedDesertionNo || '-'}</span>
+                            {selectedDesertionNo && (
                               <button
                                 className="inline-flex size-7 items-center justify-center rounded-full text-primary transition-all hover:bg-primary-container/20"
                                 title="동물 고유번호 복사"
                                 type="button"
-                                onClick={(e) => handleCopyAnimalId(e, selectedAnimalId)}
+                                onClick={(e) => handleCopyDesertionNo(e, selectedDesertionNo)}
                               >
                                 <span className="material-symbols-outlined text-base">
-                                  {copiedAnimalId === String(selectedAnimalId) ? 'check' : 'content_copy'}
+                                  {copiedDesertionNo === String(selectedDesertionNo) ? 'check' : 'content_copy'}
                                 </span>
                               </button>
                             )}
-                            {copiedAnimalId === String(selectedAnimalId) && (
+                            {copiedDesertionNo === String(selectedDesertionNo) && (
                               <span className="text-xs font-bold text-primary">복사됨</span>
                             )}
                           </div>
@@ -248,7 +253,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
               <input
                 className="w-full bg-surface-container-lowest border-none rounded-2xl p-5 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-fixed outline-none"
                 id="animal-id"
-                placeholder="예: 12"
+                placeholder="예: 441322202400123"
                 type="text"
                 value={desertionNo}
                 onChange={(e) => setDesertionNo(e.target.value)}
