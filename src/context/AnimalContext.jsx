@@ -17,6 +17,7 @@ function normalizeAnimal(item) {
   return {
     ...item,
     animalId,
+    desertionNo: item.desertionNo ?? item.desertion_no ?? '',
     species: item.species ?? item.speices ?? '',
     animal_age: item.animalAge ?? item.animal_age ?? null,
     animal_sex: item.animal_sex ?? item.animalSex ?? item.animlSex ?? null,

@@ -57,20 +57,20 @@ const SURVEY_LABELS = {
 function ProfileMenuItem({ icon, label, active, onClick }) {
   return (
     <button
-      className={`flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-left transition-all ${active
-          ? "translate-x-1 bg-white text-[#8e4e14] shadow-sm"
-          : "text-[#534439] hover:bg-white/60"
+      className={`flex w-full items-center gap-3 rounded-l-full px-6 py-3 text-left transition-all duration-200 ${active
+          ? "bg-white text-[#8e4e14] shadow-sm"
+          : "text-[#534439] hover:translate-x-1 hover:bg-white/50"
         }`}
       onClick={onClick}
       type="button"
     >
       <span
-        className="material-symbols-outlined text-3xl"
+        className="material-symbols-outlined"
         style={{ fontVariationSettings: active ? '"FILL" 1' : '"FILL" 0' }}
       >
         {icon}
       </span>
-      <span className="text-lg font-bold">{label}</span>
+      <span className="font-medium">{label}</span>
     </button>
   );
 }
@@ -174,9 +174,9 @@ function SurveyResultItem({ icon, label, value }) {
     <div className="rounded-2xl bg-white px-5 py-4 shadow-sm">
       <div className="mb-3 flex items-center gap-2 text-[#8e4e14]">
         <span className="material-symbols-outlined text-2xl">{icon}</span>
-        <span className="text-sm font-extrabold">{label}</span>
+        <span className="text-sm font-bold">{label}</span>
       </div>
-      <p className="text-xl font-extrabold text-[#091d2e]">{value}</p>
+      <p className="text-xl font-semibold text-[#091d2e]">{value}</p>
     </div>
   );
 }
@@ -214,6 +214,7 @@ function ProfilePage({
   const [profileMessage, setProfileMessage] = useState("");
   const [preference, setPreference] = useState(null);
   const [isPreferenceLoading, setIsPreferenceLoading] = useState(false);
+  const [hasLoadedPreference, setHasLoadedPreference] = useState(false);
   const [preferenceError, setPreferenceError] = useState("");
 
   useEffect(() => {
@@ -260,20 +261,18 @@ function ProfilePage({
   }, [accessToken]);
 
   useEffect(() => {
-    if (activeSection !== "survey") {
-      return;
-    }
-
     let ignore = false;
 
     const loadPreference = async () => {
       setIsPreferenceLoading(true);
+      setHasLoadedPreference(false);
       setPreferenceError("");
 
       try {
         const data = await getPreferences(accessToken);
         if (!ignore) {
           setPreference(data || null);
+          setHasLoadedPreference(true);
         }
       } catch (error) {
         const status = error.response?.status;
@@ -281,6 +280,7 @@ function ProfilePage({
 
         if (!ignore) {
           setPreference(null);
+          setHasLoadedPreference(true);
           if (!hasNoSavedPreference) {
             setPreferenceError("매칭 설문 결과를 불러오지 못했습니다.");
           }
@@ -297,7 +297,7 @@ function ProfilePage({
     return () => {
       ignore = true;
     };
-  }, [accessToken, activeSection]);
+  }, [accessToken]);
 
   const userProfile = profile || {};
   const displayName = userProfile.username || username || "프로필";
@@ -384,27 +384,27 @@ function ProfilePage({
       />
 
       <div className="flex pt-20">
-        <aside className="hidden lg:flex sticky top-20 h-[calc(100vh-80px)] w-72 shrink-0 flex-col rounded-r-[2rem] bg-[#edf4ff] px-6 py-8 shadow-[0_8px_32px_rgba(9,29,46,0.04)]">
-          <div className="mb-12 flex items-center gap-4 px-2">
-            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-[#8e4e14] ring-2 ring-white">
+        <aside className="hidden lg:sticky lg:top-20 lg:flex h-[calc(100vh-80px)] w-64 shrink-0 flex-col self-start rounded-r-[1.5rem] bg-[#edf4ff] py-8 pl-4">
+          <div className="mb-10 flex items-center gap-3 px-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#8e4e14] ring-1 ring-white">
               <span
-                className="material-symbols-outlined text-4xl"
+                className="material-symbols-outlined text-3xl"
                 style={{ fontVariationSettings: '"FILL" 1' }}
               >
                 account_circle
               </span>
             </div>
-            <div>
-              <h2 className="text-2xl font-extrabold font-headline">
+            <div className="min-w-0">
+              <h2 className="truncate text-xl font-bold font-headline">
                 {displayName}
               </h2>
               <p className="text-sm font-semibold text-[#534439]/70">
-                Adopter Member
+                예비 입양자
               </p>
             </div>
           </div>
 
-          <nav className="space-y-4">
+          <nav className="flex-1 space-y-2">
             <ProfileMenuItem
               active={activeSection === "profile"}
               icon="person"
@@ -426,86 +426,58 @@ function ProfilePage({
           </nav>
         </aside>
 
-        <main className="flex-1 px-6 py-10 lg:px-16 lg:py-14">
+        <main className="flex-1 px-6 pb-10 pt-5 lg:px-16 lg:pb-14 lg:pt-4">
           <div className="mx-auto max-w-6xl space-y-10">
-            <header className="flex flex-wrap items-end justify-between gap-6">
-              <div className="min-w-[18rem] flex-1 space-y-3">
-                <p className="text-sm font-extrabold uppercase tracking-[0.28em] text-[#8e4e14]">
-                  {activeSection === "survey" ? "Matching Survey" : "Your Sanctuary"}
-                </p>
-                <h1 className="max-w-4xl text-5xl font-extrabold leading-tight tracking-normal text-[#091d2e] font-headline md:text-7xl">
-                  {activeSection === "survey"
-                    ? "매칭 설문 결과"
-                    : `환영합니다, ${displayName}님.`}
-                </h1>
-                {!isEditing && activeSection === "profile" && (
-                  <p className="max-w-2xl text-xl font-medium leading-relaxed text-[#534439]">
-                    새로운 가족을 찾는 여정을 함께하고 있어요. 내 정보와
-                    매칭 준비 상태를 한눈에 확인해보세요.
-                  </p>
-                )}
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                {activeSection === "survey" ? (
-                  <button
-                    className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-[#8e4e14] px-6 text-sm font-extrabold text-white transition hover:bg-[#6f3800]"
-                    onClick={onNavigatePreferences}
-                    type="button"
-                  >
-                    <span className="material-symbols-outlined text-xl">
-                      edit
-                    </span>
-                    설문 수정
-                  </button>
-                ) : isEditing ? (
-                  <>
-                    <button
-                      className="inline-flex h-14 w-32 items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-extrabold text-[#79563c] transition hover:bg-[#fdcead]"
-                      disabled={isSavingProfile}
-                      onClick={handleEditCancel}
-                      type="button"
-                    >
-                      취소
-                    </button>
-                    <button
-                      className="inline-flex h-14 w-32 items-center justify-center gap-2 rounded-full bg-[#8e4e14] px-6 text-sm font-extrabold text-white transition hover:bg-[#6f3800] disabled:cursor-not-allowed disabled:opacity-60"
-                      disabled={isSavingProfile}
-                      onClick={handleProfileSave}
-                      type="button"
-                    >
-                      <span className="material-symbols-outlined text-xl">
-                        save
-                      </span>
-                      {isSavingProfile ? "저장 중" : "저장"}
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#fdcead] px-6 py-3 text-sm font-extrabold text-[#79563c] transition hover:bg-[#f4a261]/80"
-                    disabled={isProfileLoading}
-                    onClick={handleEditStart}
-                    type="button"
-                  >
-                    <span className="material-symbols-outlined text-xl">
-                      edit
-                    </span>
-                    프로필 편집
-                  </button>
-                )}
-              </div>
-            </header>
-
             <div className="grid grid-cols-1 gap-8 xl:grid-cols-12">
               {activeSection === "profile" ? (
-                <section className="rounded-[2rem] bg-[#edf4ff] p-8 shadow-[0_16px_40px_rgba(9,29,46,0.04)] xl:col-span-8 lg:p-10">
-                  <div className="mb-8 flex items-center gap-4">
-                    <span className="material-symbols-outlined text-4xl text-[#8e4e14]">
-                      contact_page
-                    </span>
-                    <h2 className="text-4xl font-extrabold font-headline">
-                      개인정보
-                    </h2>
+                <section className="rounded-[2rem] bg-[#e4efff] p-8 shadow-[0_16px_40px_rgba(9,29,46,0.04)] xl:col-span-8 lg:p-10">
+                  <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <span className="material-symbols-outlined text-4xl text-[#8e4e14]">
+                        contact_page
+                      </span>
+                      <h2 className="text-4xl font-bold font-headline">
+                        개인정보
+                      </h2>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3">
+                      {isEditing ? (
+                        <>
+                          <button
+                            className="inline-flex h-12 w-28 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-extrabold text-[#79563c] transition hover:bg-[#fdcead]"
+                            disabled={isSavingProfile}
+                            onClick={handleEditCancel}
+                            type="button"
+                          >
+                            취소
+                          </button>
+                          <button
+                            className="inline-flex h-12 w-28 items-center justify-center gap-2 rounded-full bg-[#f7bd91] px-5 text-sm font-extrabold text-[#79563c] transition hover:bg-[#eda16b] disabled:cursor-not-allowed disabled:opacity-60"
+                            disabled={isSavingProfile}
+                            onClick={handleProfileSave}
+                            type="button"
+                          >
+                            <span className="material-symbols-outlined text-xl">
+                              save
+                            </span>
+                            {isSavingProfile ? "저장 중" : "저장"}
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#f7bd91] px-5 text-sm font-extrabold text-[#79563c] transition hover:bg-[#eda16b]"
+                          disabled={isProfileLoading}
+                          onClick={handleEditStart}
+                          type="button"
+                        >
+                          <span className="material-symbols-outlined text-xl">
+                            edit
+                          </span>
+                          프로필 편집
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-7 md:grid-cols-2">
@@ -594,20 +566,22 @@ function ProfilePage({
                   )}
                 </section>
               ) : (
-                <section className="rounded-[2rem] bg-[#edf4ff] p-8 shadow-[0_16px_40px_rgba(9,29,46,0.04)] xl:col-span-8 lg:p-10">
-                  <div className="mb-8 flex items-center gap-4">
-                    <span
-                      className="material-symbols-outlined text-4xl text-[#8e4e14]"
-                      style={{ fontVariationSettings: '"FILL" 1' }}
-                    >
-                      pets
-                    </span>
-                    <h2 className="text-4xl font-extrabold font-headline">
-                      저장된 설문 결과
-                    </h2>
+                <section className="rounded-[2rem] bg-[#e4efff] p-8 shadow-[0_16px_40px_rgba(9,29,46,0.04)] xl:col-span-8 lg:p-10">
+                  <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <span
+                        className="material-symbols-outlined text-4xl text-[#8e4e14]"
+                        style={{ fontVariationSettings: '"FILL" 1' }}
+                      >
+                        pets
+                      </span>
+                      <h2 className="text-4xl font-bold font-headline">
+                        저장된 설문 결과
+                      </h2>
+                    </div>
                   </div>
 
-                  {isPreferenceLoading ? (
+                  {isPreferenceLoading && !hasLoadedPreference ? (
                     <p className="text-sm font-bold text-[#534439]/70">
                       매칭 설문 결과를 불러오는 중입니다.
                     </p>
@@ -697,16 +671,15 @@ function ProfilePage({
                       매칭 설문조사
                     </h2>
                     <p className="font-medium leading-relaxed text-[#ffdcc4]">
-                      생활 패턴과 선호도를 업데이트하면 더 잘 맞는 동물을
-                      추천받을 수 있어요.
+                      선호 정보를 업데이트하면 더 잘 맞는 동물을 추천받을 수 있어요.
                     </p>
                     <button
-                      className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-extrabold text-[#8e4e14] transition hover:gap-4"
+                      className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-extrabold text-[#8e4e14] transition-all duration-300 ease-out hover:shadow-lg"
                       onClick={onNavigatePreferences}
                       type="button"
                     >
                       설문 수정
-                      <span className="material-symbols-outlined text-xl">
+                      <span className="material-symbols-outlined text-xl transition-transform duration-300 ease-out group-hover:translate-x-2">
                         arrow_forward
                       </span>
                     </button>

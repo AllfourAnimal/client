@@ -47,11 +47,11 @@ function AnimalListPage({
         onNavigateProfile={onNavigateProfile}
       />
 
-      <main className="pt-24 min-h-screen">
+      <main className="pt-20 min-h-screen">
 
         {/* Hero */}
         <header className="max-w-7xl mx-auto px-8 py-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter text-on-surface mb-6 font-headline">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-5 font-headline">
             새로운 가족을 기다리는 친구들
           </h1>
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">

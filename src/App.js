@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import { useAuth } from './context/AuthContext';
@@ -30,6 +30,10 @@ function App() {
     setSelectedReview(id ?? null);
     setCurrentPage('review-details');
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [currentPage, selectedAnimalId, selectedReview]);
 
   if (currentPage === 'signup') {
     return <SignupPage onNavigateLogin={() => navigate('login')} />;
