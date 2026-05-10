@@ -168,7 +168,7 @@ function PreferencesPage({ onNavigateHome }) {
               </h1>
               <p className="text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed font-medium">
                 당신이 선호하는 반려동물의 특징을 알려주세요.<br className="hidden md:block" />
-                정교한 알고리즘을 통해 최고의 인연을 추천해 드립니다.
+                All4Animal만의 AI기반 알고리즘을 통해 최고의 동반자를 추천해 드립니다.
               </p>
             </div>
           </header>
@@ -286,7 +286,6 @@ function PreferencesPage({ onNavigateHome }) {
               >
                 건너뛰기
               </button>
-              <p className="text-on-surface-variant text-sm font-medium">데이터 분석을 위해 약 10초 정도 소요될 수 있습니다.</p>
             </div>
 
           </form>

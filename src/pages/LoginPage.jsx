@@ -28,7 +28,7 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
       <div className="layout-container flex h-full grow flex-col items-center justify-center p-6 sm:p-6">
         <div className="w-full max-w-[480px] flex flex-col gap-4">
 
-          {/* 홈 네비게이션 */}
+          {/* 홈 네비게이션
           <div className="flex items-center">
             <button
               className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors duration-200"
@@ -37,17 +37,17 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
               <span className="material-symbols-outlined">arrow_back</span>
               <span className="text-sm font-semibold uppercase tracking-wider">홈으로</span>
             </button>
-          </div>
+          </div> */}
 
           {/* 로그인 카드 */}
           <div className="bg-surface-container-lowest rounded-xl p-8 sm:p-12 shadow-[0_8px_32px_rgba(9,29,46,0.04)] border border-outline-variant/15 flex flex-col gap-8">
 
             {/* 브랜드/헤더 */}
             <div className="flex flex-col items-center text-center gap-4">
-              <div className="size-14 bg-gradient-to-br from-primary to-primary-container rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+              <div className="flex items-center justify-center gap-2 text-2xl font-bold text-[#091d2e]">
                 <span
-                  className="material-symbols-outlined text-white text-4xl"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
+                  className="material-symbols-outlined text-[#8e4e14] text-4xl"
+                  style={{ fontVariationSettings: '"FILL" 1' }}
                 >
                   pets
                 </span>
