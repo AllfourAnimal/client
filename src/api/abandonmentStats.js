@@ -9,8 +9,11 @@ const SHELTER_SERVICE_PATH = "abandonmentPublicService_v2/shelter_v2";
 const SERVICE_KEY =
   "39bc66238992a14aa753983bbb0a0581936d216876a6d6de03584f406e535a8f";
 const DEFAULT_PAGE_SIZE = 1000;
+const RESCUE_COUNT_CACHE_KEY = "all4animal:thisYearRescueCount";
 const SHELTER_COUNT_CACHE_KEY = "all4animal:shelterCount";
-const SHELTER_COUNT_CACHE_TTL = 1000 * 60 * 60 * 24;
+const ONE_DAY = 1000 * 60 * 60 * 24;
+const RESCUE_COUNT_CACHE_TTL = ONE_DAY;
+const SHELTER_COUNT_CACHE_TTL = ONE_DAY * 7;
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -71,23 +74,24 @@ async function runInBatches(items, batchSize, task) {
   return results;
 }
 
-function getCachedShelterCount() {
+function getCachedCount(cacheKey, cacheTtl, validator = () => true) {
   if (typeof localStorage === "undefined") {
     return null;
   }
 
   try {
-    const cached = JSON.parse(localStorage.getItem(SHELTER_COUNT_CACHE_KEY));
+    const cached = JSON.parse(localStorage.getItem(cacheKey));
 
     if (
       typeof cached?.count === "number" &&
-      Date.now() - cached.cachedAt < SHELTER_COUNT_CACHE_TTL
+      Date.now() - cached.cachedAt < cacheTtl &&
+      validator(cached)
     ) {
       return cached.count;
     }
-  } catch (error) {
+  } catch {
     try {
-      localStorage.removeItem(SHELTER_COUNT_CACHE_KEY);
+      localStorage.removeItem(cacheKey);
     } catch {
       return null;
     }
@@ -96,17 +100,18 @@ function getCachedShelterCount() {
   return null;
 }
 
-function setCachedShelterCount(count) {
+function setCachedCount(cacheKey, count, metadata = {}) {
   if (typeof localStorage === "undefined") {
     return;
   }
 
   try {
     localStorage.setItem(
-      SHELTER_COUNT_CACHE_KEY,
+      cacheKey,
       JSON.stringify({
         count,
         cachedAt: Date.now(),
+        ...metadata,
       })
     );
   } catch {
@@ -117,17 +122,34 @@ function setCachedShelterCount(count) {
 export async function fetchThisYearRescueCount() {
   const today = new Date();
   const startOfYear = new Date(today.getFullYear(), 0, 1);
+  const year = today.getFullYear();
+  const cachedCount = getCachedCount(
+    RESCUE_COUNT_CACHE_KEY,
+    RESCUE_COUNT_CACHE_TTL,
+    (cached) => cached.year === year
+  );
+
+  if (cachedCount !== null) {
+    return cachedCount;
+  }
+
   const data = await fetchPublicData(ABANDONMENT_SERVICE_PATH, {
     bgnde: formatDate(startOfYear),
     endde: formatDate(today),
     numOfRows: 1,
   });
 
-  return getTotalCount(data);
+  const count = getTotalCount(data);
+  setCachedCount(RESCUE_COUNT_CACHE_KEY, count, { year });
+
+  return count;
 }
 
 export async function fetchShelterCount() {
-  const cachedCount = getCachedShelterCount();
+  const cachedCount = getCachedCount(
+    SHELTER_COUNT_CACHE_KEY,
+    SHELTER_COUNT_CACHE_TTL
+  );
 
   if (cachedCount !== null) {
     return cachedCount;
@@ -158,7 +180,7 @@ export async function fetchShelterCount() {
       .filter(Boolean)
   );
 
-  setCachedShelterCount(shelterIds.size);
+  setCachedCount(SHELTER_COUNT_CACHE_KEY, shelterIds.size);
 
   return shelterIds.size;
 }

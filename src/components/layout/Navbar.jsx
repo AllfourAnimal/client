@@ -19,7 +19,7 @@ function Navbar({
 
   return (
     <header className="bg-[#f7f9ff] fixed top-0 w-full z-50">
-      <nav className="grid grid-cols-[auto_1fr_auto] items-center w-full px-4 sm:px-8 py-4 max-w-screen-2xl mx-auto">
+      <nav className="relative grid grid-cols-[auto_1fr_auto] items-center w-full px-4 sm:px-8 py-4 max-w-screen-2xl mx-auto">
         <div className="text-2xl font-bold text-[#091d2e] flex items-center gap-2 justify-self-start whitespace-nowrap">
           <button className="flex items-center gap-2" onClick={onNavigateHome} type="button">
             <span
@@ -32,7 +32,7 @@ function Navbar({
           </button>
         </div>
 
-        <div className="hidden md:flex items-center space-x-8 justify-self-center">
+        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center space-x-8 md:flex">
           {renderNavLink('home', '\uD648', onNavigateHome)}
           {renderNavLink('animal-list', '\uB3D9\uBB3C \uBAA9\uB85D', onNavigateAnimalList)}
           {renderNavLink('review-list', '\uC785\uC591 \uD6C4\uAE30', onNavigateReviews)}
