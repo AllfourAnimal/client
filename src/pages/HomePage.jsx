@@ -76,8 +76,8 @@ const getAnimalAgeText = (animalAge) => {
 };
 
 const getAnimalSexText = (animalSex) => {
-  if (animalSex === "MALE") return "남아";
-  if (animalSex === "FEMALE") return "여아";
+  if (animalSex === "MALE" || animalSex === "M") return "수컷";
+  if (animalSex === "FEMALE" || animalSex === "F") return "암컷";
   return "";
 };
 
@@ -96,8 +96,8 @@ const toRecommendedCard = (animal, index) => {
 
   return {
     animalId: animal.animalId,
-    title: `${animal.species || "동물"} #${animal.animalId}`,
-    breed: [animal.animalType, ageText, sexText].filter(Boolean).join(" • "),
+    title: `${animal.species || "동물"}`,
+    breed: [ageText, sexText].filter(Boolean).join(" • "),
     match: Math.max(91, 98 - index * 4),
     src: getAnimalImageSrc(animal),
     offset: index === 1,
@@ -111,7 +111,7 @@ function HomePage({
   onNavigateProfile,
   onNavigateReviews,
 }) {
-  const { accessToken } = useAuth();
+  const { accessToken, username } = useAuth();
   const { adoptions, loading: adoptionsLoading, error: adoptionsError } = useAdoptions();
   const { cacheAnimals, imagesByAnimalId } = useAnimals();
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -122,6 +122,7 @@ function HomePage({
   const [recommendedAnimals, setRecommendedAnimals] = useState([]);
   const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(false);
   const [recommendationsError, setRecommendationsError] = useState("");
+  const [activeSidebarItem, setActiveSidebarItem] = useState("overview");
   const [rescueCount, setRescueCount] = useState(null);
   const [shelterCount, setShelterCount] = useState(null);
   const [isRescueCountLoading, setIsRescueCountLoading] = useState(true);
@@ -142,6 +143,7 @@ function HomePage({
 
         return {
           animalId,
+          species: adoption.animalSpecies || "",
           imageSrc: getAdoptionImageSrc(adoption, imagesByAnimalId[animalId]),
         };
       })
@@ -273,6 +275,44 @@ function HomePage({
     };
   }, []);
 
+  useEffect(() => {
+    const sections = [
+      { item: "overview", ref: overviewSectionRef },
+      { item: "matches", ref: matchesSectionRef },
+      { item: "adoptions", ref: adoptionSectionRef },
+    ];
+
+    const updateActiveSidebarItem = () => {
+      const activationLine = 140;
+      const activeSection = sections.reduce((current, section) => {
+        const element = section.ref.current;
+
+        if (!element) {
+          return current;
+        }
+
+        const top = element.getBoundingClientRect().top;
+
+        if (top <= activationLine) {
+          return { item: section.item, top };
+        }
+
+        return current;
+      }, sections[0]);
+
+      setActiveSidebarItem(activeSection.item);
+    };
+
+    updateActiveSidebarItem();
+    window.addEventListener("scroll", updateActiveSidebarItem, { passive: true });
+    window.addEventListener("resize", updateActiveSidebarItem);
+
+    return () => {
+      window.removeEventListener("scroll", updateActiveSidebarItem);
+      window.removeEventListener("resize", updateActiveSidebarItem);
+    };
+  }, []);
+
   const handleChatResizeStart = (event) => {
     event.preventDefault();
     chatResizeRef.current = {
@@ -283,7 +323,14 @@ function HomePage({
     };
   };
 
-  const scrollToSection = (sectionRef) => {
+  const getSidebarButtonClass = (item) => (
+    activeSidebarItem === item
+      ? "flex w-full items-center gap-3 py-3 px-6 bg-white text-[#8e4e14] rounded-l-full shadow-sm transition-all duration-200"
+      : "flex w-full items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
+  );
+
+  const scrollToSection = (sectionRef, item) => {
+    setActiveSidebarItem(item);
     sectionRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
@@ -385,8 +432,8 @@ function HomePage({
           <nav className="flex-1 space-y-2">
             <button
               type="button"
-              className="flex w-full items-center gap-3 py-3 px-6 bg-white text-[#8e4e14] rounded-l-full shadow-sm transition-transform duration-200"
-              onClick={() => scrollToSection(overviewSectionRef)}
+              className={getSidebarButtonClass("overview")}
+              onClick={() => scrollToSection(overviewSectionRef, "overview")}
             >
               <span
                 className="material-symbols-outlined"
@@ -398,16 +445,16 @@ function HomePage({
             </button>
             <button
               type="button"
-              className="flex w-full items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
-              onClick={() => scrollToSection(matchesSectionRef)}
+              className={getSidebarButtonClass("matches")}
+              onClick={() => scrollToSection(matchesSectionRef, "matches")}
             >
               <span className="material-symbols-outlined">search</span>
               <span className="font-medium">나의 매칭 현황</span>
             </button>
             <button
               type="button"
-              className="flex w-full items-center gap-3 py-3 px-6 text-[#534439] hover:bg-white/50 hover:translate-x-1 rounded-l-full transition-all duration-200"
-              onClick={() => scrollToSection(adoptionSectionRef)}
+              className={getSidebarButtonClass("adoptions")}
+              onClick={() => scrollToSection(adoptionSectionRef, "adoptions")}
             >
               <span className="material-symbols-outlined">contact_support</span>
               <span className="font-medium">입양 문의 중</span>
@@ -428,7 +475,7 @@ function HomePage({
           {/* Hero */}
           <section ref={overviewSectionRef} className="mb-12 scroll-mt-28">
             <h1 className="text-5xl font-extrabold text-on-background mb-2 tracking-tight font-headline">
-              환영해요 예비 입양자님!
+              환영해요 {username || "예비 입양자"}님!
             </h1>
             <p className="pt-2 text-on-surface-variant text-lg">
               모든 동물을 위해 All4Animal이 함께합니다.
@@ -436,7 +483,7 @@ function HomePage({
           </section>
 
           {/* 전국 구조 현황 Bento */}
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
             <div className="md:col-span-2 bg-surface-container-high rounded-[1.5rem] p-8 flex flex-col justify-between relative overflow-hidden group">
               <div className="relative z-10">
                 <h3 className="text-tertiary font-bold text-sm mb-2">전국</h3>
@@ -505,7 +552,7 @@ function HomePage({
           </section>
 
           {/* Top Matches */}
-          <section ref={matchesSectionRef} className="mb-16 scroll-mt-28">
+          <section ref={matchesSectionRef} className="mb-24 scroll-mt-28">
             <div className="flex justify-between items-end mb-8">
               <div>
                 <h2 className="text-3xl font-bold text-on-background font-headline">
@@ -596,7 +643,7 @@ function HomePage({
                     )}
                   </div>
                   <p className="font-bold text-on-surface">
-                    {animal.animalId}
+                    {animal.species || "동물"}
                   </p>
                 </button>
               ))}
