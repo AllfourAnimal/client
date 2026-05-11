@@ -36,6 +36,20 @@ export function getAiImage(images) {
   );
 }
 
+export function getAllImages(images) {
+  const normalized = images
+    .map((image) => ({
+      imageUrl: image?.imageUrl ?? image?.image_url ?? image?.url ?? null,
+      is_ai_image: image?.is_ai_image ?? image?.isAiImage ?? false,
+    }))
+    .filter((image) => image.imageUrl);
+
+  return [
+    ...normalized.filter((img) => img.is_ai_image),
+    ...normalized.filter((img) => !img.is_ai_image),
+  ];
+}
+
 // 동물 검색 필터링 API 호출 함수
 export async function searchAnimals(token, filters) {
   const response = await axios.get(`${BASE_URL}/search`, {
