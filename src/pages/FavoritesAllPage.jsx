@@ -151,9 +151,9 @@ function FavoritesAllPage({
             </div>
             <button
               onClick={() => onNavigateAnimalList()}
-              className="text-primary font-bold flex items-center gap-1 hover:underline"
+              className="text-primary font-bold flex items-center gap-1 group transition-colors hover:text-primary/70"
             >
-              <span className="material-symbols-outlined text-base">chevron_left</span>
+              <span className="material-symbols-outlined text-base transition-transform group-hover:-translate-x-1">chevron_left</span>
               목록 요약
             </button>
           </div>

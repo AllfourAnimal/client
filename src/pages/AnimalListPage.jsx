@@ -51,24 +51,24 @@ function AnimalListPage({
 
         {/* Hero */}
         <header className="max-w-7xl mx-auto px-8 py-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-5 font-headline">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-4 font-headline">
             새로운 가족을 기다리는 친구들
           </h1>
           <p className="text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-            모든 생명의 각자의 이야기를 담고 당신의 손길을 기다리고 있습니다.
+            모든 생명이 각자의 이야기를 담고 당신의 손길을 기다리고 있습니다.
           </p>
         </header>
 
         {/* 전체 동물 목록 */}
-        <section className="max-w-7xl mx-auto px-8 pb-12">
+        <section className="max-w-7xl mx-auto px-8 pb-24">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-on-surface font-headline">전체 동물 목록</h2>
             <button
               onClick={() => onNavigateAnimalListAll()}
-              className="text-primary font-bold flex items-center gap-1 hover:underline"
+              className="text-primary font-bold flex items-center gap-1 group transition-colors hover:text-primary/70"
             >
               전체 보기
-              <span className="material-symbols-outlined text-base">chevron_right</span>
+              <span className="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">chevron_right</span>
             </button>
           </div>
           {loading ? (
@@ -92,15 +92,15 @@ function AnimalListPage({
         </section>
 
         {/* 찜한 동물 목록 */}
-        <section className="max-w-7xl mx-auto px-8 pb-20">
+        <section className="max-w-7xl mx-auto px-8 pb-24">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-on-surface font-headline">찜한 동물 목록</h2>
             <button
               onClick={() => onNavigateFavoritesAll()}
-              className="text-primary font-bold flex items-center gap-1 hover:underline"
+              className="text-primary font-bold flex items-center gap-1 group transition-colors hover:text-primary/70"
             >
               전체 보기
-              <span className="material-symbols-outlined text-base">chevron_right</span>
+              <span className="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">chevron_right</span>
             </button>
           </div>
           {favoriteAnimals.length > 0 ? (

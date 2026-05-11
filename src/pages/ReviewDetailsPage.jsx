@@ -263,8 +263,8 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
               <div className="flex flex-col items-center text-center">
                 <span className="text-on-surface-variant text-sm font-medium mb-1 text-center">구조 위치</span>
                 <div className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-tertiary text-sm">location_on</span>
-                  <span className="text-lg font-bold text-on-surface">{review.happenPlace}</span>
+                  <span className="material-symbols-outlined text-tertiary text-sm shrink-0">location_on</span>
+                  <span className="text-lg font-bold text-on-surface whitespace-nowrap">{review.happenPlace}</span>
                 </div>
               </div>
               <div className="flex flex-col items-center text-center">
@@ -299,8 +299,8 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
                     <div className="absolute left-0 top-0 h-full w-1.5 bg-primary-container" />
                     <div className="p-8 md:p-12">
                       <div className="mb-8 flex items-center gap-3 text-primary">
-                        <span className="material-symbols-outlined text-3xl">format_quote</span>
-                        <span className="text-sm font-extrabold tracking-wide uppercase">Adoption Story</span>
+                        <span className="material-symbols-outlined text-3xl">auto_stories</span>
+                        <span className="text-sm font-extrabold tracking-wide uppercase">입양 후기</span>
                       </div>
                       <div className="whitespace-pre-line text-lg md:text-xl leading-9 text-on-surface-variant">
                         {review.content}
@@ -326,7 +326,7 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
                         <dd className="font-bold text-on-surface text-right">{review.species || '-'}</dd>
                       </div>
                       <div className="flex items-start justify-between gap-4">
-                        <dt className="text-sm font-semibold text-on-surface-variant">구조 위치</dt>
+                        <dt className="text-sm font-semibold text-on-surface-variant shrink-0 whitespace-nowrap">구조 위치</dt>
                         <dd className="font-bold text-on-surface text-right">{review.happenPlace || '-'}</dd>
                       </div>
                     </dl>

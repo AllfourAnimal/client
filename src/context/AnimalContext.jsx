@@ -42,19 +42,23 @@ export function AnimalProvider({ children }) {
   const [error, setError] = useState('');
 
   // 동물 데이터를 병합하여 상태에 저장하는 함수
+  // replace: true 시 animalIds(순서 목록)만 초기화하고, animalsById(조회 캐시)는 항상 병합
   const mergeAnimals = useCallback((animals, { replace = false } = {}) => {
     setAnimalsById((prev) => {
-      const next = replace ? {} : { ...prev };
+      const next = { ...prev };
       animals.forEach((animal) => {
+        const patch = Object.fromEntries(
+          Object.entries(animal).filter(([, v]) => v !== null && v !== undefined && v !== '')
+        );
         next[animal.animalId] = {
           ...next[animal.animalId],
-          ...animal,
+          ...patch,
         };
       });
       return next;
     });
 
-    // animalIds는 중복 없이 순서대로 관리
+    // animalIds는 중복 없이 순서대로 관리 (replace 시 목록만 초기화)
     setAnimalIds((prev) => {
       const merged = replace ? [] : [...prev];
       animals.forEach((animal) => {

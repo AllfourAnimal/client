@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAdoptions } from '../context/AdoptionContext';
@@ -86,12 +86,79 @@ function InfoPill({ icon, value }) {
   );
 }
 
-function QuickInfo({ icon, label, value, className = '', valueClassName = '' }) {
+function AutoSizeText({ value }) {
+  const ref = useRef(null);
+  const [fontSize, setFontSize] = useState(null);
+  const fontSizeRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let frameId = 0;
+
+    const applyFontSize = (nextFontSize) => {
+      if (fontSizeRef.current === nextFontSize) return;
+      fontSizeRef.current = nextFontSize;
+      setFontSize(nextFontSize);
+    };
+
+    const measureText = () => {
+      const maxSize = 18;
+      const minSize = 11;
+      const availableWidth = el.clientWidth;
+      const currentSize = parseFloat(window.getComputedStyle(el).fontSize) || maxSize;
+      const requiredWidthAtMaxSize = el.scrollWidth * (maxSize / currentSize);
+
+      if (!availableWidth || requiredWidthAtMaxSize <= availableWidth + 1) {
+        applyFontSize(null);
+        return;
+      }
+
+      applyFontSize(Math.max(minSize, Math.floor((availableWidth / requiredWidthAtMaxSize) * maxSize)));
+    };
+
+    const resizeText = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(measureText);
+    };
+
+    resizeText();
+
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', resizeText);
+      return () => window.removeEventListener('resize', resizeText);
+    }
+
+    const resizeObserver = new ResizeObserver(resizeText);
+    if (el.parentElement) resizeObserver.observe(el.parentElement);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+    };
+  }, [value]);
+
+  return (
+    <span
+      ref={ref}
+      className="block max-w-full min-h-7 overflow-hidden whitespace-nowrap text-lg font-bold leading-7 text-on-surface"
+      style={fontSize ? { fontSize: `${fontSize}px` } : undefined}
+      title={value || ''}
+    >
+      {value || ''}
+    </span>
+  );
+}
+
+function QuickInfo({ icon, label, value, className = '', valueClassName = '', autoSize = false }) {
   return (
     <div className={`p-4 rounded-xl bg-surface-container flex flex-col items-center justify-center text-center min-h-[120px] ${className}`}>
       <span className="material-symbols-outlined text-primary text-3xl mb-2">{icon}</span>
       <span className="text-on-surface-variant text-sm font-medium">{label}</span>
-      <span className={`text-on-surface font-bold text-lg min-h-7 ${valueClassName}`}>{value || ''}</span>
+      {autoSize
+        ? <AutoSizeText value={value} />
+        : <span className={`text-on-surface font-bold text-lg min-h-7 ${valueClassName}`}>{value || ''}</span>
+      }
     </div>
   );
 }
@@ -117,6 +184,7 @@ function AnimalDetailsPage({
 }) {
   const [animalStory, setAnimalStory] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [favoriteTextPressed, setFavoriteTextPressed] = useState(false);
   const [showAdoptionModal, setShowAdoptionModal] = useState(false);
   const [showAdoptionConfirmModal, setShowAdoptionConfirmModal] = useState(false);
   const [showNeedInquiryModal, setShowNeedInquiryModal] = useState(false);
@@ -194,7 +262,7 @@ function AnimalDetailsPage({
       story,
       personalityTags,
       healthNotes,
-      weight: `${animal.weight}kg`,
+      weight: (() => { const w = getValue(animal, ['weight', 'body_weight', 'bodyWeight', 'animal_weight', 'weightKg']); return w ? `${w}kg` : ''; })(),
       vaccination: getValue(animal, ['vaccination', 'vaccinationStatus', 'vaccination_status']),
     };
   }, [animal, animalStory]);
@@ -312,7 +380,7 @@ function AnimalDetailsPage({
                       >
                         <span className="material-symbols-outlined text-xl leading-none">chevron_right</span>
                       </button>
-                      <div className="absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+                      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
                         {allImages.map((img, idx) => (
                           <button
                             key={img.imageUrl}
@@ -359,14 +427,14 @@ function AnimalDetailsPage({
                     label="발견 장소"
                     value={details.happenedPlace}
                     className="col-span-2"
-                    valueClassName="max-w-full whitespace-nowrap text-sm md:text-base lg:text-lg"
+                    autoSize
                   />
                 </div>
 
                 <section className="bg-surface-container-lowest px-10 pt-8 pb-8 rounded-xl shadow-sm border border-outline-variant/10 min-h-[220px]">
                   <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 font-headline">
                     <span className="w-1.5 h-8 bg-primary-container rounded-full" />
-                    {details.name}의 이야기
+                    이 동물의 이야기
                   </h2>
                   <div className="space-y-6 text-on-surface-variant text-lg leading-relaxed font-body">
                     {details.story}
@@ -404,16 +472,22 @@ function AnimalDetailsPage({
                     <div className="mt-4 space-y-5">
                       <button
                         type="button"
-                        onClick={() => toggleFavorite(animal.animalId, animal, isFavorited)}
+                        onClick={() => {
+                          setFavoriteTextPressed(true);
+                          setTimeout(() => setFavoriteTextPressed(false), 150);
+                          toggleFavorite(animal.animalId, animal, isFavorited);
+                        }}
                         className="w-full py-4 bg-secondary-container text-on-secondary-container rounded-full font-bold text-lg flex items-center justify-center gap-2 hover:bg-secondary-fixed transition-colors"
                       >
                         <span
-                          className="material-symbols-outlined"
-                          style={{ fontVariationSettings: isFavorited ? '"FILL" 1' : '"FILL" 0' }}
+                          className={`material-symbols-outlined transition-transform duration-150 ${favoriteTextPressed ? 'scale-90' : 'scale-100'}${isFavorited ? ' text-red-500' : ''}`}
+                          style={{ fontVariationSettings: isFavorited ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
                         >
                           favorite
                         </span>
-                        {isFavorited ? '관심 목록에서 제거' : '관심 목록에 추가'}
+                        <span className={`inline-block transition-transform duration-150 ${favoriteTextPressed ? 'scale-90' : 'scale-100'}`}>
+                          {isFavorited ? '관심 목록에서 제거' : '관심 목록에 추가'}
+                        </span>
                       </button>
                       <button
                         type="button"
@@ -477,7 +551,7 @@ function AnimalDetailsPage({
             role="dialog"
             aria-modal="true"
             aria-labelledby="adoption-confirm-title"
-            className="w-full max-w-md rounded-2xl bg-surface-container-lowest p-8 shadow-2xl border border-outline-variant/20"
+            className="w-full max-w-lg rounded-2xl bg-surface-container-lowest p-8 shadow-2xl border border-outline-variant/20"
           >
             <div className="mb-6 flex items-center justify-between gap-4">
               <h2 id="adoption-confirm-title" className="font-headline text-2xl font-extrabold text-on-surface">
@@ -494,7 +568,10 @@ function AnimalDetailsPage({
             </div>
 
             <p className="text-sm leading-relaxed text-on-surface-variant">
-              예를 누르면 이 동물이 로그인한 유저의 문의 동물로 등록되고, 보호소 문의 정보를 확인할 수 있습니다.
+              문의 등록시 보호소 문의 정보를 확인할 수 있습니다.
+            </p>
+            <p className="text-sm leading-relaxed text-on-surface-variant">
+              문의 등록은 동시에 최대 5마리만 가능하므로 신중하게 선택해주세요.
             </p>
 
             {adoptionInquiryError && (
