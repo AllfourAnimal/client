@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAdoptions } from '../context/AdoptionContext';
@@ -116,6 +116,7 @@ function AnimalDetailsPage({
   onNavigateProfile,
 }) {
   const [animalStory, setAnimalStory] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showAdoptionModal, setShowAdoptionModal] = useState(false);
   const [showAdoptionConfirmModal, setShowAdoptionConfirmModal] = useState(false);
   const [showNeedInquiryModal, setShowNeedInquiryModal] = useState(false);
@@ -149,9 +150,10 @@ function AnimalDetailsPage({
   useEffect(() => {
     setCertificateFile(null);
     setCertificateError('');
+    setCurrentImageIndex(0);
   }, [animalId]);
 
-  const { getAnimal, imagesByAnimalId } = useAnimals();
+  const { getAnimal, imagesByAnimalId, allImagesByAnimalId } = useAnimals();
   const { favoriteIds, toggleFavorite } = useFavorites();
   const { getAdoptionForAnimal, hasAdoptionForAnimal, registerAdoptionInquiry, submitCertificate } = useAdoptions();
   const animal = getAnimal(animalId);
@@ -197,7 +199,17 @@ function AnimalDetailsPage({
     };
   }, [animal, animalStory]);
 
-  const imageSrc = animal ? imagesByAnimalId[animal.animalId] ?? animal.thumbnailImageUrl : null;
+  const allImages = animal ? (allImagesByAnimalId[animal.animalId] ?? []) : [];
+  const fallbackSrc = animal ? imagesByAnimalId[animal.animalId] ?? animal.thumbnailImageUrl : null;
+  const imageSrc = allImages.length > 0 ? allImages[currentImageIndex]?.imageUrl ?? fallbackSrc : fallbackSrc;
+
+  const handlePrevImage = useCallback(() => {
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  }, [allImages.length]);
+
+  const handleNextImage = useCallback(() => {
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+  }, [allImages.length]);
   const isFavorited = animal ? favoriteIds.has(Number(animal.animalId)) : false;
   const adoptionInquiryRegistered = animal
     ? hasAdoptionForAnimal(animal.animalId)
@@ -282,6 +294,37 @@ function AnimalDetailsPage({
                   <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-full text-sm md:text-base font-bold text-primary shadow-md">
                     {adoptionStatus}
                   </div>
+                  {allImages.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handlePrevImage}
+                        aria-label="이전 사진"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
+                      >
+                        <span className="material-symbols-outlined text-xl leading-none">chevron_left</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleNextImage}
+                        aria-label="다음 사진"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
+                      >
+                        <span className="material-symbols-outlined text-xl leading-none">chevron_right</span>
+                      </button>
+                      <div className="absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+                        {allImages.map((img, idx) => (
+                          <button
+                            key={img.imageUrl}
+                            type="button"
+                            aria-label={`${idx + 1}번째 사진`}
+                            onClick={() => setCurrentImageIndex(idx)}
+                            className={`h-1.5 rounded-full transition-all ${idx === currentImageIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/50'}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
                   <div className="absolute bottom-0 left-0 w-full px-12 pt-8 pb-10 text-white">
                     <div className="mb-6 flex flex-wrap items-end gap-6">
                       <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight font-headline">

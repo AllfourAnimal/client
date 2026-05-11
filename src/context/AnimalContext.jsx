@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { fetchAnimalImages, fetchAnimals, getAiImage, searchAnimals } from '../api/animals';
+import { fetchAnimalImages, fetchAnimals, getAiImage, getAllImages, searchAnimals } from '../api/animals';
 import { useAuth } from './AuthContext';
 
 const AnimalContext = createContext(null);
@@ -36,6 +36,7 @@ export function AnimalProvider({ children }) {
   const [animalsById, setAnimalsById] = useState({});
   const [animalIds, setAnimalIds] = useState([]);
   const [imagesByAnimalId, setImagesByAnimalId] = useState({});
+  const [allImagesByAnimalId, setAllImagesByAnimalId] = useState({});
   const imagesByAnimalIdRef = useRef({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -76,21 +77,25 @@ export function AnimalProvider({ children }) {
       ids.map((animalId) => fetchAnimalImages(animalId, accessToken))
     );
 
-    // 결과를 imagesByAnimalId 상태에 병합하여 저장
+    const entries = ids.map((animalId, index) => {
+      const result = results[index];
+      const images = result.status === 'fulfilled' ? result.value : [];
+      return { animalId, images };
+    });
+
     setImagesByAnimalId((prev) => {
       const next = {
         ...prev,
-        ...Object.fromEntries(
-          ids.map((animalId, index) => {
-            const result = results[index];
-            const imageUrl = result.status === 'fulfilled' ? getAiImage(result.value) : null;
-            return [animalId, imageUrl];
-          })
-        ),
+        ...Object.fromEntries(entries.map(({ animalId, images }) => [animalId, getAiImage(images)])),
       };
       imagesByAnimalIdRef.current = next;
       return next;
     });
+
+    setAllImagesByAnimalId((prev) => ({
+      ...prev,
+      ...Object.fromEntries(entries.map(({ animalId, images }) => [animalId, getAllImages(images)])),
+    }));
   }, [accessToken]);
 
   // 동물 목록 페이지를 불러오는 함수
@@ -153,6 +158,7 @@ export function AnimalProvider({ children }) {
       setAnimalsById({});
       setAnimalIds([]);
       setImagesByAnimalId({});
+      setAllImagesByAnimalId({});
       imagesByAnimalIdRef.current = {};
       setError('');
     }
@@ -162,6 +168,7 @@ export function AnimalProvider({ children }) {
     animals,
     animalsById,
     imagesByAnimalId,
+    allImagesByAnimalId,
     loading,
     error,
     getAnimal,
