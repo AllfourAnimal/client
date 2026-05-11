@@ -3,6 +3,7 @@ import Navbar from '../components/layout/Navbar';
 import { createReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
 import { useAdoptions } from '../context/AdoptionContext';
+import AppFooter from '../components/layout/AppFooter';
 
 const REVIEW_DRAFT_STATUSES = new Set([
   'INQUIRY',
@@ -174,7 +175,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
             입양 후기 작성
           </h1>
           <p className="text-on-surface-variant font-medium">
-            당신의 인생 가족이 된 반려동물과의 따뜻한 이야기를 남겨주세요.
+            당신의 가족이 된 반려동물과의 따뜻한 이야기를 남겨주세요.
           </p>
         </div>
 
@@ -400,20 +401,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
         </form>
       </main>
 
-      <footer className="w-full mt-auto rounded-t-2xl bg-[#edf4ff]">
-        <div className="flex flex-col md:flex-row justify-between items-center px-12 py-10 w-full max-w-7xl mx-auto">
-          <div className="flex flex-col items-center md:items-start mb-6 md:mb-0">
-            <div className="text-xl font-bold text-[#091d2e] mb-2 font-headline">All4Animal</div>
-            <p className="text-sm text-[#534439]">© 2024 All4Animal. Every pet deserves a story.</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-[#534439]">
-            <button className="hover:underline decoration-[#f4a261] underline-offset-4 transition-all" type="button">Our Mission</button>
-            <button className="hover:underline decoration-[#f4a261] underline-offset-4 transition-all" type="button">Success Stories</button>
-            <button className="hover:underline decoration-[#f4a261] underline-offset-4 transition-all" type="button">Privacy Policy</button>
-            <button className="hover:underline decoration-[#f4a261] underline-offset-4 transition-all" type="button">Contact Us</button>
-          </div>
-        </div>
-      </footer>
+      <AppFooter />
     </div>
   );
 }

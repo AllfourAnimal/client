@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react';
 import HeartButton from './HeartButton';
 import { getAdoptionStatusLabel } from '../../adoptionStatus';
 import { useAdoptions } from '../../context/AdoptionContext';
@@ -29,6 +30,15 @@ function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, onNavigat
     getAgeLabel(animal.animal_age),
     getSexLabel(animal.animal_sex),
   ].filter(Boolean);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    setImgLoaded(false);
+    if (imgRef.current?.complete) {
+      setImgLoaded(true);
+    }
+  }, [imageSrc]);
 
   return (
     <div
@@ -37,11 +47,20 @@ function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, onNavigat
     >
       <div className={`relative ${compact ? 'h-60' : 'h-72'} overflow-hidden rounded-t-3xl bg-surface-container-low flex items-center justify-center transform-gpu`}>
         {imageSrc ? (
-          <img
-            src={imageSrc}
-            alt={`${animal.species} ${animal.animalId}`}
-            className="w-full h-full object-cover transition-transform duration-500 will-change-transform transform-gpu group-hover:scale-110"
-          />
+          <>
+            {!imgLoaded && (
+              <span className="relative inline-flex h-12 w-12 items-center justify-center text-primary" aria-label="이미지 로딩 중" role="status">
+                <span className="absolute h-12 w-12 animate-spin rounded-full border-4 border-current/20 border-t-current" />
+              </span>
+            )}
+            <img
+              ref={imgRef}
+              src={imageSrc}
+              alt={`${animal.species} ${animal.animalId}`}
+              className={`w-full h-full object-cover transition-transform duration-500 will-change-transform transform-gpu group-hover:scale-110 ${imgLoaded ? '' : 'hidden'}`}
+              onLoad={() => setImgLoaded(true)}
+            />
+          </>
         ) : (
           <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20">pets</span>
         )}

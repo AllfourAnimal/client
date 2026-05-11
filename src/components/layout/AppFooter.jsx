@@ -5,7 +5,7 @@ function AppFooter() {
         <div className="space-y-4">
           <div className="text-[#f7f9ff] font-bold text-3xl font-headline">All4Animal</div>
           <p className="text-slate-400 text-sm max-w-s">
-            반려동물 입양을 혁신하는 All4Animal과 함께 새로운 가족을 만나보세요. 우리의 매칭 시스템이 당신과 완벽한 반려동물을 연결해드립니다.
+            반려동물 입양을 혁신하는 All4Animal과 함께 새로운 가족을 만나보세요. 우리의 AI 매칭 시스템이 당신과 완벽한 반려동물을 연결해드립니다.
           </p>
         </div>
       </div>

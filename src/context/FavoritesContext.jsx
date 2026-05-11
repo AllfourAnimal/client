@@ -22,6 +22,7 @@ function toAnimalShape(item) {
   const source = getAnimalPayload(item);
 
   return {
+    ...source,
     animalId: Number(source.animalId ?? source.animal_id ?? source.id),
     desertionNo: source.desertionNo ?? source.desertion_no ?? '',
     species: source.species ?? source.speices ?? '',
@@ -54,15 +55,21 @@ export function FavoritesProvider({ children }) {
   const animalsByIdRef = useRef(animalsById);
   const favoriteAnimalsRef = useRef(favoriteAnimals);
 
-  const mergeWithCachedAnimal = useCallback((shaped, cached) => ({
-    ...shaped,
-    desertionNo: shaped.desertionNo || cached?.desertionNo || cached?.desertion_no || '',
-    species: shaped.species || cached?.species || '',
-    animal_age: shaped.animal_age ?? cached?.animal_age ?? cached?.animalAge ?? null,
-    animal_sex: shaped.animal_sex || cached?.animal_sex || cached?.animalSex || cached?.animlSex || null,
-    adopted: shaped.adopted ?? cached?.adopted ?? false,
-    thumbnailImageUrl: shaped.thumbnailImageUrl || cached?.thumbnailImageUrl || null,
-  }), []);
+  const mergeWithCachedAnimal = useCallback((shaped, cached) => {
+    const shapedPatch = Object.fromEntries(
+      Object.entries(shaped).filter(([, v]) => v !== null && v !== undefined && v !== '')
+    );
+    return {
+      ...(cached ?? {}),
+      ...shapedPatch,
+      desertionNo: shaped.desertionNo || cached?.desertionNo || cached?.desertion_no || '',
+      species: shaped.species || cached?.species || '',
+      animal_age: shaped.animal_age ?? cached?.animal_age ?? cached?.animalAge ?? null,
+      animal_sex: shaped.animal_sex || cached?.animal_sex || cached?.animalSex || cached?.animlSex || null,
+      adopted: shaped.adopted ?? cached?.adopted ?? false,
+      thumbnailImageUrl: shaped.thumbnailImageUrl || cached?.thumbnailImageUrl || null,
+    };
+  }, []);
 
   const enrichFromAnimalList = useCallback(async (animals) => {
     const missingIds = new Set(

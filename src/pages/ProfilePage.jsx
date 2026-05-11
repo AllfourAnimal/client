@@ -416,7 +416,7 @@ function ProfilePage({
             />
             <ProfileMenuItem
               active={activeSection === "survey"}
-              icon="pets"
+              icon="quiz"
               label="매칭 설문"
               onClick={() => {
                 setActiveSection("survey");
@@ -567,13 +567,13 @@ function ProfilePage({
                 </section>
               ) : (
                 <section className="rounded-[2rem] bg-[#e4efff] p-8 shadow-[0_16px_40px_rgba(9,29,46,0.04)] xl:col-span-8 lg:p-10">
-                  <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                  <div className="mb-8 flex flex-wrap items-center justify-between gap-4 min-h-12">
                     <div className="flex items-center gap-4">
                       <span
                         className="material-symbols-outlined text-4xl text-[#8e4e14]"
                         style={{ fontVariationSettings: '"FILL" 1' }}
                       >
-                        pets
+                        docs
                       </span>
                       <h2 className="text-4xl font-bold font-headline">
                         저장된 설문 결과
@@ -661,12 +661,6 @@ function ProfilePage({
               <aside className="space-y-6 xl:col-span-4">
                 <section className="overflow-hidden rounded-[2rem] bg-[#8e4e14] p-7 text-white shadow-[0_18px_34px_rgba(142,78,20,0.22)]">
                   <div className="relative z-10 space-y-4">
-                    <span
-                      className="material-symbols-outlined text-5xl text-white/60"
-                      style={{ fontVariationSettings: '"FILL" 1' }}
-                    >
-                      quiz
-                    </span>
                     <h2 className="text-3xl font-extrabold leading-tight font-headline">
                       매칭 설문조사
                     </h2>
