@@ -5,7 +5,7 @@ import { fetchMe } from '../api/auth';
 import { deleteReview, fetchReviewDetail, updateReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
 
-const DEFAULT_REVIEW_IMAGE = '/all4animal-paw.svg';
+const DEFAULT_REVIEW_IMAGE = '/all4animal.png';
 const MAX_REVIEW_IMAGES = 3;
 
 function getUserId(user) {
