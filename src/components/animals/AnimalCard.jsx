@@ -41,23 +41,17 @@ function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, compact =
       onClick={() => navigate(`/animals/${animal.animalId}`)}
     >
       <div className={`relative ${compact ? 'h-60' : 'h-72'} overflow-hidden rounded-t-3xl bg-surface-container-low flex items-center justify-center transform-gpu`}>
-        {imageSrc ? (
-          <>
-            {!imgLoaded && (
-              <span className="relative inline-flex h-12 w-12 items-center justify-center text-primary" aria-label="이미지 로딩 중" role="status">
-                <span className="absolute h-12 w-12 animate-spin rounded-full border-4 border-current/20 border-t-current" />
-              </span>
-            )}
-            <img
-              ref={imgRef}
-              src={imageSrc}
-              alt={`${animal.species} ${animal.animalId}`}
-              className={`w-full h-full object-cover transition-transform duration-500 will-change-transform transform-gpu group-hover:scale-110 ${imgLoaded ? '' : 'hidden'}`}
-              onLoad={() => setImgLoaded(true)}
-            />
-          </>
-        ) : (
-          <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20">pets</span>
+        {!imgLoaded && (
+          <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20 animate-pulse">pets</span>
+        )}
+        {imageSrc && (
+          <img
+            ref={imgRef}
+            src={imageSrc}
+            alt={`${animal.species} ${animal.animalId}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 will-change-transform transform-gpu group-hover:scale-110 ${imgLoaded ? '' : 'hidden'}`}
+            onLoad={() => setImgLoaded(true)}
+          />
         )}
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-primary shadow-sm">
           {adoptionStatus}

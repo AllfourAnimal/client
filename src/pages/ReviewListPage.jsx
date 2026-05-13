@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import ReviewCard from '../components/reviews/ReviewCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { fetchAdoptedReviews, fetchReviews, fetchReviewsByAnimalType } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
 
@@ -163,7 +164,7 @@ function ReviewListPage() {
 
         {/* Cards */}
         {loading ? (
-          <p className="text-center text-on-surface-variant py-24">리뷰를 불러오는 중...</p>
+          <LoadingSpinner size="lg" className="py-24" />
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-24 text-on-surface-variant">
             <span className="material-symbols-outlined text-6xl mb-4 opacity-30">error</span>
@@ -198,7 +199,12 @@ function ReviewListPage() {
               disabled={loadingMore}
               onClick={() => loadReviews(page + 1, true, activeFilter)}
             >
-              {loadingMore ? '불러오는 중...' : '더 많은 이야기 보기'}
+              {loadingMore ? (
+                <span className="flex items-center gap-2">
+                  <LoadingSpinner size="sm" />
+                  불러오는 중...
+                </span>
+              ) : '더 많은 이야기 보기'}
             </button>
           </div>
         )}

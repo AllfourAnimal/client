@@ -1,14 +1,28 @@
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function ReviewCard({ review }) {
   const navigate = useNavigate();
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    setImgLoaded(false);
+    if (imgRef.current?.complete) setImgLoaded(true);
+  }, [review.image]);
+
   return (
     <article className="bg-surface-container-lowest rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:shadow-xl group border border-surface-container">
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-64 overflow-hidden bg-surface-container-low flex items-center justify-center">
+        {!imgLoaded && (
+          <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20 animate-pulse">pets</span>
+        )}
         <img
+          ref={imgRef}
           alt={review.alt || review.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${imgLoaded ? '' : 'hidden'}`}
           src={review.image}
+          onLoad={() => setImgLoaded(true)}
         />
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary">
           {review.certified ? '입양 인증' : '입양 미인증'}

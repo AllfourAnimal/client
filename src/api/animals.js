@@ -3,10 +3,19 @@ import axios from "axios";
 const BASE_URL = "https://all4animal.site/api/animals";
 
 // 동물 정보 API 호출 함수
-export async function fetchAnimals(token, page = 0, size = 10) {
+export async function fetchAnimals(token, page = 0, size = 10, signal) {
   const response = await axios.get(`${BASE_URL}`, {
     headers: { Authorization: `Bearer ${token}` },
     params: { page, size },
+    signal,
+  });
+  return response.data;
+}
+
+// 개별 동물 상세 정보 API 호출 함수
+export async function fetchAnimalById(animalId, token) {
+  const response = await axios.get(`${BASE_URL}/${animalId}`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 }

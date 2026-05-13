@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { createReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
 import { useAdoptions } from '../context/AdoptionContext';
@@ -186,9 +187,9 @@ function ReviewPostPage() {
             </div>
 
             {adoptionsLoading ? (
-              <p className="rounded-xl bg-surface-container-low px-5 py-4 text-sm font-semibold text-on-surface-variant">
-                입양 진행 내역을 불러오는 중...
-              </p>
+              <div className="rounded-xl bg-surface-container-low px-5 py-4">
+                <LoadingSpinner size="sm" />
+              </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {adoptions.map((adoption, index) => {

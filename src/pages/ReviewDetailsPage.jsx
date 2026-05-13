@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { fetchMe } from '../api/auth';
 import { deleteReview, fetchReviewDetail, updateReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
@@ -211,7 +212,7 @@ function ReviewDetailsPage() {
 
       <main className="pt-24 pb-20 max-w-7xl mx-auto px-6">
         {loading ? (
-          <p className="text-center text-on-surface-variant py-24">리뷰를 불러오는 중...</p>
+          <LoadingSpinner size="lg" className="py-24" />
         ) : error && !review ? (
           <div className="text-center py-24">
             <span className="material-symbols-outlined text-6xl mb-4 text-on-surface-variant opacity-30">error</span>
