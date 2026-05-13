@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAdoptions } from '../context/AdoptionContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { getAnimalStory } from '../api/animals';
 import { useAuth } from '../context/AuthContext';  // getAnimalStory 함수에서 토큰을 사용하기 위해 AuthContext에서 accessToken을 가져옵니다.
 import { getAdoptionStatusLabel } from '../adoptionStatus';
@@ -173,6 +174,8 @@ function AnimalDetailsPage() {
   const { id } = useParams();
   const animalId = Number(id);
   const navigate = useNavigate();
+  const { state: locationState } = useLocation();
+  const recommendationRank = locationState?.recommendationRank ?? null;
   const [animalStory, setAnimalStory] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [favoriteTextPressed, setFavoriteTextPressed] = useState(false);
@@ -186,6 +189,8 @@ function AnimalDetailsPage() {
   const [certificateSubmitting, setCertificateSubmitting] = useState(false);
   const [certificateError, setCertificateError] = useState('');
   const { accessToken } = useAuth();
+  const { getAnimal, imagesByAnimalId, allImagesByAnimalId, cacheAnimals, loadAnimalById } = useAnimals();
+  const [animalDataLoading, setAnimalDataLoading] = useState(false);
 
   useEffect(() => {
     if (!animalId || !accessToken) {
@@ -207,12 +212,31 @@ function AnimalDetailsPage() {
   }, [animalId, accessToken]);
 
   useEffect(() => {
+    if (!animalId || !accessToken) return;
+    const animal = getAnimal(animalId);
+    // 나이 + 보호소 정보가 모두 있을 때만 전체 데이터 로드 완료로 판단 (입양 캐시는 careNm만 있을 수 있음)
+    if (animal?.animal_age != null && (animal?.careNm || animal?.happenedPlace)) return;
+
+    let cancelled = false;
+    setAnimalDataLoading(true);
+
+    loadAnimalById(animalId)
+      .catch((err) => {
+        console.error('[AnimalDetailsPage] loadAnimalById failed:', err?.message);
+      })
+      .finally(() => {
+        if (!cancelled) setAnimalDataLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [animalId, accessToken]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     setCertificateFile(null);
     setCertificateError('');
     setCurrentImageIndex(0);
   }, [animalId]);
 
-  const { getAnimal, imagesByAnimalId, allImagesByAnimalId } = useAnimals();
   const { favoriteIds, toggleFavorite } = useFavorites();
   const { getAdoptionForAnimal, hasAdoptionForAnimal, registerAdoptionInquiry, submitCertificate } = useAdoptions();
   const animal = getAnimal(animalId);
@@ -253,7 +277,7 @@ function AnimalDetailsPage() {
       story,
       personalityTags,
       healthNotes,
-      weight: (() => { const w = getValue(animal, ['weight', 'body_weight', 'bodyWeight', 'animal_weight', 'weightKg']); return w ? `${w}kg` : ''; })(),
+      weight: (() => { const w = getValue(animal, ['weight', 'animalWeight', 'body_weight', 'bodyWeight', 'animal_weight', 'weightKg']); if (!w) return ''; const s = String(w); return s.toLowerCase().includes('kg') ? s : `${s}kg`; })(),
       vaccination: getValue(animal, ['vaccination', 'vaccinationStatus', 'vaccination_status']),
     };
   }, [animal, animalStory]);
@@ -319,16 +343,22 @@ function AnimalDetailsPage() {
 
       <main className="pt-20 min-h-screen">
         <div className="max-w-7xl mx-auto px-8 pb-24">
-          {!animal ? (
+          {!animal || (animalDataLoading && !(animal?.animal_age != null && (animal?.careNm || animal?.happenedPlace))) ? (
             <div className="text-center py-24">
-              <p className="text-error mb-6">동물 정보를 찾을 수 없습니다.</p>
-              <button
-                type="button"
-                onClick={() => navigate('/animals')}
-                className="bg-primary text-on-primary px-8 py-3 rounded-full font-bold"
-              >
-                목록으로 돌아가기
-              </button>
+              {animalDataLoading ? (
+                <LoadingSpinner size="lg" />
+              ) : (
+                <>
+                  <p className="text-error mb-6">동물 정보를 찾을 수 없습니다.</p>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/animals')}
+                    className="bg-primary text-on-primary px-8 py-3 rounded-full font-bold"
+                  >
+                    목록으로 돌아가기
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -383,9 +413,11 @@ function AnimalDetailsPage() {
                       <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight font-headline">
                         {details.name}
                       </h1>
-                      <div className="inline-flex items-center px-5 py-2 rounded-full bg-white text-black font-bold text-lg shadow-xl ring-4 ring-white/20">
-                        99% 적합
-                      </div>
+                      {recommendationRank && (
+                        <div className={`${{ 1: 'rank-badge', 2: 'rank-badge-silver', 3: 'rank-badge-bronze' }[recommendationRank]} inline-flex items-center px-5 py-2 rounded-full text-black font-bold text-lg shadow-xl ring-4 ring-white/20`}>
+                          {recommendationRank}순위 적합
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col gap-6">
                       <div className="flex flex-wrap gap-4">

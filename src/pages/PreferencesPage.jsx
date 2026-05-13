@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { getPreferences, patchPreferences } from '../api/preferences';
 import { FaDog, FaCat, FaBaby } from 'react-icons/fa';
 import {
@@ -176,9 +177,7 @@ function PreferencesPage() {
           </header>
 
           {isLoadingPreference && (
-            <p className="mb-8 text-center text-sm font-bold text-on-surface-variant">
-              저장된 설문 정보를 불러오는 중입니다.
-            </p>
+            <LoadingSpinner size="md" className="mb-8" />
           )}
 
           <form className="space-y-12" onSubmit={handleSubmit}>

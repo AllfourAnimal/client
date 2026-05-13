@@ -1,10 +1,67 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import AnimalCard from '../components/animals/AnimalCard';
+
+function AnimatedSelect({ value, onChange, options }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selected = options.find((o) => o.value === value);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="bg-surface-container-low rounded-2xl pl-6 pr-10 py-3 text-sm font-semibold text-on-secondary-container transition-all flex items-center whitespace-nowrap relative"
+      >
+        <span className="relative">
+          <span className="invisible select-none pointer-events-none" aria-hidden="true">
+            {options.reduce((a, b) => a.label.length >= b.label.length ? a : b).label}
+          </span>
+          <span className="absolute inset-0 flex items-center">{selected?.label}</span>
+        </span>
+        <span
+          className={`material-symbols-outlined text-base absolute right-3 transition-transform duration-200 ${open ? 'rotate-180' : 'rotate-0'}`}
+        >
+          expand_more
+        </span>
+      </button>
+      <div
+        className={`absolute top-full mt-1 left-0 min-w-full bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/20 overflow-hidden z-50 transition-all duration-200 ease-out origin-top ${
+          open ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'
+        }`}
+      >
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => { onChange(option.value); setOpen(false); }}
+            className={`w-full text-left px-4 py-2.5 text-sm font-semibold group ${
+              value === option.value ? 'text-primary' : 'text-on-secondary-container'
+            }`}
+          >
+            <span className="inline-block px-3 py-1 rounded-lg transition-colors group-hover:bg-primary-container/30">
+              {option.label}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function FavoritesAllPage() {
   const navigate = useNavigate();
@@ -89,26 +146,26 @@ function FavoritesAllPage() {
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
               />
             </div>
-            <div className="flex gap-3 w-full md:w-auto overflow-x-auto">
-              <select
-                className="bg-surface-container-low border-none rounded-2xl px-6 py-3 text-sm font-semibold text-on-secondary-container focus:ring-2 focus:ring-primary-fixed transition-all"
+            <div className="flex gap-3 w-full md:w-auto flex-wrap">
+              <AnimatedSelect
                 value={animalType}
-                onChange={(e) => setAnimalType(e.target.value)}
-              >
-                <option value="">모든 동물</option>
-                <option value="DOG">강아지</option>
-                <option value="CAT">고양이</option>
-                <option value="ETC">기타</option>
-              </select>
-              <select
-                className="bg-surface-container-low border-none rounded-2xl px-6 py-3 text-sm font-semibold text-on-secondary-container focus:ring-2 focus:ring-primary-fixed transition-all"
+                onChange={setAnimalType}
+                options={[
+                  { value: '', label: '모든 동물' },
+                  { value: 'DOG', label: '강아지' },
+                  { value: 'CAT', label: '고양이' },
+                  { value: 'ETC', label: '기타' },
+                ]}
+              />
+              <AnimatedSelect
                 value={careAddr}
-                onChange={(e) => setCareAddr(e.target.value)}
-              >
-                <option value="">지역 전체</option>
-                <option value="서울">서울</option>
-                <option value="경기">경기</option>
-              </select>
+                onChange={setCareAddr}
+                options={[
+                  { value: '', label: '지역 전체' },
+                  { value: '서울', label: '서울' },
+                  { value: '경기', label: '경기' },
+                ]}
+              />
               <button
                 onClick={handleSearch}
                 disabled={loading}

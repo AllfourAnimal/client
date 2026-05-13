@@ -2,9 +2,24 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
+import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import AnimalCard from '../components/animals/AnimalCard';
+
+function AnimalCardSkeleton() {
+  return (
+    <div className="isolate bg-surface-container-lowest rounded-3xl overflow-hidden border border-outline-variant/10">
+      <div className="h-72 bg-surface-container-low rounded-t-3xl flex items-center justify-center">
+        <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20 animate-pulse">pets</span>
+      </div>
+      <div className="p-6 space-y-3">
+        <div className="h-6 w-28 bg-surface-container-low rounded-full animate-pulse" />
+        <div className="h-4 w-44 bg-surface-container-low rounded-full animate-pulse" />
+      </div>
+    </div>
+  );
+}
 
 function AnimalListPage() {
   const navigate = useNavigate();
@@ -13,22 +28,49 @@ function AnimalListPage() {
   const [error, setError] = useState('');
   const { favoriteIds, favoriteAnimals, toggleFavorite } = useFavorites();
   const { imagesByAnimalId, loadAnimalsPage } = useAnimals();
+  const { accessToken } = useAuth();
 
   useEffect(() => {
+    if (!accessToken) return;
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+    let cancelled = false;
+
     const loadAnimals = async () => {
       setLoading(true);
       setError('');
       try {
-        const data = await loadAnimalsPage(0, 6, { replace: true });
-        setAnimals(data);
+        const randomPage = Math.floor(Math.random() * 50);
+        let data = await loadAnimalsPage(randomPage, 6, { replace: true, signal });
+        if (cancelled) return;
+
+        // 빈 페이지(범위 초과)인 경우 page 0으로 재시도
+        if (data.length === 0) {
+          data = await loadAnimalsPage(0, 6, { replace: true, signal });
+          if (cancelled) return;
+        }
+
+        const shuffled = [...data];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        setAnimals(shuffled.slice(0, 6));
       } catch (err) {
-        setError('동물 목록을 불러오지 못했습니다.');
+        if (err?.name === 'CanceledError' || err?.name === 'AbortError') return;
+        if (!cancelled) setError('동물 목록을 불러오지 못했습니다.');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
+
     loadAnimals();
-  }, [loadAnimalsPage]);
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [loadAnimalsPage, accessToken]);
 
 
   return (
@@ -61,7 +103,9 @@ function AnimalListPage() {
             </button>
           </div>
           {loading ? (
-            <p className="text-center text-on-surface-variant py-16">불러오는 중...</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {Array.from({ length: 6 }).map((_, i) => <AnimalCardSkeleton key={i} />)}
+            </div>
           ) : error ? (
             <p className="text-center text-error py-16">{error}</p>
           ) : (

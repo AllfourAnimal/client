@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import AppFooter from "../components/layout/AppFooter";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { useAuth } from "../context/AuthContext";
 import { fetchProfile, updateProfile } from "../api/profile";
 import { getPreferences } from "../api/preferences";
@@ -540,9 +541,7 @@ function ProfilePage() {
                   </div>
 
                   {isProfileLoading && (
-                    <p className="mt-6 text-sm font-bold text-[#534439]/70">
-                      프로필 정보를 불러오는 중입니다.
-                    </p>
+                    <LoadingSpinner size="sm" className="mt-6" />
                   )}
                   {profileError && (
                     <p className="mt-6 text-sm font-bold text-red-700">
@@ -572,9 +571,7 @@ function ProfilePage() {
                   </div>
 
                   {isPreferenceLoading && !hasLoadedPreference ? (
-                    <p className="text-sm font-bold text-[#534439]/70">
-                      매칭 설문 결과를 불러오는 중입니다.
-                    </p>
+                    <LoadingSpinner size="sm" className="py-4" />
                   ) : preference ? (
                     <>
                       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">

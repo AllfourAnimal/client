@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import AppFooter from "../components/layout/AppFooter";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { getRecommendedAnimals } from "../api/animals";
 import { sendChatMessage } from "../api/chatbot";
 import {
@@ -130,6 +131,41 @@ const toRecommendedCard = (animal, index, cachedImageSrc) => {
     offset: index === 1,
   };
 };
+
+function RecommendedCardImage({ src, title }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    setImgLoaded(false);
+    if (imgRef.current?.complete) setImgLoaded(true);
+  }, [src]);
+
+  if (!src) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-surface-container-high">
+        <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20 animate-pulse">pets</span>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {!imgLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-surface-container-high">
+          <span className="material-symbols-outlined text-6xl text-on-surface-variant opacity-20 animate-pulse">pets</span>
+        </div>
+      )}
+      <img
+        ref={imgRef}
+        alt={`${title} 사진`}
+        className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${imgLoaded ? '' : 'opacity-0'}`}
+        src={src}
+        onLoad={() => setImgLoaded(true)}
+      />
+    </>
+  );
+}
 
 function HomePage() {
   const navigate = useNavigate();
@@ -635,30 +671,18 @@ function HomePage() {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {recommendedCards.map((card) => (
+              {recommendedCards.map((card, index) => (
                 <button
                   key={card.animalId}
                   className={`group cursor-pointer block text-left w-full${card.offset ? " md:-mt-6" : ""}`}
-                  onClick={() => navigate(`/animals/${card.animalId}`)}
+                  onClick={() => navigate(`/animals/${card.animalId}`, { state: { recommendationRank: index + 1 } })}
                   aria-label={`동물 ${card.animalId} 상세페이지로 이동`}
                 >
                   <div className="relative mb-4 rounded-[1.5rem] overflow-hidden aspect-[4/5]">
-                    {card.src ? (
-                      <img
-                        alt={`${card.title} 사진`}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        src={card.src}
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-surface-container-high text-primary">
-                        <span className="material-symbols-outlined text-6xl">
-                          pets
-                        </span>
-                      </div>
-                    )}
+                    <RecommendedCardImage src={card.src} title={card.title} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-primary font-bold text-xs">
-                      {card.match}% Match
+                    <div className={`${['rank-badge', 'rank-badge-silver', 'rank-badge-bronze'][index]} absolute top-4 left-4 inline-flex items-center px-4 py-1.5 rounded-full text-black font-bold text-sm shadow-xl ring-4 ring-white/20`}>
+                      {index + 1}순위 적합
                     </div>
                     <div className="absolute bottom-4 left-4 text-white">
                       <h3 className="text-2xl font-bold">{card.title}</h3>
@@ -719,8 +743,8 @@ function HomePage() {
                 </button>
               ))}
               {adoptionsLoading && (
-                <div className="flex h-48 w-48 flex-shrink-0 items-center justify-center rounded-full bg-surface-container-high text-sm font-semibold text-on-surface-variant">
-                  불러오는 중...
+                <div className="flex h-48 w-48 flex-shrink-0 items-center justify-center rounded-full bg-surface-container-high">
+                  <LoadingSpinner size="md" />
                 </div>
               )}
               {!adoptionsLoading && adoptionCarouselAnimals.length === 0 && (

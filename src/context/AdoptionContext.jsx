@@ -15,8 +15,9 @@ function toAnimalCacheItem(adoption) {
   if (Number.isNaN(animalId)) return null;
 
   return {
+    ...adoption,
     animalId,
-    species: adoption.animalSpecies ?? '',
+    species: adoption.animalSpecies ?? adoption.species ?? '',
     animalType: adoption.animalType ?? '',
   };
 }
