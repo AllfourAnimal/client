@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import { fetchMe } from '../api/auth';
 import { deleteReview, fetchReviewDetail, updateReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
 
-const DEFAULT_REVIEW_IMAGE = '/all4animal-paw.svg';
 const MAX_REVIEW_IMAGES = 3;
 
 function getUserId(user) {
@@ -49,10 +49,16 @@ function getReviewImages(review) {
 }
 
 function fillGalleryImages(images) {
-  return Array.from({ length: 3 }, (_, index) => images[index] || DEFAULT_REVIEW_IMAGE);
+  return Array.from({ length: MAX_REVIEW_IMAGES }, (_, index) => ({
+    src: images[index] || '',
+    isFallback: !images[index],
+  }));
 }
 
-function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onNavigateReviewList, onNavigateProfile }) {
+function ReviewDetailsPage() {
+  const { id } = useParams();
+  const reviewId = Number(id);
+  const navigate = useNavigate();
   const { accessToken } = useAuth();
   const [review, setReview] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -185,7 +191,7 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
     try {
       await deleteReview(targetReviewId, accessToken);
       setShowDeleteModal(false);
-      onNavigateReviewList();
+      navigate('/reviews');
     } catch (err) {
       setError('리뷰를 삭제하지 못했습니다.');
     } finally {
@@ -201,13 +207,7 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
 
   return (
     <div className="bg-surface text-on-surface font-body">
-      <Navbar
-        activePage="review-list"
-        onNavigateHome={onNavigateHome}
-        onNavigateAnimalList={onNavigateAnimalList}
-        onNavigateReviews={onNavigateReviewList}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <main className="pt-24 pb-20 max-w-7xl mx-auto px-6">
         {loading ? (
@@ -218,7 +218,7 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
             <p className="text-lg font-semibold text-error">{error}</p>
             <button
               className="mt-6 bg-secondary-container text-on-secondary-container px-8 py-3 rounded-full font-bold"
-              onClick={onNavigateReviewList}
+              onClick={() => navigate('/reviews')}
             >
               목록으로 돌아가기
             </button>
@@ -235,14 +235,29 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 {galleryImages.map((image, index) => (
                   <div
-                    key={`${image}-${index}`}
+                    key={`${image.src || 'paw'}-${index}`}
                     className={`${index === 0 ? 'md:col-span-8 md:row-span-2' : 'md:col-span-4'} overflow-hidden rounded-2xl bg-surface-container-low relative group`}
                   >
-                    <img
-                      className={`${index === 0 ? 'h-[520px]' : 'h-[252px]'} w-full object-cover transition-transform duration-500 group-hover:scale-105`}
-                      alt={`${review.petName || '리뷰'} 사진 ${index + 1}`}
-                      src={image}
-                    />
+                    {image.isFallback ? (
+                      <div
+                        className={`${index === 0 ? 'h-[520px]' : 'h-[252px]'} flex w-full items-center justify-center bg-primary-container/10 text-primary/35`}
+                        aria-label="기본 발바닥 이미지"
+                        role="img"
+                      >
+                        <span
+                          className={`material-symbols-outlined ${index === 0 ? 'text-[9rem]' : 'text-7xl'}`}
+                          style={{ fontVariationSettings: '"FILL" 1' }}
+                        >
+                          pets
+                        </span>
+                      </div>
+                    ) : (
+                      <img
+                        className={`${index === 0 ? 'h-[520px]' : 'h-[252px]'} w-full object-cover transition-transform duration-500 group-hover:scale-105`}
+                        alt={`${review.petName || '리뷰'} 사진 ${index + 1}`}
+                        src={image.src}
+                      />
+                    )}
                     {index === 0 && (
                       <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
                     )}
@@ -343,7 +358,7 @@ function ReviewDetailsPage({ reviewId, onNavigateHome, onNavigateAnimalList, onN
 
                   <button
                     className="w-full bg-secondary-container text-on-secondary-container px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-secondary-container/80 transition-all active:scale-95 shadow-md"
-                    onClick={onNavigateReviewList}
+                    onClick={() => navigate('/reviews')}
                   >
                     <span className="material-symbols-outlined">list</span>
                     목록으로 돌아가기

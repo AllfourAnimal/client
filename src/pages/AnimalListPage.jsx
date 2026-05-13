@@ -1,18 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import AnimalCard from '../components/animals/AnimalCard';
 
-function AnimalListPage({
-  onNavigateHome,
-  onNavigateAnimalDetails,
-  onNavigateReviews,
-  onNavigateProfile,
-  onNavigateAnimalListAll,
-  onNavigateFavoritesAll,
-}) {
+function AnimalListPage() {
+  const navigate = useNavigate();
   const [animals, setAnimals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -39,13 +34,7 @@ function AnimalListPage({
   return (
     <div className="bg-background text-on-background font-body">
 
-      <Navbar
-        activePage="animal-list"
-        isCurrentPage
-        onNavigateHome={onNavigateHome}
-        onNavigateReviews={onNavigateReviews}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <main className="pt-20 min-h-screen">
 
@@ -64,7 +53,7 @@ function AnimalListPage({
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-on-surface font-headline">전체 동물 목록</h2>
             <button
-              onClick={() => onNavigateAnimalListAll()}
+              onClick={() => navigate('/animals/all')}
               className="text-primary font-bold flex items-center gap-1 group transition-colors hover:text-primary/70"
             >
               전체 보기
@@ -84,7 +73,6 @@ function AnimalListPage({
                   imageSrc={imagesByAnimalId[animal.animalId]}
                   isFavorited={favoriteIds.has(Number(animal.animalId))}
                   onToggleFavorite={toggleFavorite}
-                  onNavigateAnimalDetails={onNavigateAnimalDetails}
                 />
               ))}
             </div>
@@ -96,7 +84,7 @@ function AnimalListPage({
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-on-surface font-headline">찜한 동물 목록</h2>
             <button
-              onClick={() => onNavigateFavoritesAll()}
+              onClick={() => navigate('/animals/favorites')}
               className="text-primary font-bold flex items-center gap-1 group transition-colors hover:text-primary/70"
             >
               전체 보기
@@ -112,7 +100,6 @@ function AnimalListPage({
                   imageSrc={imagesByAnimalId[animal.animalId] ?? animal.thumbnailImageUrl}
                   isFavorited={favoriteIds.has(animal.animalId)}
                   onToggleFavorite={toggleFavorite}
-                  onNavigateAnimalDetails={onNavigateAnimalDetails}
                   compact
                 />
               ))}

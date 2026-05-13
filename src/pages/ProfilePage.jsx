@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import AppFooter from "../components/layout/AppFooter";
 import { useAuth } from "../context/AuthContext";
@@ -196,13 +197,8 @@ function normalizePersonalities(personalities) {
   return [];
 }
 
-function ProfilePage({
-  onNavigateHome,
-  onNavigateAnimalList,
-  onNavigateReviews,
-  onNavigatePreferences,
-  onNavigateProfile,
-}) {
+function ProfilePage() {
+  const navigate = useNavigate();
   const { accessToken, username } = useAuth();
   const [activeSection, setActiveSection] = useState("profile");
   const [profile, setProfile] = useState(null);
@@ -375,13 +371,7 @@ function ProfilePage({
 
   return (
     <div className="min-h-screen bg-[#f7f9ff] text-[#091d2e] font-body">
-      <Navbar
-        activePage="profile"
-        onNavigateHome={onNavigateHome}
-        onNavigateAnimalList={onNavigateAnimalList}
-        onNavigateReviews={onNavigateReviews}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <div className="flex pt-20">
         <aside className="hidden lg:sticky lg:top-20 lg:flex h-[calc(100vh-80px)] w-64 shrink-0 flex-col self-start rounded-r-[1.5rem] bg-[#edf4ff] py-8 pl-4">
@@ -669,7 +659,7 @@ function ProfilePage({
                     </p>
                     <button
                       className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-extrabold text-[#8e4e14] transition-all duration-300 ease-out hover:shadow-lg"
-                      onClick={onNavigatePreferences}
+                      onClick={() => navigate('/preferences')}
                       type="button"
                     >
                       설문 수정

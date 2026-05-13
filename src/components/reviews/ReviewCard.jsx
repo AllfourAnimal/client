@@ -1,4 +1,7 @@
-function ReviewCard({ review, onNavigateReviewDetails }) {
+import { useNavigate } from 'react-router-dom';
+
+function ReviewCard({ review }) {
+  const navigate = useNavigate();
   return (
     <article className="bg-surface-container-lowest rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:shadow-xl group border border-surface-container">
       <div className="relative h-64 overflow-hidden">
@@ -31,7 +34,7 @@ function ReviewCard({ review, onNavigateReviewDetails }) {
         </p>
         <button
           className="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all text-sm"
-          onClick={() => onNavigateReviewDetails && onNavigateReviewDetails(review.id)}
+          onClick={() => navigate(`/reviews/${review.id}`)}
         >
           더 읽어보기{' '}
           <span className="material-symbols-outlined text-[18px]">chevron_right</span>

@@ -1,17 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import AnimalCard from '../components/animals/AnimalCard';
 
-function FavoritesAllPage({
-  onNavigateHome,
-  onNavigateAnimalDetails,
-  onNavigateReviews,
-  onNavigateProfile,
-  onNavigateAnimalList,
-}) {
+function FavoritesAllPage() {
+  const navigate = useNavigate();
   const { favoriteIds, favoriteAnimals, toggleFavorite } = useFavorites();
   const { imagesByAnimalId, searchAnimals } = useAnimals();
 
@@ -73,14 +69,7 @@ function FavoritesAllPage({
   return (
     <div className="bg-background text-on-background font-body">
 
-      <Navbar
-        activePage="animal-list"
-        isCurrentPage
-        onNavigateHome={onNavigateHome}
-        onNavigateAnimalList={onNavigateAnimalList}
-        onNavigateReviews={onNavigateReviews}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <main className="pt-24 min-h-screen">
 
@@ -150,7 +139,7 @@ function FavoritesAllPage({
               <span className="text-on-surface-variant text-sm">{displayAnimals.length}마리</span>
             </div>
             <button
-              onClick={() => onNavigateAnimalList()}
+              onClick={() => navigate('/animals')}
               className="text-primary font-bold flex items-center gap-1 group transition-colors hover:text-primary/70"
             >
               <span className="material-symbols-outlined text-base transition-transform group-hover:-translate-x-1">chevron_left</span>
@@ -181,7 +170,6 @@ function FavoritesAllPage({
                   imageSrc={imagesByAnimalId[animal.animalId] ?? animal.thumbnailImageUrl}
                   isFavorited={favoriteIds.has(animal.animalId)}
                   onToggleFavorite={toggleFavorite}
-                  onNavigateAnimalDetails={onNavigateAnimalDetails}
                 />
               ))}
             </div>

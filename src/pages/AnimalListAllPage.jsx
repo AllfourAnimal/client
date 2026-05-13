@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/layout/Navbar';
@@ -64,13 +65,8 @@ function AnimatedSelect({ value, onChange, options }) {
   );
 }
 
-function AnimalListAllPage({
-  onNavigateHome,
-  onNavigateAnimalDetails,
-  onNavigateReviews,
-  onNavigateProfile,
-  onNavigateAnimalList,
-}) {
+function AnimalListAllPage() {
+  const navigate = useNavigate();
   const { favoriteIds, toggleFavorite } = useFavorites();
   const {
     imagesByAnimalId,
@@ -166,13 +162,7 @@ function AnimalListAllPage({
   return (
     <div className="bg-background text-on-background font-body">
 
-      <Navbar
-        activePage="animal-list"
-        onNavigateHome={onNavigateHome}
-        onNavigateAnimalList={onNavigateAnimalList}
-        onNavigateReviews={onNavigateReviews}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <main className="pt-24 min-h-screen">
 
@@ -244,7 +234,7 @@ function AnimalListAllPage({
               )}
             </div>
             <button
-              onClick={() => onNavigateAnimalList()}
+              onClick={() => navigate('/animals')}
               className="text-primary font-bold flex items-center gap-1 group transition-colors hover:text-primary/70"
             >
               <span className="material-symbols-outlined text-base transition-transform group-hover:-translate-x-1">chevron_left</span>
@@ -269,7 +259,6 @@ function AnimalListAllPage({
                   imageSrc={imagesByAnimalId[animal.animalId]}
                   isFavorited={favoriteIds.has(Number(animal.animalId))}
                   onToggleFavorite={toggleFavorite}
-                  onNavigateAnimalDetails={onNavigateAnimalDetails}
                 />
               ))}
             </div>

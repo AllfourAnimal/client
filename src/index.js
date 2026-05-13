@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -11,15 +12,17 @@ import { AdoptionProvider } from './context/AdoptionContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <AnimalProvider>
-        <AdoptionProvider>
-          <FavoritesProvider>
-            <App />
-          </FavoritesProvider>
-        </AdoptionProvider>
-      </AnimalProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <AnimalProvider>
+          <AdoptionProvider>
+            <FavoritesProvider>
+              <App />
+            </FavoritesProvider>
+          </AdoptionProvider>
+        </AnimalProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

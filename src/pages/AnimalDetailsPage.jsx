@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAnimals } from '../context/AnimalContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAdoptions } from '../context/AdoptionContext';
@@ -7,6 +8,7 @@ import AppFooter from '../components/layout/AppFooter';
 import { getAnimalStory } from '../api/animals';
 import { useAuth } from '../context/AuthContext';  // getAnimalStory 함수에서 토큰을 사용하기 위해 AuthContext에서 accessToken을 가져옵니다.
 import { getAdoptionStatusLabel } from '../adoptionStatus';
+import { getAnimalSexIcon, getAnimalSexLabel } from '../animalSex';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const HIGH_PERSONALITY_VALUES = new Set(['HIGH', 'VERY_HIGH']);
@@ -34,14 +36,6 @@ function getAgeLabel(value) {
     return age >= 1 ? `${age}살` : '1살 미만';
   }
   return String(value);
-}
-
-function getSexLabel(sex) {
-  if (!sex) return '';
-  const value = String(sex).toUpperCase();
-  if (value === 'MALE' || value === 'M') return '수컷';
-  if (value === 'FEMALE' || value === 'F') return '암컷';
-  return String(sex);
 }
 
 function toList(value) {
@@ -175,13 +169,10 @@ function ShelterInfoRow({ icon, label, value }) {
   );
 }
 
-function AnimalDetailsPage({
-  animalId,
-  onNavigateHome,
-  onNavigateAnimalList,
-  onNavigateReviews,
-  onNavigateProfile,
-}) {
+function AnimalDetailsPage() {
+  const { id } = useParams();
+  const animalId = Number(id);
+  const navigate = useNavigate();
   const [animalStory, setAnimalStory] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [favoriteTextPressed, setFavoriteTextPressed] = useState(false);
@@ -236,7 +227,7 @@ function AnimalDetailsPage({
     const id = animal.animalId;
     const name = getValue(animal, ['name', 'animalName', 'animal_name']) || species || id;
     const age = getAgeLabel(getValue(animal, ['animal_age', 'animalAge', 'age']));
-    const sex = getSexLabel(getValue(animal, ['animal_sex', 'animalSex', 'animlSex', 'sex', 'gender']));
+    const sex = getAnimalSexLabel(getValue(animal, ['animal_sex', 'animalSex', 'sex']));
     const isVaccinated = (animal.vaccinated ? '접종완료' : '미접종');
     const happenedPlace = getValue(animal, ['happenedPlace', 'happendPlace', 'happenPlace', 'happened_place', 'happen_place', 'careAddr', 'careAddress', 'address']);
     const careNm = getValue(animal, ['careNm', 'careName', 'care_nm', 'shelterName']);
@@ -324,13 +315,7 @@ function AnimalDetailsPage({
 
   return (
     <div className="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container font-body">
-      <Navbar
-        activePage="animal-list"
-        onNavigateHome={onNavigateHome}
-        onNavigateAnimalList={onNavigateAnimalList}
-        onNavigateReviews={onNavigateReviews}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <main className="pt-20 min-h-screen">
         <div className="max-w-7xl mx-auto px-8 pb-24">
@@ -339,7 +324,7 @@ function AnimalDetailsPage({
               <p className="text-error mb-6">동물 정보를 찾을 수 없습니다.</p>
               <button
                 type="button"
-                onClick={onNavigateAnimalList}
+                onClick={() => navigate('/animals')}
                 className="bg-primary text-on-primary px-8 py-3 rounded-full font-bold"
               >
                 목록으로 돌아가기
@@ -405,7 +390,7 @@ function AnimalDetailsPage({
                     <div className="flex flex-col gap-6">
                       <div className="flex flex-wrap gap-4">
                         <InfoPill icon="cake" value={details.age} />
-                        <InfoPill icon={details.sex === '수컷' ? 'male' : 'female'} value={details.sex} />
+                        <InfoPill icon={getAnimalSexIcon(details.sex)} value={details.sex} />
                         <InfoPill icon="auto_awesome" value={details.personality} />
                       </div>
                       {/* <div className="flex min-h-10">

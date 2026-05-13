@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import AppFooter from "../components/layout/AppFooter";
 import { getRecommendedAnimals } from "../api/animals";
@@ -10,6 +11,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useAdoptions } from "../context/AdoptionContext";
 import { useAnimals } from "../context/AnimalContext";
+import { getAnimalSexLabel } from "../animalSex";
 
 const INITIAL_CHAT_MESSAGES = [
   {
@@ -55,8 +57,39 @@ const getAdoptionImageSrc = (adoption, cachedImageSrc) => (
   null
 );
 
-const getAnimalImageSrc = (animal) => (
-  animal?.imageUrls?.[0] ||
+const normalizeAnimalImage = (image) => {
+  if (typeof image === "string") {
+    return {
+      imageUrl: image,
+      isAiImage: false,
+    };
+  }
+
+  return {
+    imageUrl: image?.imageUrl ?? image?.image_url ?? image?.url ?? image?.fileUrl ?? image?.src ?? null,
+    isAiImage: Boolean(image?.is_ai_image ?? image?.isAiImage),
+  };
+};
+
+const getEmbeddedAnimalImageSrc = (animal) => {
+  const imageList = [
+    ...(Array.isArray(animal?.images) ? animal.images : []),
+    ...(Array.isArray(animal?.imageUrls) ? animal.imageUrls : []),
+    ...(Array.isArray(animal?.animalImages) ? animal.animalImages : []),
+  ]
+    .map(normalizeAnimalImage)
+    .filter((image) => image.imageUrl);
+
+  return (
+    imageList.find((image) => image.isAiImage)?.imageUrl ||
+    imageList[0]?.imageUrl ||
+    null
+  );
+};
+
+const getAnimalImageSrc = (animal, cachedImageSrc) => (
+  cachedImageSrc ||
+  getEmbeddedAnimalImageSrc(animal) ||
   animal?.thumbnailImageUrl ||
   animal?.thumbnail_image_url ||
   animal?.imageUrl ||
@@ -75,12 +108,6 @@ const getAnimalAgeText = (animalAge) => {
   return age > 0 ? `${age}살` : "1살 미만";
 };
 
-const getAnimalSexText = (animalSex) => {
-  if (animalSex === "MALE" || animalSex === "M") return "수컷";
-  if (animalSex === "FEMALE" || animalSex === "F") return "암컷";
-  return "";
-};
-
 const getRecommendedAnimalsFromResponse = (data) => (
   Array.isArray(data?.animals) ? data.animals : []
 );
@@ -90,27 +117,22 @@ const toRecommendedAnimalCacheItem = (animal) => ({
   thumbnailImageUrl: getAnimalImageSrc(animal),
 });
 
-const toRecommendedCard = (animal, index) => {
+const toRecommendedCard = (animal, index, cachedImageSrc) => {
   const ageText = getAnimalAgeText(animal.animalAge);
-  const sexText = getAnimalSexText(animal.animalSex);
+  const sexText = getAnimalSexLabel(animal.animalSex ?? animal.animal_sex ?? animal.animlSex);
 
   return {
     animalId: animal.animalId,
     title: `${animal.species || "동물"}`,
     breed: [ageText, sexText].filter(Boolean).join(" • "),
     match: Math.max(91, 98 - index * 4),
-    src: getAnimalImageSrc(animal),
+    src: getAnimalImageSrc(animal, cachedImageSrc),
     offset: index === 1,
   };
 };
 
-function HomePage({
-  onNavigateAnimalList,
-  onNavigatePreferences,
-  onNavigateAnimalDetails,
-  onNavigateProfile,
-  onNavigateReviews,
-}) {
+function HomePage() {
+  const navigate = useNavigate();
   const { accessToken, username } = useAuth();
   const { adoptions, loading: adoptionsLoading, error: adoptionsError } = useAdoptions();
   const { cacheAnimals, imagesByAnimalId } = useAnimals();
@@ -154,8 +176,10 @@ function HomePage({
   ), [adoptions, imagesByAnimalId]);
 
   const recommendedCards = useMemo(() => (
-    recommendedAnimals.map(toRecommendedCard)
-  ), [recommendedAnimals]);
+    recommendedAnimals.map((animal, index) => (
+      toRecommendedCard(animal, index, imagesByAnimalId[animal.animalId])
+    ))
+  ), [imagesByAnimalId, recommendedAnimals]);
 
   useEffect(() => {
     if (!isChatOpen) {
@@ -462,13 +486,7 @@ function HomePage({
 
   return (
     <div className="bg-surface text-on-surface font-body">
-      <Navbar
-        activePage="home"
-        isCurrentPage
-        onNavigateAnimalList={onNavigateAnimalList}
-        onNavigateReviews={onNavigateReviews}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <div className="pt-20 grid grid-cols-1 lg:grid-cols-[256px_1fr]">
         {/* 사이드NavBar */}
@@ -516,7 +534,7 @@ function HomePage({
           <div className="px-4 mt-auto">
             <button
               className="w-full py-4 bg-primary text-on-primary font-bold rounded-full hover:scale-95 transition-all shadow-lg shadow-primary/20"
-              onClick={onNavigatePreferences}
+              onClick={() => navigate('/preferences')}
             >
               설문 작성
             </button>
@@ -572,15 +590,15 @@ function HomePage({
             <div className="space-y-6">
               <div className="bg-surface-container-lowest rounded-[1.5rem] p-6 shadow-sm flex flex-col justify-center">
                 <span className="text-tertiary font-bold text-sm uppercase tracking-widest mb-1">
-                  이번 달 입양 건수
+                  이번 달 입양 연결 건수
                 </span>
                 <div className="flex items-center justify-between">
-                  <span className="text-4xl font-bold text-on-surface">28</span>
+                  <span className="text-4xl font-bold text-on-surface">0</span>
                   <div className="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold flex items-center">
                     <span className="material-symbols-outlined text-sm mr-1">
                       trending_up
                     </span>
-                    +12%
+                    +0%
                   </div>
                 </div>
               </div>
@@ -621,7 +639,7 @@ function HomePage({
                 <button
                   key={card.animalId}
                   className={`group cursor-pointer block text-left w-full${card.offset ? " md:-mt-6" : ""}`}
-                  onClick={() => onNavigateAnimalDetails(card.animalId)}
+                  onClick={() => navigate(`/animals/${card.animalId}`)}
                   aria-label={`동물 ${card.animalId} 상세페이지로 이동`}
                 >
                   <div className="relative mb-4 rounded-[1.5rem] overflow-hidden aspect-[4/5]">
@@ -677,7 +695,7 @@ function HomePage({
                 <button
                   key={animal.animalId}
                   className="flex-shrink-0 w-48 group block text-center"
-                  onClick={() => onNavigateAnimalDetails(animal.animalId)}
+                  onClick={() => navigate(`/animals/${animal.animalId}`)}
                   aria-label={`동물 ${animal.animalId} 상세페이지로 이동`}
                 >
                   <div className="h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 transition-transform group-hover:scale-105 bg-surface-container-high">
