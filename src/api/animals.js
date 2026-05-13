@@ -19,33 +19,47 @@ export async function fetchAnimalImages(animalId, token) {
   return response.data;
 }
 
-export function getAiImage(images) {
-  const normalizedImages = images
-    .map((image) => {
-      return {
-        imageUrl: image?.imageUrl ?? image?.image_url ?? image?.url ?? null,
-        is_ai_image: image?.is_ai_image ?? image?.isAiImage ?? false,
-      };
-    })
-    .filter((image) => image.imageUrl);
+const LOCAL_AI_IMAGES = {
+  1: '/images/aiImage_1.png',
+  2: '/images/aiImage_2.png',
+  4: '/images/aiImage_4.png',
+  97: '/images/aiImage_97.png',
+  174: '/images/aiImage_174.png',
+};
 
-  return (
-    normalizedImages.find((image) => image.is_ai_image)?.imageUrl ??
-    normalizedImages[0]?.imageUrl ??
-    null
-  );
-}
-
-export function getAllImages(images) {
-  const normalized = images
+function normalizeImages(images) {
+  return images
     .map((image) => ({
       imageUrl: image?.imageUrl ?? image?.image_url ?? image?.url ?? null,
       is_ai_image: image?.is_ai_image ?? image?.isAiImage ?? false,
     }))
     .filter((image) => image.imageUrl);
+}
+
+export function getAiImage(images, animalId) {
+  const normalized = normalizeImages(images);
+  const apiAiImage = normalized.find((image) => image.is_ai_image)?.imageUrl;
+  if (apiAiImage) return apiAiImage;
+
+  const localFallback = animalId != null ? LOCAL_AI_IMAGES[Number(animalId)] : undefined;
+  return localFallback ?? normalized[0]?.imageUrl ?? null;
+}
+
+export function getAllImages(images, animalId) {
+  const normalized = normalizeImages(images);
+  const hasApiAiImage = normalized.some((img) => img.is_ai_image);
+
+  const localFallback =
+    !hasApiAiImage && animalId != null ? LOCAL_AI_IMAGES[Number(animalId)] : null;
+
+  const aiImages = hasApiAiImage
+    ? normalized.filter((img) => img.is_ai_image)
+    : localFallback
+      ? [{ imageUrl: localFallback, is_ai_image: true }]
+      : [];
 
   return [
-    ...normalized.filter((img) => img.is_ai_image),
+    ...aiImages,
     ...normalized.filter((img) => !img.is_ai_image),
   ];
 }

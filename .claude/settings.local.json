@@ -4,7 +4,8 @@
       "Bash(Get-ChildItem -Path \"c:\\\\All4Animal\\\\client\" -Directory)",
       "Bash(Select-Object Name)",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(dir \"c:\\\\All4Animal\\\\client\\\\public\\\\images\")"
     ]
   }
 }

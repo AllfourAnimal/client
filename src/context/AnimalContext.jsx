@@ -90,7 +90,7 @@ export function AnimalProvider({ children }) {
     setImagesByAnimalId((prev) => {
       const next = {
         ...prev,
-        ...Object.fromEntries(entries.map(({ animalId, images }) => [animalId, getAiImage(images)])),
+        ...Object.fromEntries(entries.map(({ animalId, images }) => [animalId, getAiImage(images, animalId)])),
       };
       imagesByAnimalIdRef.current = next;
       return next;
@@ -98,7 +98,7 @@ export function AnimalProvider({ children }) {
 
     setAllImagesByAnimalId((prev) => ({
       ...prev,
-      ...Object.fromEntries(entries.map(({ animalId, images }) => [animalId, getAllImages(images)])),
+      ...Object.fromEntries(entries.map(({ animalId, images }) => [animalId, getAllImages(images, animalId)])),
     }));
   }, [accessToken]);
 
