@@ -1,21 +1,23 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 
-function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) {
+function LoginPage() {
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      const submittedLoginId = loginId.trim(); // 로그인 아이디는 공백 제거
+      const submittedLoginId = loginId.trim();
       const data = await loginUser({ loginId: submittedLoginId, password });
       const completedSurvey = login(data.accessToken, submittedLoginId, data.username);
-      if (onNavigatePreferences) onNavigatePreferences(completedSurvey);
+      navigate(completedSurvey ? '/' : '/preferences', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || '로그인에 실패했습니다. 서버 상태와 입력 정보를 확인해주세요.');
     }
@@ -82,12 +84,6 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
                   <label className="text-sm font-semibold text-on-surface/80">
                     비밀번호
                   </label>
-                  <a
-                    href="#"
-                    className="text-xs font-bold text-primary hover:text-primary-container transition-colors uppercase tracking-tight"
-                  >
-                    비밀번호를 잊으셨나요?
-                  </a>
                 </div>
                 <input
                   type="password"
@@ -113,7 +109,7 @@ function LoginPage({ onNavigateHome, onNavigatePreferences, onNavigateSignup }) 
                   <span className="text-on-surface-variant text-sm">처음이신가요?</span>
                   <button
                     type="button"
-                    onClick={onNavigateSignup}
+                    onClick={() => navigate('/signup')}
                     className="text-primary font-bold text-sm hover:underline underline-offset-4 decoration-2"
                   >
                     계정 생성

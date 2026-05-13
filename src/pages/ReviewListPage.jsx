@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import AppFooter from '../components/layout/AppFooter';
 import ReviewCard from '../components/reviews/ReviewCard';
@@ -56,7 +57,8 @@ function normalizeReview(review) {
   };
 }
 
-function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfile, onNavigateReviewDetails, onNavigateReviewPost }) {
+function ReviewListPage() {
+  const navigate = useNavigate();
   const { accessToken } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [activeFilter, setActiveFilter] = useState('전체');
@@ -103,13 +105,7 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
     <div className="bg-background font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
       <div className="fixed inset-0 grain-overlay z-[40] pointer-events-none" />
 
-      <Navbar
-        activePage="review-list"
-        isCurrentPage
-        onNavigateHome={onNavigateHome}
-        onNavigateAnimalList={onNavigateAnimalList}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <main className="max-w-screen-2xl mx-auto px-8 py-8 pt-24">
         {/* CTA */}
@@ -126,7 +122,7 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
             <div className="relative z-10 shrink-0">
               <button
                 className="bg-primary text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-2"
-                onClick={onNavigateReviewPost}
+                onClick={() => navigate('/reviews/write')}
               >
                 <span className="material-symbols-outlined">edit_square</span>
                 후기 작성하기
@@ -185,7 +181,6 @@ function ReviewListPage({ onNavigateHome, onNavigateAnimalList, onNavigateProfil
               <ReviewCard
                 key={review.id}
                 review={review}
-                onNavigateReviewDetails={onNavigateReviewDetails}
               />
             ))}
           </div>

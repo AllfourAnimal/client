@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeartButton from './HeartButton';
 import { getAdoptionStatusLabel } from '../../adoptionStatus';
+import { getAnimalSexLabel } from '../../animalSex';
 import { useAdoptions } from '../../context/AdoptionContext';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -14,21 +16,14 @@ function getAgeLabel(birthYear) {
   return age >= 1 ? `${age}살` : '1살 미만';
 }
 
-function getSexLabel(sex) {
-  if (!sex) return '';
-  const s = sex.toUpperCase();
-  if (s === 'MALE' || s === 'M') return '수컷';
-  if (s === 'FEMALE' || s === 'F') return '암컷';
-  return '중성';
-}
-
-function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, onNavigateAnimalDetails, compact = false }) {
+function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, compact = false }) {
+  const navigate = useNavigate();
   const { getAdoptionForAnimal } = useAdoptions();
   const adoption = getAdoptionForAnimal(animal.animalId);
   const adoptionStatus = getAdoptionStatusLabel(animal, adoption);
   const tags = [
     getAgeLabel(animal.animal_age),
-    getSexLabel(animal.animal_sex),
+    getAnimalSexLabel(animal.animal_sex),
   ].filter(Boolean);
   const [imgLoaded, setImgLoaded] = useState(false);
   const imgRef = useRef(null);
@@ -43,7 +38,7 @@ function AnimalCard({ animal, imageSrc, isFavorited, onToggleFavorite, onNavigat
   return (
     <div
       className="isolate bg-surface-container-lowest rounded-3xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 border border-outline-variant/10 hover:shadow-2xl hover:shadow-primary/10 cursor-pointer"
-      onClick={() => onNavigateAnimalDetails(animal.animalId)}
+      onClick={() => navigate(`/animals/${animal.animalId}`)}
     >
       <div className={`relative ${compact ? 'h-60' : 'h-72'} overflow-hidden rounded-t-3xl bg-surface-container-low flex items-center justify-center transform-gpu`}>
         {imageSrc ? (

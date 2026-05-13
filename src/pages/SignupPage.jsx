@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { checkId, signupUser } from '../api/auth';
 import AppFooter from '../components/layout/AppFooter';
 
-function SignupPage({ onNavigateLogin }) {
+function SignupPage() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     loginId: '',
     name: '',
@@ -87,7 +89,7 @@ function SignupPage({ onNavigateLogin }) {
 
     try {
       await signupUser({ ...form, loginId: form.loginId.trim() });
-      onNavigateLogin();
+      navigate('/login');
     } catch (err) {
       const errors = err.response?.data?.errors;
       if (errors)
@@ -323,7 +325,7 @@ function SignupPage({ onNavigateLogin }) {
                   이미 계정이 있으신가요?{' '}
                   <button
                     type="button"
-                    onClick={onNavigateLogin}
+                    onClick={() => navigate('/login')}
                     className="text-primary font-bold hover:underline ml-2"
                   >
                     로그인하기

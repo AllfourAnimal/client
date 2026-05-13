@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getPreferences, patchPreferences } from '../api/preferences';
 import { FaDog, FaCat, FaBaby } from 'react-icons/fa';
@@ -63,7 +64,8 @@ function SurveySection({ number, title, badge, children }) {
   );
 }
 
-function PreferencesPage({ onNavigateHome }) {
+function PreferencesPage() {
+  const navigate = useNavigate();
   const { accessToken, markSurveyComplete } = useAuth();
   const [animalType, setAnimalType] = useState('DOG');
   const [size, setSize] = useState('SMALL');
@@ -137,7 +139,7 @@ function PreferencesPage({ onNavigateHome }) {
     try {
       await patchPreferences(accessToken, { animalType, size, gender, age, personalities: personalities.join(',') });
       markSurveyComplete();
-      onNavigateHome();
+      navigate('/');
     } catch {
       setError('선호 정보 저장에 실패했습니다. 다시 시도해주세요.');
       setLoading(false);
@@ -146,7 +148,7 @@ function PreferencesPage({ onNavigateHome }) {
 
   const handleSkip = () => {
     markSurveyComplete();
-    onNavigateHome();
+    navigate('/');
   };
 
   const radioClass = (selected) =>

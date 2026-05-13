@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import { createReview } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
@@ -70,7 +71,8 @@ function getReviewWritten(adoption) {
   return Boolean(adoption.reviewId ?? adoption.review_id);
 }
 
-function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimalDetails, onNavigateReviewList, onNavigateProfile }) {
+function ReviewPostPage() {
+  const navigate = useNavigate();
   const { accessToken } = useAuth();
   const { adoptions: myAdoptions, loading: adoptionsLoading, loadAdoptions } = useAdoptions();
   const [title, setTitle] = useState('');
@@ -93,8 +95,8 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
   const handleSelectAdoption = (adoption) => {
     const selectedAnimalId = getAnimalId(adoption);
 
-    if (selectedAnimalId && onNavigateAnimalDetails) {
-      onNavigateAnimalDetails(String(selectedAnimalId));
+    if (selectedAnimalId) {
+      navigate(`/animals/${selectedAnimalId}`);
     }
   };
 
@@ -150,7 +152,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
       loadAdoptions().catch((err) => {
         console.error('[ReviewPostPage] refresh adoptions after review create failed:', err);
       });
-      onNavigateReviewList();
+      navigate('/reviews');
     } catch (err) {
       console.error('[ReviewPostPage] create review failed:', err);
       setError('리뷰를 작성하지 못했습니다.');
@@ -161,13 +163,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col font-body">
-      <Navbar
-        activePage="review-list"
-        onNavigateHome={onNavigateHome}
-        onNavigateAnimalList={onNavigateAnimalList}
-        onNavigateReviews={onNavigateReviewList}
-        onNavigateProfile={onNavigateProfile}
-      />
+      <Navbar />
 
       <main className="flex-grow max-w-5xl mx-auto w-full px-6 py-12 pt-24">
         <div className="mb-12">
@@ -386,7 +382,7 @@ function ReviewPostPage({ onNavigateHome, onNavigateAnimalList, onNavigateAnimal
             <button
               className="px-8 py-4 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-all"
               type="button"
-              onClick={onNavigateReviewList}
+              onClick={() => navigate('/reviews')}
             >
               취소
             </button>
