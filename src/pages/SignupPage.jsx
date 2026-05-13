@@ -180,7 +180,10 @@ function SignupPage() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 ml-1">
                     <label className="text-sm font-bold text-on-surface-variant">비밀번호 확인</label>
-                    {fieldErrors.passwordConfirm && <span className="text-xs text-error">{fieldErrors.passwordConfirm}</span>}
+                    {(form.passwordConfirm && form.password !== form.passwordConfirm)
+                      ? <span className="text-xs text-error">비밀번호가 일치하지 않습니다.</span>
+                      : fieldErrors.passwordConfirm && <span className="text-xs text-error">{fieldErrors.passwordConfirm}</span>
+                    }
                   </div>
                   <input
                     name="passwordConfirm"

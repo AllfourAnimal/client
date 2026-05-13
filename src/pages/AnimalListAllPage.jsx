@@ -190,7 +190,7 @@ function AnimalListAllPage() {
                   { value: '', label: '모든 동물' },
                   { value: 'DOG', label: '강아지' },
                   { value: 'CAT', label: '고양이' },
-                  { value: 'ETC', label: '기타' },
+                  { value: 'OTHER', label: '기타' },
                 ]}
               />
               <AnimatedSelect
